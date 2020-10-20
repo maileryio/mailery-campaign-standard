@@ -1,14 +1,14 @@
-# _____
+# Regular campaign module for Mailery Platform
 
-**_____**
+**Regular campaign module for Mailery Platform**
 
-[![Latest Stable Version](https://poser.pugx.org/maileryio/_____/v/stable)](https://packagist.org/packages/maileryio/_____)
-[![Total Downloads](https://poser.pugx.org/maileryio/_____/downloads)](https://packagist.org/packages/maileryio/_____)
-[![Build Status](https://travis-ci.com/maileryio/_____.svg?branch=master)](https://travis-ci.com/maileryio/_____)
-[![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/maileryio/_____.svg)](https://scrutinizer-ci.com/g/maileryio/_____/)
-[![Scrutinizer Code Coverage](https://img.shields.io/scrutinizer/coverage/g/maileryio/_____.svg)](https://scrutinizer-ci.com/g/maileryio/_____/)
+[![Latest Stable Version](https://poser.pugx.org/maileryio/mailery-campaign-regular/v/stable)](https://packagist.org/packages/maileryio/mailery-campaign-regular)
+[![Total Downloads](https://poser.pugx.org/maileryio/mailery-campaign-regular/downloads)](https://packagist.org/packages/maileryio/mailery-campaign-regular)
+[![Build Status](https://travis-ci.com/maileryio/mailery-campaign-regular.svg?branch=master)](https://travis-ci.com/maileryio/mailery-campaign-regular)
+[![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/maileryio/mailery-campaign-regular.svg)](https://scrutinizer-ci.com/g/maileryio/mailery-campaign-regular/)
+[![Scrutinizer Code Coverage](https://img.shields.io/scrutinizer/coverage/g/maileryio/mailery-campaign-regular.svg)](https://scrutinizer-ci.com/g/maileryio/mailery-campaign-regular/)
 
-_____
+Regular campaign module for Mailery Platform
 
 ## Installation
 
@@ -17,13 +17,13 @@ The preferred way to install this library is through [composer](http://getcompos
 Either run
 
 ```sh
-php composer.phar require "maileryio/_____"
+php composer.phar require "maileryio/mailery-campaign-regular"
 ```
 
 or add
 
 ```json
-"maileryio/_____": "*"
+"maileryio/mailery-campaign-regular": "*"
 ```
 
 to the require section of your composer.json.

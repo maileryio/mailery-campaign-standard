@@ -1,4 +1,4 @@
-# _____ Change Log
+# Campaign Regular Change Log
 
 ## 1.0.0 under development
 

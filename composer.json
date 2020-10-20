@@ -1,16 +1,19 @@
 {
-    "name": "maileryio/_____",
+    "name": "maileryio/mailery-campaign-regular",
     "type": "library",
-    "description": "_____",
+    "description": "Regular campaign module for Mailery Platform",
     "keywords": [
-        "_____"
+        "mail",
+        "mailer",
+        "campaign",
+        "regular"
     ],
-    "homepage": "https://github.com/maileryio/_____",
+    "homepage": "https://github.com/maileryio/mailery-campaign-regular",
     "license": "BSD-3-Clause",
     "support": {
-        "source": "https://github.com/maileryio/_____",
-        "issues": "https://github.com/maileryio/_____/issues",
-        "wiki": "https://github.com/maileryio/_____/wiki"
+        "source": "https://github.com/maileryio/mailery-campaign-regular",
+        "issues": "https://github.com/maileryio/mailery-campaign-regular/issues",
+        "wiki": "https://github.com/maileryio/mailery-campaign-regular/wiki"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -25,12 +28,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Mailery\\_____\\": "src"
+            "Mailery\\Campaign\\Regular\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Mailery\\_____\\Tests\\": "tests"
+            "Mailery\\Campaign\\Regular\\Tests\\": "tests"
         }
     },
     "scripts": {

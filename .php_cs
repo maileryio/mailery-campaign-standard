@@ -2,9 +2,9 @@
 
 $date = date('Y');
 $header = <<<EOF
-_____
-@link      https://github.com/maileryio/_____
-@package   _____
+Regular campaign module for Mailery Platform
+@link      https://github.com/maileryio/mailery-campaign-regular
+@package   Mailery\Campaign\Regular
 @license   BSD-3-Clause
 @copyright Copyright (c) {$date}, Mailery (https://mailery.io/)
 EOF;
