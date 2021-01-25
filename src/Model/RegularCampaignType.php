@@ -1,10 +1,10 @@
 <?php
 
-namespace Mailery\Campaign\Webpush\Model;
+namespace Mailery\Campaign\Regular\Model;
 
 use Mailery\Campaign\Model\CampaignTypeInterface;
 
-class CampaignType implements CampaignTypeInterface
+class RegularCampaignType implements CampaignTypeInterface
 {
     /**
      * @inheritdoc
