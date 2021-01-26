@@ -2,7 +2,6 @@
 
 namespace Mailery\Campaign\Regular\Form;
 
-use Cycle\ORM\ORMInterface;
 use FormManager\Factory as F;
 use FormManager\Form;
 use Mailery\Brand\Entity\Brand;
@@ -22,15 +21,15 @@ class CampaignForm extends Form
     private Brand $brand;
 
     /**
-     * @var ORMInterface
-     */
-    private ORMInterface $orm;
-
-    /**
      * @var RegularCampaign|null
      */
-    private ?RegularCampaign $campaign;
+    private ?RegularCampaign $campaign = null;
 
+    /**
+     * @var CampaignRepository
+     */
+    private CampaignRepository $campaignRepo;
+    
     /**
      * @var CampaignCrudService
      */
@@ -38,16 +37,17 @@ class CampaignForm extends Form
 
     /**
      * @param BrandLocator $brandLocator
+     * @param CampaignRepository $campaignRepo
      * @param CampaignCrudService $campaignCrudService
      * @param ORMInterface $orm
      */
     public function __construct(
         BrandLocator $brandLocator,
-        CampaignCrudService $campaignCrudService,
-        ORMInterface $orm
+        CampaignRepository $campaignRepo,
+        CampaignCrudService $campaignCrudService
     ) {
-        $this->orm = $orm;
         $this->brand = $brandLocator->getBrand();
+        $this->campaignRepo = $campaignRepo->withBrand($this->brand);
         $this->campaignCrudService = $campaignCrudService;
         parent::__construct($this->inputs());
     }
@@ -109,7 +109,7 @@ class CampaignForm extends Form
                     return;
                 }
 
-                $campaign = $this->getCampaignRepository()->findByName($value, $this->campaign);
+                $campaign = $this->campaignRepo->findByName($value, $this->campaign);
                 if ($campaign !== null) {
                     $context->buildViolation('Campaign with this name already exists.')
                         ->atPath('name')
@@ -127,14 +127,5 @@ class CampaignForm extends Form
                 ->addConstraint($nameConstraint),
             '' => F::submit($this->campaign === null ? 'Create' : 'Update'),
         ];
-    }
-
-    /**
-     * @return CampaignRepository
-     */
-    private function getCampaignRepository(): CampaignRepository
-    {
-        return $this->orm->getRepository(RegularCampaign::class)
-            ->withBrand($this->brand);
     }
 }
