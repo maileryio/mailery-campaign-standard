@@ -31,7 +31,12 @@ class CampaignCrudService
         $campaign = (new RegularCampaign())
             ->setName($valueObject->getName())
             ->setBrand($valueObject->getBrand())
+            ->setTemplate($valueObject->getTemplate())
         ;
+
+        foreach ($valueObject->getGroups() as $group) {
+            $campaign->getGroups()->add($group);
+        }
 
         $tr = new Transaction($this->orm);
         $tr->persist($campaign);
@@ -50,25 +55,16 @@ class CampaignCrudService
         $campaign = $campaign
             ->setName($valueObject->getName())
             ->setBrand($valueObject->getBrand())
+            ->setTemplate($valueObject->getTemplate())
         ;
 
-        $tr = new Transaction($this->orm);
-        $tr->persist($campaign);
-        $tr->run();
+        foreach ($campaign->getGroups() as $group) {
+            $campaign->getGroups()->removeElement($group);
+        }
 
-        return $campaign;
-    }
-
-    /**
-     * @param RegularCampaign $campaign
-     * @param CampaignValueObject $valueObject
-     * @return Campaign
-     */
-    public function updateContent(RegularCampaign $campaign, CampaignValueObject $valueObject): RegularCampaign
-    {
-        $campaign = $campaign
-            ->setContent($valueObject->getContent())
-        ;
+        foreach ($valueObject->getGroups() as $group) {
+            $campaign->getGroups()->add($group);
+        }
 
         $tr = new Transaction($this->orm);
         $tr->persist($campaign);
@@ -83,6 +79,10 @@ class CampaignCrudService
      */
     public function delete(RegularCampaign $campaign): bool
     {
+        foreach ($campaign->getGroups() as $groupPivot) {
+             $campaign->getGroups()->removeElement($groupPivot);
+        }
+
         $tr = new Transaction($this->orm);
         $tr->delete($campaign);
         $tr->run();

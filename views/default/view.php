@@ -5,6 +5,8 @@ use Mailery\Icon\Icon;
 use Mailery\Widget\Link\Link;
 use Mailery\Widget\Dataview\DetailView;
 use Mailery\Campaign\Regular\Entity\RegularCampaign;
+use Mailery\Subscriber\Entity\Group;
+use Yiisoft\Html\Html;
 
 /** @var Yiisoft\Yii\WebView $this */
 /** @var Psr\Http\Message\ServerRequestInterface $request */
@@ -67,6 +69,32 @@ $this->setTitle($campaign->getName());
                     'label' => 'Name',
                     'value' => function (RegularCampaign $data, $index) {
                         return $data->getName();
+                    },
+                ],
+                [
+                    'label' => 'Template',
+                    'value' => function (RegularCampaign $data, $index) use($urlGenerator) {
+                        return Html::a(
+                            $data->getTemplate()->getName(),
+                            $urlGenerator->generate($data->getTemplate()->getViewRouteName(), $data->getTemplate()->getViewRouteParams())
+                        );
+                    },
+                ],
+                [
+                    'label' => 'Groups',
+                    'value' => function (RegularCampaign $data, $index) use($urlGenerator) {
+                        return implode(
+                            '<br />',
+                            array_map(
+                                function (Group $group) use($urlGenerator) {
+                                    return Html::a(
+                                        $group->getName(),
+                                        $urlGenerator->generate($group->getViewRouteName(), $group->getViewRouteParams())
+                                    );
+                                },
+                                $data->getGroups()->toArray()
+                            )
+                        );
                     },
                 ],
             ]);

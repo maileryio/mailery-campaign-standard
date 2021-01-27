@@ -6,7 +6,7 @@ use Mailery\Widget\Form\FormRenderer;
 /** @var Yiisoft\Yii\WebView $this */
 /** @var Psr\Http\Message\ServerRequestInterface $request */
 /** @var Mailery\Campaign\Regular\Entity\RegularCampaign $campaign */
-/** @var FormManager\Form $campaignForm */
+/** @var Mailery\Campaign\Regular\Form\CampaignForm $campaignForm */
 /** @var string $csrf */
 /** @var bool $submitted */
 
