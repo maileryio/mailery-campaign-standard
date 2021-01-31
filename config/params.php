@@ -16,4 +16,20 @@ return [
             '@vendor/maileryio/mailery-campaign-regular/src/Entity',
         ],
     ],
+
+    'maileryio/mailery-menu-sidebar' => [
+        'items' => [
+            'campaigns' => [
+                'items' => [
+                    'campaigns' => [
+                        'activeRouteNames' => [
+                            '/campaign/regular/view',
+                            '/campaign/regular/create',
+                            '/campaign/regular/edit',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
 ];
