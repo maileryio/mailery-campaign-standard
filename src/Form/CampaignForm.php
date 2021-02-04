@@ -1,15 +1,15 @@
 <?php
 
-namespace Mailery\Campaign\Regular\Form;
+namespace Mailery\Campaign\Standard\Form;
 
 use FormManager\Factory as F;
 use FormManager\Form;
 use Mailery\Brand\Entity\Brand;
 use Mailery\Brand\Service\BrandLocatorInterface as BrandLocator;
-use Mailery\Campaign\Regular\Entity\RegularCampaign;
+use Mailery\Campaign\Standard\Entity\StandardCampaign;
 use Mailery\Campaign\Repository\CampaignRepository;
-use Mailery\Campaign\Regular\Service\CampaignCrudService;
-use Mailery\Campaign\Regular\ValueObject\CampaignValueObject;
+use Mailery\Campaign\Standard\Service\CampaignCrudService;
+use Mailery\Campaign\Standard\ValueObject\CampaignValueObject;
 use Symfony\Component\Validator\Constraints;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Mailery\Template\Repository\TemplateRepository;
@@ -26,9 +26,9 @@ class CampaignForm extends Form
     private Brand $brand;
 
     /**
-     * @var RegularCampaign|null
+     * @var StandardCampaign|null
      */
-    private ?RegularCampaign $campaign = null;
+    private ?StandardCampaign $campaign = null;
 
     /**
      * @var CampaignRepository
@@ -92,10 +92,10 @@ class CampaignForm extends Form
     }
 
     /**
-     * @param RegularCampaign $campaign
+     * @param StandardCampaign $campaign
      * @return self
      */
-    public function withCampaign(RegularCampaign $campaign): self
+    public function withCampaign(StandardCampaign $campaign): self
     {
         $this->campaign = $campaign;
         $this->offsetSet('', F::submit('Update'));
@@ -113,9 +113,9 @@ class CampaignForm extends Form
     }
 
     /**
-     * @return RegularCampaign|null
+     * @return StandardCampaign|null
      */
-    public function save(): ?RegularCampaign
+    public function save(): ?StandardCampaign
     {
         if (!$this->isValid()) {
             return null;
