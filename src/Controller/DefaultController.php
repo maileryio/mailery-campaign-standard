@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Mailery\Campaign\Regular\Controller;
+namespace Mailery\Campaign\Standard\Controller;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Yiisoft\Http\Method;
 use Yiisoft\Router\UrlGeneratorInterface as UrlGenerator;
-use Mailery\Campaign\Regular\Form\CampaignForm;
+use Mailery\Campaign\Standard\Form\CampaignForm;
 use Yiisoft\Yii\View\ViewRenderer;
 use Psr\Http\Message\ResponseFactoryInterface as ResponseFactory;
 use Mailery\Campaign\Repository\CampaignRepository;
