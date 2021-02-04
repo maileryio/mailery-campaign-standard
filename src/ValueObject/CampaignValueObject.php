@@ -1,9 +1,9 @@
 <?php
 
-namespace Mailery\Campaign\Regular\ValueObject;
+namespace Mailery\Campaign\Standard\ValueObject;
 
 use Mailery\Brand\Entity\Brand;
-use Mailery\Campaign\Regular\Form\CampaignForm;
+use Mailery\Campaign\Standard\Form\CampaignForm;
 use Mailery\Template\Entity\Template;
 use Mailery\Subscriber\Entity\Group;
 
