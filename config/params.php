@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use Mailery\Campaign\Regular\Model\RegularCampaignType;
+use Mailery\Campaign\Standard\Model\StandardCampaignType;
 
 return [
     'maileryio/mailery-campaign' => [
         'types' => [
-            RegularCampaignType::class => RegularCampaignType::class,
+            StandardCampaignType::class => StandardCampaignType::class,
         ],
     ],
 
