@@ -1,17 +1,17 @@
 <?php
 
-namespace Mailery\Campaign\Regular\Model;
+namespace Mailery\Campaign\Standard\Model;
 
 use Mailery\Campaign\Model\CampaignTypeInterface;
 
-class RegularCampaignType implements CampaignTypeInterface
+class StandardCampaignType implements CampaignTypeInterface
 {
     /**
      * @inheritdoc
      */
     public function getLabel(): string
     {
-        return 'Regular campaign';
+        return 'Standard campaign';
     }
 
     /**
@@ -19,7 +19,7 @@ class RegularCampaignType implements CampaignTypeInterface
      */
     public function getShortLabel(): string
     {
-        return 'Regular campaign';
+        return 'Standard campaign';
     }
 
     /**
