@@ -19,7 +19,7 @@ class RegularCampaign extends Campaign implements RoutableEntityInterface, Logga
      */
     public function getEditRouteName(): ?string
     {
-        return '/campaign/regular/edit';
+        return '/campaign/standard/edit';
     }
 
     /**
@@ -35,7 +35,7 @@ class RegularCampaign extends Campaign implements RoutableEntityInterface, Logga
      */
     public function getViewRouteName(): ?string
     {
-        return '/campaign/regular/view';
+        return '/campaign/standard/view';
     }
 
     /**
@@ -51,7 +51,7 @@ class RegularCampaign extends Campaign implements RoutableEntityInterface, Logga
      */
     public function getPreviewRouteName(): ?string
     {
-        return '/campaign/regular/view';
+        return '/campaign/standard/view';
     }
 
     /**

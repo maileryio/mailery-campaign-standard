@@ -13,7 +13,7 @@ return [
 
     'yiisoft/yii-cycle' => [
         'annotated-entity-paths' => [
-            '@vendor/maileryio/mailery-campaign-regular/src/Entity',
+            '@vendor/maileryio/mailery-campaign-standard/src/Entity',
         ],
     ],
 
@@ -23,9 +23,9 @@ return [
                 'items' => [
                     'campaigns' => [
                         'activeRouteNames' => [
-                            '/campaign/regular/view',
-                            '/campaign/regular/create',
-                            '/campaign/regular/edit',
+                            '/campaign/standard/view',
+                            '/campaign/standard/create',
+                            '/campaign/standard/edit',
                         ],
                     ],
                 ],

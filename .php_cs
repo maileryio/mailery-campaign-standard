@@ -3,7 +3,7 @@
 $date = date('Y');
 $header = <<<EOF
 Regular campaign module for Mailery Platform
-@link      https://github.com/maileryio/mailery-campaign-regular
+@link      https://github.com/maileryio/mailery-campaign-standard
 @package   Mailery\Campaign\Regular
 @license   BSD-3-Clause
 @copyright Copyright (c) {$date}, Mailery (https://mailery.io/)

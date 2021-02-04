@@ -89,7 +89,7 @@ class DefaultController
             if (($campaign = $campaignForm->save()) !== null) {
                 return $this->responseFactory
                     ->createResponse(302)
-                    ->withHeader('Location', $urlGenerator->generate('/campaign/regular/view', ['id' => $campaign->getId()]));
+                    ->withHeader('Location', $urlGenerator->generate('/campaign/standard/view', ['id' => $campaign->getId()]));
             }
         }
 
@@ -126,7 +126,7 @@ class DefaultController
             if ($campaignForm->save() !== null) {
                 return $this->responseFactory
                     ->createResponse(302)
-                    ->withHeader('Location', $urlGenerator->generate('/campaign/regular/view', ['id' => $campaign->getId()]));
+                    ->withHeader('Location', $urlGenerator->generate('/campaign/standard/view', ['id' => $campaign->getId()]));
             }
         }
 

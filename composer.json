@@ -1,19 +1,19 @@
 {
-    "name": "maileryio/mailery-campaign-regular",
+    "name": "maileryio/mailery-campaign-standard",
     "type": "library",
     "description": "Regular campaign module for Mailery Platform",
     "keywords": [
         "mail",
         "mailer",
         "campaign",
-        "regular"
+        "standard"
     ],
-    "homepage": "https://github.com/maileryio/mailery-campaign-regular",
+    "homepage": "https://github.com/maileryio/mailery-campaign-standard",
     "license": "BSD-3-Clause",
     "support": {
-        "source": "https://github.com/maileryio/mailery-campaign-regular",
-        "issues": "https://github.com/maileryio/mailery-campaign-regular/issues",
-        "wiki": "https://github.com/maileryio/mailery-campaign-regular/wiki"
+        "source": "https://github.com/maileryio/mailery-campaign-standard",
+        "issues": "https://github.com/maileryio/mailery-campaign-standard/issues",
+        "wiki": "https://github.com/maileryio/mailery-campaign-standard/wiki"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

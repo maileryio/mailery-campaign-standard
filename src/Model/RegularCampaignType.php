@@ -27,7 +27,7 @@ class RegularCampaignType implements CampaignTypeInterface
      */
     public function getCreateRouteName(): ?string
     {
-        return '/campaign/regular/create';
+        return '/campaign/standard/create';
     }
 
     /**

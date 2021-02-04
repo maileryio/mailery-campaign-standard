@@ -2,11 +2,11 @@
 
 **Regular campaign module for Mailery Platform**
 
-[![Latest Stable Version](https://poser.pugx.org/maileryio/mailery-campaign-regular/v/stable)](https://packagist.org/packages/maileryio/mailery-campaign-regular)
-[![Total Downloads](https://poser.pugx.org/maileryio/mailery-campaign-regular/downloads)](https://packagist.org/packages/maileryio/mailery-campaign-regular)
-[![Build Status](https://travis-ci.com/maileryio/mailery-campaign-regular.svg?branch=master)](https://travis-ci.com/maileryio/mailery-campaign-regular)
-[![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/maileryio/mailery-campaign-regular.svg)](https://scrutinizer-ci.com/g/maileryio/mailery-campaign-regular/)
-[![Scrutinizer Code Coverage](https://img.shields.io/scrutinizer/coverage/g/maileryio/mailery-campaign-regular.svg)](https://scrutinizer-ci.com/g/maileryio/mailery-campaign-regular/)
+[![Latest Stable Version](https://poser.pugx.org/maileryio/mailery-campaign-standard/v/stable)](https://packagist.org/packages/maileryio/mailery-campaign-standard)
+[![Total Downloads](https://poser.pugx.org/maileryio/mailery-campaign-standard/downloads)](https://packagist.org/packages/maileryio/mailery-campaign-standard)
+[![Build Status](https://travis-ci.com/maileryio/mailery-campaign-standard.svg?branch=master)](https://travis-ci.com/maileryio/mailery-campaign-standard)
+[![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/maileryio/mailery-campaign-standard.svg)](https://scrutinizer-ci.com/g/maileryio/mailery-campaign-standard/)
+[![Scrutinizer Code Coverage](https://img.shields.io/scrutinizer/coverage/g/maileryio/mailery-campaign-standard.svg)](https://scrutinizer-ci.com/g/maileryio/mailery-campaign-standard/)
 
 Regular campaign module for Mailery Platform
 
@@ -17,13 +17,13 @@ The preferred way to install this library is through [composer](http://getcompos
 Either run
 
 ```sh
-php composer.phar require "maileryio/mailery-campaign-regular"
+php composer.phar require "maileryio/mailery-campaign-standard"
 ```
 
 or add
 
 ```json
-"maileryio/mailery-campaign-regular": "*"
+"maileryio/mailery-campaign-standard": "*"
 ```
 
 to the require section of your composer.json.
