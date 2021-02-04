@@ -1,11 +1,11 @@
 <?php
 
-namespace Mailery\Campaign\Regular\Service;
+namespace Mailery\Campaign\Standard\Service;
 
 use Cycle\ORM\ORMInterface;
 use Cycle\ORM\Transaction;
-use Mailery\Campaign\Regular\Entity\RegularCampaign;
-use Mailery\Campaign\Regular\ValueObject\CampaignValueObject;
+use Mailery\Campaign\Standard\Entity\StandardCampaign;
+use Mailery\Campaign\Standard\ValueObject\CampaignValueObject;
 
 class CampaignCrudService
 {
@@ -24,11 +24,11 @@ class CampaignCrudService
 
     /**
      * @param CampaignValueObject $valueObject
-     * @return RegularCampaign
+     * @return StandardCampaign
      */
-    public function create(CampaignValueObject $valueObject): RegularCampaign
+    public function create(CampaignValueObject $valueObject): StandardCampaign
     {
-        $campaign = (new RegularCampaign())
+        $campaign = (new StandardCampaign())
             ->setName($valueObject->getName())
             ->setBrand($valueObject->getBrand())
             ->setTemplate($valueObject->getTemplate())
@@ -46,11 +46,11 @@ class CampaignCrudService
     }
 
     /**
-     * @param RegularCampaign $campaign
+     * @param StandardCampaign $campaign
      * @param CampaignValueObject $valueObject
      * @return Campaign
      */
-    public function update(RegularCampaign $campaign, CampaignValueObject $valueObject): RegularCampaign
+    public function update(StandardCampaign $campaign, CampaignValueObject $valueObject): StandardCampaign
     {
         $campaign = $campaign
             ->setName($valueObject->getName())
@@ -74,10 +74,10 @@ class CampaignCrudService
     }
 
     /**
-     * @param RegularCampaign $campaign
+     * @param StandardCampaign $campaign
      * @return bool
      */
-    public function delete(RegularCampaign $campaign): bool
+    public function delete(StandardCampaign $campaign): bool
     {
         foreach ($campaign->getGroups() as $groupPivot) {
              $campaign->getGroups()->removeElement($groupPivot);
