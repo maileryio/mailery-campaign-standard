@@ -4,13 +4,13 @@ use Mailery\Activity\Log\Widget\ActivityLogLink;
 use Mailery\Icon\Icon;
 use Mailery\Widget\Link\Link;
 use Mailery\Widget\Dataview\DetailView;
-use Mailery\Campaign\Regular\Entity\RegularCampaign;
+use Mailery\Campaign\Standard\Entity\StandardCampaign;
 use Mailery\Subscriber\Entity\Group;
 use Yiisoft\Html\Html;
 
 /** @var Yiisoft\Yii\WebView $this */
 /** @var Psr\Http\Message\ServerRequestInterface $request */
-/** @var Mailery\Campaign\Regular\Entity\RegularCampaign $campaign */
+/** @var Mailery\Campaign\Standard\Entity\StandardCampaign $campaign */
 /** @var string $csrf */
 /** @var bool $submitted */
 
@@ -68,13 +68,13 @@ $this->setTitle($campaign->getName());
             ->attributes([
                 [
                     'label' => 'Name',
-                    'value' => function (RegularCampaign $data, $index) {
+                    'value' => function (StandardCampaign $data, $index) {
                         return $data->getName();
                     },
                 ],
                 [
                     'label' => 'Template',
-                    'value' => function (RegularCampaign $data, $index) use($urlGenerator) {
+                    'value' => function (StandardCampaign $data, $index) use($urlGenerator) {
                         return Html::a(
                             $data->getTemplate()->getName(),
                             $urlGenerator->generate($data->getTemplate()->getViewRouteName(), $data->getTemplate()->getViewRouteParams())
@@ -83,7 +83,7 @@ $this->setTitle($campaign->getName());
                 ],
                 [
                     'label' => 'Groups',
-                    'value' => function (RegularCampaign $data, $index) use($urlGenerator) {
+                    'value' => function (StandardCampaign $data, $index) use($urlGenerator) {
                         return implode(
                             '<br />',
                             array_map(

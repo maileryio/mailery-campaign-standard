@@ -1,7 +1,7 @@
 {
     "name": "maileryio/mailery-campaign-standard",
     "type": "library",
-    "description": "Regular campaign module for Mailery Platform",
+    "description": "Standard campaign module for Mailery Platform",
     "keywords": [
         "mail",
         "mailer",

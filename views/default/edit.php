@@ -5,8 +5,8 @@ use Mailery\Widget\Form\FormRenderer;
 
 /** @var Yiisoft\Yii\WebView $this */
 /** @var Psr\Http\Message\ServerRequestInterface $request */
-/** @var Mailery\Campaign\Regular\Entity\RegularCampaign $campaign */
-/** @var Mailery\Campaign\Regular\Form\CampaignForm $campaignForm */
+/** @var Mailery\Campaign\Standard\Entity\StandardCampaign $campaign */
+/** @var Mailery\Campaign\Standard\Form\CampaignForm $campaignForm */
 /** @var string $csrf */
 /** @var bool $submitted */
 
