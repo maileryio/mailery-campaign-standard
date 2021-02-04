@@ -1,13 +1,13 @@
 <?php
 
-namespace Mailery\Campaign\Regular\Provider;
+namespace Mailery\Campaign\Standard\Provider;
 
 use Yiisoft\Di\Container;
 use Yiisoft\Di\Support\ServiceProvider;
 use Yiisoft\Router\RouteCollectorInterface;
 use Yiisoft\Router\Group;
 use Yiisoft\Router\Route;
-use Mailery\Campaign\Regular\Controller\DefaultController;
+use Mailery\Campaign\Standard\Controller\DefaultController;
 
 final class RouteCollectorServiceProvider extends ServiceProvider
 {
