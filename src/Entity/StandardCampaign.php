@@ -1,6 +1,6 @@
 <?php
 
-namespace Mailery\Campaign\Regular\Entity;
+namespace Mailery\Campaign\Standard\Entity;
 
 use Mailery\Campaign\Entity\Campaign;
 use Mailery\Activity\Log\Entity\LoggableEntityInterface;
@@ -10,7 +10,7 @@ use Mailery\Common\Entity\RoutableEntityInterface;
 /**
  * @Cycle\Annotated\Annotation\Entity
  */
-class RegularCampaign extends Campaign implements RoutableEntityInterface, LoggableEntityInterface
+class StandardCampaign extends Campaign implements RoutableEntityInterface, LoggableEntityInterface
 {
     use LoggableEntityTrait;
 
