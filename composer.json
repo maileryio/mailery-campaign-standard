@@ -28,12 +28,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Mailery\\Campaign\\Regular\\": "src"
+            "Mailery\\Campaign\\Standard\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Mailery\\Campaign\\Regular\\Tests\\": "tests"
+            "Mailery\\Campaign\\Standard\\Tests\\": "tests"
         }
     },
     "scripts": {
