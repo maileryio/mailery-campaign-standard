@@ -1,6 +1,6 @@
-# Regular campaign module for Mailery Platform
+# Standard campaign module for Mailery Platform
 
-**Regular campaign module for Mailery Platform**
+**Standard campaign module for Mailery Platform**
 
 [![Latest Stable Version](https://poser.pugx.org/maileryio/mailery-campaign-standard/v/stable)](https://packagist.org/packages/maileryio/mailery-campaign-standard)
 [![Total Downloads](https://poser.pugx.org/maileryio/mailery-campaign-standard/downloads)](https://packagist.org/packages/maileryio/mailery-campaign-standard)
@@ -8,7 +8,7 @@
 [![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/maileryio/mailery-campaign-standard.svg)](https://scrutinizer-ci.com/g/maileryio/mailery-campaign-standard/)
 [![Scrutinizer Code Coverage](https://img.shields.io/scrutinizer/coverage/g/maileryio/mailery-campaign-standard.svg)](https://scrutinizer-ci.com/g/maileryio/mailery-campaign-standard/)
 
-Regular campaign module for Mailery Platform
+Standard campaign module for Mailery Platform
 
 ## Installation
 
