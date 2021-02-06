@@ -12,7 +12,7 @@ use Mailery\Campaign\Standard\Form\CampaignForm;
 use Yiisoft\Yii\View\ViewRenderer;
 use Psr\Http\Message\ResponseFactoryInterface as ResponseFactory;
 use Mailery\Campaign\Repository\CampaignRepository;
-use Mailery\Brand\Service\BrandLocatorInterface;
+use Mailery\Brand\BrandLocatorInterface;
 
 class DefaultController
 {
