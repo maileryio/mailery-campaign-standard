@@ -17,7 +17,7 @@ class StandardCampaignType implements CampaignTypeInterface
     /**
      * @inheritdoc
      */
-    public function getShortLabel(): string
+    public function getCreateLabel(): string
     {
         return 'Standard campaign';
     }
