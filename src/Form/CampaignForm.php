@@ -178,7 +178,7 @@ class CampaignForm extends Form
                 ->addConstraint(new Constraints\Choice([
                     'choices' => array_keys($templateOptions)
                 ])),
-            'groups' => F::select('Send to groups', $groupOptions, ['multiple' => true])
+            'groups' => F::select('Recipients', $groupOptions, ['multiple' => true])
                 ->addConstraint(new Constraints\NotBlank())
                 ->addConstraint(new Constraints\Choice([
                     'choices' => array_keys($groupOptions),
