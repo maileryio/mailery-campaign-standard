@@ -2,7 +2,6 @@
 
 namespace Mailery\Campaign\Standard\ValueObject;
 
-use Mailery\Brand\Entity\Brand;
 use Mailery\Campaign\Standard\Form\CampaignForm;
 use Mailery\Template\Entity\Template;
 use Mailery\Subscriber\Entity\Group;
@@ -13,11 +12,6 @@ class CampaignValueObject
      * @var string
      */
     private string $name;
-
-    /**
-     * @var Brand
-     */
-    private Brand $brand;
 
     /**
      * @var Template
@@ -37,7 +31,7 @@ class CampaignValueObject
     {
         $new = new self();
 
-        $new->name = $form['name']->getValue();
+        $new->name = $form->getAttributeValue('name');
 
         return $new;
     }
@@ -48,14 +42,6 @@ class CampaignValueObject
     public function getName(): string
     {
         return $this->name;
-    }
-
-    /**
-     * @return Brand
-     */
-    public function getBrand(): Brand
-    {
-        return $this->brand;
     }
 
     /**
@@ -72,18 +58,6 @@ class CampaignValueObject
     public function getGroups(): array
     {
         return $this->groups;
-    }
-
-    /**
-     * @param Brand $brand
-     * @return self
-     */
-    public function withBrand(Brand $brand): self
-    {
-        $new = clone $this;
-        $new->brand = $brand;
-
-        return $new;
     }
 
     /**

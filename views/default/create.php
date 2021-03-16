@@ -1,12 +1,12 @@
 <?php declare(strict_types=1);
 
-use Mailery\Widget\Form\FormRenderer;
-
+/** @var Yiisoft\Form\Widget\Field $field */
+/** @var Yiisoft\Router\UrlGeneratorInterface $urlGenerator */
 /** @var Yiisoft\Yii\WebView $this */
 /** @var Psr\Http\Message\ServerRequestInterface $request */
-/** @var FormManager\Form $campaignForm */
+/** @var Mailery\Campaign\Standard\Form\CampaignForm $form */
 /** @var string $csrf */
-/** @var bool $submitted */
+
 $this->setTitle('New standard campaign');
 
 ?><div class="row">
@@ -22,8 +22,5 @@ $this->setTitle('New standard campaign');
     </div>
 </div>
 <div class="mb-2"></div>
-<div class="row">
-    <div class="col-6">
-        <?= (new FormRenderer($campaignForm->withCsrf($csrf)))($submitted); ?>
-    </div>
-</div>
+
+<?= $this->render('_form', compact('csrf', 'field', 'form')) ?>

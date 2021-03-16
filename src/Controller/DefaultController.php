@@ -13,6 +13,9 @@ use Yiisoft\Yii\View\ViewRenderer;
 use Psr\Http\Message\ResponseFactoryInterface as ResponseFactory;
 use Mailery\Campaign\Repository\CampaignRepository;
 use Mailery\Brand\BrandLocatorInterface;
+use Mailery\Campaign\Standard\Service\CampaignCrudService;
+use Mailery\Campaign\Standard\ValueObject\CampaignValueObject;
+use Yiisoft\Validator\ValidatorInterface;
 
 class DefaultController
 {
@@ -27,28 +30,44 @@ class DefaultController
     private ResponseFactory $responseFactory;
 
     /**
+     * @var UrlGenerator
+     */
+    private UrlGenerator $urlGenerator;
+
+    /**
      * @var CampaignRepository
      */
     private CampaignRepository $campaignRepo;
 
     /**
+     * @var CampaignCrudService
+     */
+    private CampaignCrudService $campaignCrudService;
+
+    /**
      * @param ViewRenderer $viewRenderer
      * @param ResponseFactory $responseFactory
      * @param BrandLocatorInterface $brandLocator
+     * @param UrlGenerator $urlGenerator
      * @param CampaignRepository $campaignRepo
+     * @param CampaignCrudService $campaignCrudService
      */
     public function __construct(
         ViewRenderer $viewRenderer,
         ResponseFactory $responseFactory,
         BrandLocatorInterface $brandLocator,
-        CampaignRepository $campaignRepo
+        UrlGenerator $urlGenerator,
+        CampaignRepository $campaignRepo,
+        CampaignCrudService $campaignCrudService
     ) {
         $this->viewRenderer = $viewRenderer
             ->withController($this)
             ->withViewBasePath(dirname(dirname(__DIR__)) . '/views');
 
         $this->responseFactory = $responseFactory;
+        $this->urlGenerator = $urlGenerator;
         $this->campaignRepo = $campaignRepo->withBrand($brandLocator->getBrand());
+        $this->campaignCrudService = $campaignCrudService->withBrand($brandLocator->getBrand());
     }
 
     /**
@@ -67,69 +86,56 @@ class DefaultController
 
     /**
      * @param Request $request
-     * @param CampaignForm $campaignForm
-     * @param UrlGenerator $urlGenerator
+     * @param ValidatorInterface $validator
+     * @param CampaignForm $form
      * @return Response
      */
-    public function create(Request $request, CampaignForm $campaignForm, UrlGenerator $urlGenerator): Response
+    public function create(Request $request, ValidatorInterface $validator, CampaignForm $form): Response
     {
-        $campaignForm
-            ->setAttributes([
-                'action' => $request->getUri()->getPath(),
-                'method' => 'post',
-                'enctype' => 'multipart/form-data',
-            ])
-        ;
+        $body = $request->getParsedBody();
 
-        $submitted = $request->getMethod() === Method::POST;
+        if (($request->getMethod() === Method::POST) && $form->load($body) && $validator->validate($form, $form->getRules())) {
+            $valueObject = CampaignValueObject::fromForm($form);
+            $campaign = $this->campaignCrudService->create($valueObject);
 
-        if ($submitted) {
-            $campaignForm->loadFromServerRequest($request);
-
-            if (($campaign = $campaignForm->save()) !== null) {
-                return $this->responseFactory
+            return $this->responseFactory
                     ->createResponse(302)
-                    ->withHeader('Location', $urlGenerator->generate('/campaign/standard/view', ['id' => $campaign->getId()]));
-            }
+                    ->withHeader('Location', $this->urlGenerator->generate('/campaign/standard/view', ['id' => $campaign->getId()]));
         }
 
-        return $this->viewRenderer->render('create', compact('campaignForm', 'submitted'));
+        return $this->viewRenderer->render('create', compact('form'));
     }
 
     /**
      * @param Request $request
-     * @param CampaignForm $campaignForm
-     * @param UrlGenerator $urlGenerator
+     * @param ValidatorInterface $validator
+     * @param FlashInterface $flash
+     * @param CampaignForm $form
      * @return Response
      */
-    public function edit(Request $request, CampaignForm $campaignForm, UrlGenerator $urlGenerator): Response
+    public function edit(Request $request, ValidatorInterface $validator, FlashInterface $flash, CampaignForm $form): Response
     {
+        $body = $request->getParsedBody();
         $campaignId = $request->getAttribute('id');
         if (empty($campaignId) || ($campaign = $this->campaignRepo->findByPK($campaignId)) === null) {
             return $this->responseFactory->createResponse(404);
         }
 
-        $campaignForm
-            ->withCampaign($campaign)
-            ->setAttributes([
-                'action' => $request->getUri()->getPath(),
-                'method' => 'post',
-                'enctype' => 'multipart/form-data',
-            ])
-        ;
+        $form = $form->withCampaign($campaign);
 
-        $submitted = $request->getMethod() === Method::POST;
+        if (($request->getMethod() === Method::POST) && $form->load($body) && $validator->validate($form, $form->getRules())) {
+            $valueObject = CampaignValueObject::fromForm($form);
+            $this->campaignCrudService->update($campaign, $valueObject);
 
-        if ($submitted) {
-            $campaignForm->loadFromServerRequest($request);
-
-            if ($campaignForm->save() !== null) {
-                return $this->responseFactory
-                    ->createResponse(302)
-                    ->withHeader('Location', $urlGenerator->generate('/campaign/standard/view', ['id' => $campaign->getId()]));
-            }
+            $flash->add(
+                'success',
+                [
+                    'body' => 'Data have been saved!',
+                ],
+                true
+            );
         }
 
-        return $this->viewRenderer->render('edit', compact('campaign', 'campaignForm', 'submitted'));
+        return $this->viewRenderer->render('edit', compact('form', 'campaign'));
     }
 }
