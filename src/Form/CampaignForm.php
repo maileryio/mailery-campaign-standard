@@ -96,10 +96,10 @@ class CampaignForm extends FormModel
     /**
      * @return array
      */
-    public function attributeLabels(): array
+    public function getAttributeLabels(): array
     {
         return [
-            'name' => 'Name',
+            'name' => 'Subject',
             'sender' => 'Sender',
             'template' => 'Template',
             'groups' => 'Groups',
