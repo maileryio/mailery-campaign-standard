@@ -16,6 +16,7 @@ use Mailery\Brand\BrandLocatorInterface;
 use Mailery\Campaign\Standard\Service\CampaignCrudService;
 use Mailery\Campaign\Standard\ValueObject\CampaignValueObject;
 use Yiisoft\Validator\ValidatorInterface;
+use Yiisoft\Session\Flash\FlashInterface;
 
 class DefaultController
 {

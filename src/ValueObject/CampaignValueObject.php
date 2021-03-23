@@ -4,6 +4,7 @@ namespace Mailery\Campaign\Standard\ValueObject;
 
 use Mailery\Campaign\Standard\Form\CampaignForm;
 use Mailery\Template\Entity\Template;
+use Mailery\Sender\Entity\Sender;
 use Mailery\Subscriber\Entity\Group;
 
 class CampaignValueObject
@@ -12,6 +13,11 @@ class CampaignValueObject
      * @var string
      */
     private string $name;
+
+    /**
+     * @var Sender
+     */
+    private Sender $sender;
 
     /**
      * @var Template
@@ -32,6 +38,9 @@ class CampaignValueObject
         $new = new self();
 
         $new->name = $form->getAttributeValue('name');
+        $new->sender = $form->getSender();
+        $new->template = $form->getTemplate();
+        $new->groups = $form->getGroups();
 
         return $new;
     }
@@ -42,6 +51,14 @@ class CampaignValueObject
     public function getName(): string
     {
         return $this->name;
+    }
+
+    /**
+     * @return Sender
+     */
+    public function getSender(): Sender
+    {
+        return $this->sender;
     }
 
     /**
@@ -58,29 +75,5 @@ class CampaignValueObject
     public function getGroups(): array
     {
         return $this->groups;
-    }
-
-    /**
-     * @param Template $template
-     * @return self
-     */
-    public function withTemplate(Template $template): self
-    {
-        $new = clone $this;
-        $new->template = $template;
-
-        return $new;
-    }
-
-    /**
-     * @param Group[] $groups
-     * @return self
-     */
-    public function withGroups(array $groups): self
-    {
-        $new = clone $this;
-        $new->groups = $groups;
-
-        return $new;
     }
 }

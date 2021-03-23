@@ -5,7 +5,7 @@ use Yiisoft\Form\Widget\Form;
 
 /** @var Yiisoft\Form\Widget\Field $field */
 /** @var Yiisoft\View\WebView $this */
-/** @var Mailery\Sender\Email\Form\SenderForm $form */
+/** @var Mailery\Campaign\Standard\Form\CampaignForm $form */
 /** @var string $csrf */
 
 ?>
@@ -22,8 +22,12 @@ use Yiisoft\Form\Widget\Form;
             ->begin(); ?>
 
         <?= $field->config($form, 'name'); ?>
+        <?= $field->config($form, 'sender')
+            ->dropDownList($form->getSenderOptions()); ?>
         <?= $field->config($form, 'template')
             ->dropDownList($form->getTemplateOptions()); ?>
+        <?= $field->config($form, 'groups')
+            ->listBox($form->getGroupOptions(), ['name' => $form->formName() . '[groups][]']); ?>
 
         <?= Html::submitButton(
             'Save',

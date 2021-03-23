@@ -47,11 +47,11 @@ class CampaignCrudService
     public function create(CampaignValueObject $valueObject): StandardCampaign
     {
         $campaign = (new StandardCampaign())
-            ->setBrand($this->getBrand())
+            ->setBrand($this->brand)
             ->setName($valueObject->getName())
+            ->setSender($valueObject->getSender())
             ->setTemplate($valueObject->getTemplate())
         ;
-
         foreach ($valueObject->getGroups() as $group) {
             $campaign->getGroups()->add($group);
         }
@@ -69,8 +69,9 @@ class CampaignCrudService
     public function update(StandardCampaign $campaign, CampaignValueObject $valueObject): StandardCampaign
     {
         $campaign = $campaign
-            ->setBrand($this->getBrand())
+            ->setBrand($this->brand)
             ->setName($valueObject->getName())
+            ->setSender($valueObject->getSender())
             ->setTemplate($valueObject->getTemplate())
         ;
 

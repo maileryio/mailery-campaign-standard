@@ -73,6 +73,15 @@ $this->setTitle($campaign->getName());
                     },
                 ],
                 [
+                    'label' => 'Sender',
+                    'value' => function (StandardCampaign $data, $index) use($urlGenerator) {
+                        return Html::a(
+                            $data->getSender()->getName(),
+                            $urlGenerator->generate($data->getSender()->getViewRouteName(), $data->getSender()->getViewRouteParams())
+                        );
+                    },
+                ],
+                [
                     'label' => 'Template',
                     'value' => function (StandardCampaign $data, $index) use($urlGenerator) {
                         return Html::a(

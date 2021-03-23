@@ -1,14 +1,13 @@
 <?php declare(strict_types=1);
 
 use Mailery\Icon\Icon;
-use Mailery\Widget\Form\FormRenderer;
 
+/** @var Yiisoft\Form\Widget\Field $field */
+/** @var Yiisoft\Router\UrlGeneratorInterface $urlGenerator */
 /** @var Yiisoft\Yii\WebView $this */
 /** @var Psr\Http\Message\ServerRequestInterface $request */
-/** @var Mailery\Campaign\Standard\Entity\StandardCampaign $campaign */
-/** @var Mailery\Campaign\Standard\Form\CampaignForm $campaignForm */
+/** @var Mailery\Campaign\Standard\Form\CampaignForm $form */
 /** @var string $csrf */
-/** @var bool $submitted */
 
 $this->setTitle('Edit campaign #' . $campaign->getId());
 
@@ -29,8 +28,5 @@ $this->setTitle('Edit campaign #' . $campaign->getId());
     </div>
 </div>
 <div class="mb-2"></div>
-<div class="row">
-    <div class="col-6">
-        <?= (new FormRenderer($campaignForm->withCsrf($csrf)))($submitted); ?>
-    </div>
-</div>
+
+<?= $this->render('_form', compact('csrf', 'field', 'form')) ?>
