@@ -14,6 +14,7 @@ use Psr\Http\Message\ResponseFactoryInterface as ResponseFactory;
 use Mailery\Campaign\Repository\CampaignRepository;
 use Mailery\Brand\BrandLocatorInterface;
 use Mailery\Campaign\Standard\Service\CampaignCrudService;
+use Mailery\Campaign\Standard\Service\CampaignSenderService;
 use Mailery\Campaign\Standard\ValueObject\CampaignValueObject;
 use Yiisoft\Validator\ValidatorInterface;
 use Yiisoft\Session\Flash\FlashInterface;
@@ -46,12 +47,18 @@ class DefaultController
     private CampaignCrudService $campaignCrudService;
 
     /**
+     * @var CampaignSenderService
+     */
+    private CampaignSenderService $campaignSenderService;
+
+    /**
      * @param ViewRenderer $viewRenderer
      * @param ResponseFactory $responseFactory
      * @param BrandLocatorInterface $brandLocator
      * @param UrlGenerator $urlGenerator
      * @param CampaignRepository $campaignRepo
      * @param CampaignCrudService $campaignCrudService
+     * @param CampaignSenderService $campaignSenderService
      */
     public function __construct(
         ViewRenderer $viewRenderer,
@@ -59,7 +66,8 @@ class DefaultController
         BrandLocatorInterface $brandLocator,
         UrlGenerator $urlGenerator,
         CampaignRepository $campaignRepo,
-        CampaignCrudService $campaignCrudService
+        CampaignCrudService $campaignCrudService,
+        CampaignSenderService $campaignSenderService
     ) {
         $this->viewRenderer = $viewRenderer
             ->withController($this)
@@ -69,6 +77,7 @@ class DefaultController
         $this->urlGenerator = $urlGenerator;
         $this->campaignRepo = $campaignRepo->withBrand($brandLocator->getBrand());
         $this->campaignCrudService = $campaignCrudService->withBrand($brandLocator->getBrand());
+        $this->campaignSenderService = $campaignSenderService;
     }
 
     /**
@@ -99,6 +108,10 @@ class DefaultController
             $valueObject = CampaignValueObject::fromForm($form);
             $campaign = $this->campaignCrudService->create($valueObject);
 
+            if (!empty($body['send'])) {
+                $this->campaignSenderService->send($campaign);
+            }
+
             return $this->responseFactory
                     ->createResponse(302)
                     ->withHeader('Location', $this->urlGenerator->generate('/campaign/standard/view', ['id' => $campaign->getId()]));
@@ -127,6 +140,10 @@ class DefaultController
         if (($request->getMethod() === Method::POST) && $form->load($body) && $validator->validate($form, $form->getRules())) {
             $valueObject = CampaignValueObject::fromForm($form);
             $this->campaignCrudService->update($campaign, $valueObject);
+
+            if (!empty($body['send'])) {
+                $this->campaignSenderService->send($campaign);
+            }
 
             $flash->add(
                 'success',

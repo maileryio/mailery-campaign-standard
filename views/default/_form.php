@@ -50,13 +50,14 @@ use Yiisoft\Form\Widget\Form;
             [
                 'class' => 'btn btn-primary float-right mt-2',
                 'name' => 'send',
+                'value' => '1',
             ]
         ); ?>
 
         <?= Html::submitButton(
             'Save as draft',
             [
-                'class' => 'btn btn-link float-right mt-2'
+                'class' => 'btn btn-link float-right mt-2',
             ]
         ); ?>
 
