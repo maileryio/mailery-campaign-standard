@@ -21,17 +21,18 @@ final class RouteCollectorServiceProvider extends ServiceProvider
         $collector = $container->get(RouteCollectorInterface::class);
 
         $collector->addGroup(
-            Group::create(
-                '/brand/{brandId:\d+}',
-                [
-                    Route::get('/campaign/standard/view/{id:\d+}', [DefaultController::class, 'view'])
-                        ->name('/campaign/standard/view'),
-                    Route::methods(['GET', 'POST'], '/campaign/standard/create', [DefaultController::class, 'create'])
-                        ->name('/campaign/standard/create'),
-                    Route::methods(['GET', 'POST'], '/campaign/standard/edit/{id:\d+}', [DefaultController::class, 'edit'])
-                        ->name('/campaign/standard/edit'),
-                ]
-            )
+            Group::create('/brand/{brandId:\d+}')
+                ->routes(
+                    Route::get('/campaign/standard/view/{id:\d+}')
+                        ->name('/campaign/standard/view')
+                        ->action([DefaultController::class, 'view']),
+                    Route::methods(['GET', 'POST'], '/campaign/standard/create')
+                        ->name('/campaign/standard/create')
+                        ->action([DefaultController::class, 'create']),
+                    Route::methods(['GET', 'POST'], '/campaign/standard/edit/{id:\d+}')
+                        ->name('/campaign/standard/edit')
+                        ->action([DefaultController::class, 'edit'])
+                )
         );
     }
 }
