@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 use Mailery\Icon\Icon;
+use Mailery\Web\Widget\FlashMessage;
 
 /** @var Yiisoft\Form\Widget\Field $field */
 /** @var Yiisoft\Router\UrlGeneratorInterface $urlGenerator */
@@ -25,6 +26,12 @@ $this->setTitle('Edit campaign #' . $campaign->getId());
                 </a>
             </div>
         </div>
+    </div>
+</div>
+<div class="mb-2"></div>
+<div class="row">
+    <div class="col-12 col-xl-4">
+        <?= FlashMessage::widget(); ?>
     </div>
 </div>
 <div class="mb-2"></div>

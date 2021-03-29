@@ -7,6 +7,7 @@ use Mailery\Widget\Dataview\DetailView;
 use Mailery\Campaign\Standard\Entity\StandardCampaign;
 use Mailery\Subscriber\Entity\Group;
 use Yiisoft\Html\Html;
+use Mailery\Web\Widget\FlashMessage;
 
 /** @var Yiisoft\Yii\WebView $this */
 /** @var Psr\Http\Message\ServerRequestInterface $request */
@@ -51,6 +52,12 @@ $this->setTitle($campaign->getName());
                 </div>
             </div>
         </div>
+    </div>
+</div>
+<div class="mb-2"></div>
+<div class="row">
+    <div class="col-12 col-xl-4">
+        <?= FlashMessage::widget(); ?>
     </div>
 </div>
 <div class="mb-2"></div>

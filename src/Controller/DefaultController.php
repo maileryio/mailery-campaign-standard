@@ -108,13 +108,9 @@ class DefaultController
             $valueObject = CampaignValueObject::fromForm($form);
             $campaign = $this->campaignCrudService->create($valueObject);
 
-            if (!empty($body['send'])) {
-                $this->campaignSenderService->send($campaign);
-            }
-
             return $this->responseFactory
-                    ->createResponse(302)
-                    ->withHeader('Location', $this->urlGenerator->generate('/campaign/standard/view', ['id' => $campaign->getId()]));
+                ->createResponse(302)
+                ->withHeader('Location', $this->urlGenerator->generate('/campaign/standard/view', ['id' => $campaign->getId()]));
         }
 
         return $this->viewRenderer->render('create', compact('form'));
@@ -141,9 +137,46 @@ class DefaultController
             $valueObject = CampaignValueObject::fromForm($form);
             $this->campaignCrudService->update($campaign, $valueObject);
 
-            if (!empty($body['send'])) {
-                $this->campaignSenderService->send($campaign);
+            $flash->add(
+                'success',
+                [
+                    'body' => 'Data have been saved!',
+                ],
+                true
+            );
+
+            if (!empty($body['next'])) {
+                return $this->responseFactory
+                    ->createResponse(302)
+                    ->withHeader('Location', $this->urlGenerator->generate('/campaign/standard/sendout', ['id' => $campaign->getId()]));
             }
+        }
+
+        return $this->viewRenderer->render('edit', compact('form', 'campaign'));
+    }
+
+    /**
+     * @param Request $request
+     * @param ValidatorInterface $validator
+     * @param FlashInterface $flash
+     * @param CampaignForm $form
+     * @return Response
+     */
+    public function sendout(Request $request, ValidatorInterface $validator, FlashInterface $flash, CampaignForm $form): Response
+    {
+        $body = $request->getParsedBody();
+        $campaignId = $request->getAttribute('id');
+        if (empty($campaignId) || ($campaign = $this->campaignRepo->findByPK($campaignId)) === null) {
+            return $this->responseFactory->createResponse(404);
+        }
+
+        $form = $form->withCampaign($campaign);
+
+        if (($request->getMethod() === Method::POST) && $form->load($body) && $validator->validate($form, $form->getRules())) {
+            $valueObject = CampaignValueObject::fromForm($form);
+            $this->campaignCrudService->update($campaign, $valueObject);
+
+            $this->campaignSenderService->send($campaign);
 
             $flash->add(
                 'success',
@@ -154,6 +187,6 @@ class DefaultController
             );
         }
 
-        return $this->viewRenderer->render('edit', compact('form', 'campaign'));
+        return $this->viewRenderer->render('sendout', compact('form', 'campaign'));
     }
 }

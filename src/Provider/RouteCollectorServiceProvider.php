@@ -31,7 +31,10 @@ final class RouteCollectorServiceProvider extends ServiceProvider
                         ->action([DefaultController::class, 'create']),
                     Route::methods(['GET', 'POST'], '/campaign/standard/edit/{id:\d+}')
                         ->name('/campaign/standard/edit')
-                        ->action([DefaultController::class, 'edit'])
+                        ->action([DefaultController::class, 'edit']),
+                    Route::methods(['GET', 'POST'], '/campaign/standard/sendout/{id:\d+}')
+                        ->name('/campaign/standard/sendout')
+                        ->action([DefaultController::class, 'sendout'])
                 )
         );
     }

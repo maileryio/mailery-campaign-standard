@@ -46,10 +46,10 @@ use Yiisoft\Form\Widget\Form;
             ->listBox($form->getGroupOptions(), ['name' => $form->formName() . '[groups][]']); ?>
 
         <?= Html::submitButton(
-            'Send campaign',
+            'Seve & next',
             [
                 'class' => 'btn btn-primary float-right mt-2',
-                'name' => 'send',
+                'name' => 'next',
                 'value' => '1',
             ]
         ); ?>
