@@ -3,15 +3,13 @@
 use Mailery\Activity\Log\Widget\ActivityLogLink;
 use Mailery\Icon\Icon;
 use Mailery\Widget\Link\Link;
-use Mailery\Widget\Dataview\DetailView;
-use Mailery\Campaign\Standard\Entity\StandardCampaign;
-use Mailery\Subscriber\Entity\Group;
-use Yiisoft\Html\Html;
 use Mailery\Web\Widget\FlashMessage;
+use Yiisoft\Html\Html;
 
 /** @var Yiisoft\Yii\WebView $this */
 /** @var Psr\Http\Message\ServerRequestInterface $request */
 /** @var Mailery\Campaign\Standard\Entity\StandardCampaign $campaign */
+/** @var Mailery\Sender\Email\Entity\EmailSender $sender */
 /** @var string $csrf */
 /** @var bool $submitted */
 
@@ -62,59 +60,23 @@ $this->setTitle($campaign->getName());
 </div>
 <div class="mb-2"></div>
 <div class="row">
-    <div class="col-12 grid-margin">
-        <?= DetailView::widget()
-            ->data($campaign)
-            ->options([
-                'class' => 'table detail-view',
-            ])
-            ->emptyText('(not set)')
-            ->emptyTextOptions([
-                'class' => 'text-muted',
-            ])
-            ->attributes([
-                [
-                    'label' => 'Name',
-                    'value' => function (StandardCampaign $data, $index) {
-                        return $data->getName();
-                    },
-                ],
-                [
-                    'label' => 'Sender',
-                    'value' => function (StandardCampaign $data, $index) use($urlGenerator) {
-                        return Html::a(
-                            $data->getSender()->getName(),
-                            $urlGenerator->generate($data->getSender()->getViewRouteName(), $data->getSender()->getViewRouteParams())
-                        );
-                    },
-                ],
-                [
-                    'label' => 'Template',
-                    'value' => function (StandardCampaign $data, $index) use($urlGenerator) {
-                        return Html::a(
-                            $data->getTemplate()->getName(),
-                            $urlGenerator->generate($data->getTemplate()->getViewRouteName(), $data->getTemplate()->getViewRouteParams())
-                        );
-                    },
-                ],
-                [
-                    'label' => 'Groups',
-                    'value' => function (StandardCampaign $data, $index) use($urlGenerator) {
-                        return implode(
-                            '<br />',
-                            array_map(
-                                function (Group $group) use($urlGenerator) {
-                                    return Html::a(
-                                        $group->getName(),
-                                        $urlGenerator->generate($group->getViewRouteName(), $group->getViewRouteParams())
-                                    );
-                                },
-                                $data->getGroups()->toArray()
-                            )
-                        );
-                    },
-                ],
-            ]);
-        ?>
+    <div class="col-md-6">
+        aaa
+    </div>
+    <div class="col-md-6">
+        <div class="callout callout-info">
+            <p>
+                <strong class="h6">From</strong>
+                <span class="border border-light rounded bg-light text-dark"><?= Html::encode(sprintf('%s <%s>', $sender->getName(), $sender->getEmail())) ?></span>
+            </p>
+            <p>
+                <strong class="h6">Reply to</strong>
+                <span class="border border-light rounded bg-light text-dark"><?= Html::encode(sprintf('%s <%s>', $sender->getReplyName(), $sender->getReplyEmail())) ?></span>
+            </p>
+            <p>
+                <strong class="h6">Subject</strong>
+                <span class="border border-light rounded bg-light text-dark"><?= Html::encode($campaign->getName()) ?></span>
+            </p>
+        </div>
     </div>
 </div>

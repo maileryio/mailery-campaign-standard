@@ -18,6 +18,7 @@ use Mailery\Campaign\Standard\Service\CampaignSenderService;
 use Mailery\Campaign\Standard\ValueObject\CampaignValueObject;
 use Yiisoft\Validator\ValidatorInterface;
 use Yiisoft\Session\Flash\FlashInterface;
+use Mailery\Sender\Repository\SenderRepository;
 
 class DefaultController
 {
@@ -42,6 +43,11 @@ class DefaultController
     private CampaignRepository $campaignRepo;
 
     /**
+     * @var SenderRepository
+     */
+    private SenderRepository $senderRepo;
+
+    /**
      * @var CampaignCrudService
      */
     private CampaignCrudService $campaignCrudService;
@@ -57,6 +63,7 @@ class DefaultController
      * @param BrandLocatorInterface $brandLocator
      * @param UrlGenerator $urlGenerator
      * @param CampaignRepository $campaignRepo
+     * @param SenderRepository $senderRepo
      * @param CampaignCrudService $campaignCrudService
      * @param CampaignSenderService $campaignSenderService
      */
@@ -66,6 +73,7 @@ class DefaultController
         BrandLocatorInterface $brandLocator,
         UrlGenerator $urlGenerator,
         CampaignRepository $campaignRepo,
+        SenderRepository $senderRepo,
         CampaignCrudService $campaignCrudService,
         CampaignSenderService $campaignSenderService
     ) {
@@ -76,6 +84,7 @@ class DefaultController
         $this->responseFactory = $responseFactory;
         $this->urlGenerator = $urlGenerator;
         $this->campaignRepo = $campaignRepo->withBrand($brandLocator->getBrand());
+        $this->senderRepo = $senderRepo->withBrand($brandLocator->getBrand());
         $this->campaignCrudService = $campaignCrudService->withBrand($brandLocator->getBrand());
         $this->campaignSenderService = $campaignSenderService;
     }
@@ -91,7 +100,9 @@ class DefaultController
             return $this->responseFactory->createResponse(404);
         }
 
-        return $this->viewRenderer->render('view', compact('campaign'));
+        $sender = $this->senderRepo->findByPK($campaign->getSender()->getId());
+
+        return $this->viewRenderer->render('view', compact('campaign', 'sender'));
     }
 
     /**
@@ -109,7 +120,7 @@ class DefaultController
             $campaign = $this->campaignCrudService->create($valueObject);
 
             return $this->responseFactory
-                ->createResponse(302)
+                    ->createResponse(302)
                 ->withHeader('Location', $this->urlGenerator->generate('/campaign/standard/view', ['id' => $campaign->getId()]));
         }
 
@@ -155,38 +166,4 @@ class DefaultController
         return $this->viewRenderer->render('edit', compact('form', 'campaign'));
     }
 
-    /**
-     * @param Request $request
-     * @param ValidatorInterface $validator
-     * @param FlashInterface $flash
-     * @param CampaignForm $form
-     * @return Response
-     */
-    public function sendout(Request $request, ValidatorInterface $validator, FlashInterface $flash, CampaignForm $form): Response
-    {
-        $body = $request->getParsedBody();
-        $campaignId = $request->getAttribute('id');
-        if (empty($campaignId) || ($campaign = $this->campaignRepo->findByPK($campaignId)) === null) {
-            return $this->responseFactory->createResponse(404);
-        }
-
-        $form = $form->withCampaign($campaign);
-
-        if (($request->getMethod() === Method::POST) && $form->load($body) && $validator->validate($form, $form->getRules())) {
-            $valueObject = CampaignValueObject::fromForm($form);
-            $this->campaignCrudService->update($campaign, $valueObject);
-
-            $this->campaignSenderService->send($campaign);
-
-            $flash->add(
-                'success',
-                [
-                    'body' => 'Data have been saved!',
-                ],
-                true
-            );
-        }
-
-        return $this->viewRenderer->render('sendout', compact('form', 'campaign'));
-    }
 }

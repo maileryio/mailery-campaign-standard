@@ -26,6 +26,7 @@ return [
                             '/campaign/standard/view',
                             '/campaign/standard/create',
                             '/campaign/standard/edit',
+                            '/campaign/standard/sendout',
                         ],
                     ],
                 ],
