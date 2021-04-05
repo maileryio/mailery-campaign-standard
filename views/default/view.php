@@ -5,11 +5,14 @@ use Mailery\Icon\Icon;
 use Mailery\Widget\Link\Link;
 use Mailery\Web\Widget\FlashMessage;
 use Yiisoft\Html\Html;
+use Yiisoft\Form\Widget\Form;
 
+/** @var Yiisoft\Form\Widget\Field $field */
 /** @var Yiisoft\Yii\WebView $this */
 /** @var Psr\Http\Message\ServerRequestInterface $request */
 /** @var Mailery\Campaign\Standard\Entity\StandardCampaign $campaign */
 /** @var Mailery\Sender\Email\Entity\EmailSender $sender */
+/** @var Mailery\Campaign\Standard\Form\SendTestForm $testForm */
 /** @var string $csrf */
 /** @var bool $submitted */
 
@@ -60,22 +63,46 @@ $this->setTitle($campaign->getName());
 </div>
 <div class="mb-2"></div>
 <div class="row">
-    <div class="col-md-6">
-        aaa
+    <div class="col-md-4">
+        <h3 class="h6">Test send this campaign</h3>
+        <div class="mb-4"></div>
+
+        <?= Form::widget()
+            ->options(
+                [
+                    'id' => 'form-sender',
+                    'csrf' => $csrf,
+                    'enctype' => 'multipart/form-data',
+                ]
+            )
+            ->action($urlGenerator->generate('/campaign/standard/test', ['id' => $campaign->getId()]))
+            ->begin(); ?>
+
+        <?= $field->config($testForm, 'recipients'); ?>
+        <div class="form-text text-muted">Enter unlimited number of addresses, separated by a semi-colon (;)</div>
+
+        <?= Html::submitButton(
+            'Test send this newsletter',
+            [
+                'class' => 'btn btn-outline-secondary float-right mt-2',
+            ]
+        ); ?>
+
+        <?= Form::end(); ?>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-8">
         <div class="callout callout-info">
             <p>
                 <strong class="h6">From</strong>
-                <span class="border border-light rounded bg-light text-dark"><?= Html::encode(sprintf('%s <%s>', $sender->getName(), $sender->getEmail())) ?></span>
+                <span class="border border-light rounded bg-light text-dark p-1"><?= Html::encode(sprintf('%s <%s>', $sender->getName(), $sender->getEmail())) ?></span>
             </p>
             <p>
                 <strong class="h6">Reply to</strong>
-                <span class="border border-light rounded bg-light text-dark"><?= Html::encode(sprintf('%s <%s>', $sender->getReplyName(), $sender->getReplyEmail())) ?></span>
+                <span class="border border-light rounded bg-light text-dark p-1"><?= Html::encode(sprintf('%s <%s>', $sender->getReplyName(), $sender->getReplyEmail())) ?></span>
             </p>
             <p>
                 <strong class="h6">Subject</strong>
-                <span class="border border-light rounded bg-light text-dark"><?= Html::encode($campaign->getName()) ?></span>
+                <span class="border border-light rounded bg-light text-dark p-1"><?= Html::encode($campaign->getName()) ?></span>
             </p>
         </div>
     </div>

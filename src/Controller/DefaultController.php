@@ -8,11 +8,14 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Yiisoft\Http\Method;
 use Yiisoft\Router\UrlGeneratorInterface as UrlGenerator;
+use Mailery\Campaign\Form\SendTestForm;
 use Mailery\Campaign\Standard\Form\CampaignForm;
 use Yiisoft\Yii\View\ViewRenderer;
 use Psr\Http\Message\ResponseFactoryInterface as ResponseFactory;
 use Mailery\Campaign\Repository\CampaignRepository;
 use Mailery\Brand\BrandLocatorInterface;
+use Mailery\Campaign\Service\SendoutCrudService;
+use Mailery\Campaign\ValueObject\SendoutValueObject;
 use Mailery\Campaign\Standard\Service\CampaignCrudService;
 use Mailery\Campaign\Standard\Service\CampaignSenderService;
 use Mailery\Campaign\Standard\ValueObject\CampaignValueObject;
@@ -53,6 +56,11 @@ class DefaultController
     private CampaignCrudService $campaignCrudService;
 
     /**
+     * @var SendoutCrudService
+     */
+    private SendoutCrudService $sendoutCrudService;
+
+    /**
      * @var CampaignSenderService
      */
     private CampaignSenderService $campaignSenderService;
@@ -65,6 +73,7 @@ class DefaultController
      * @param CampaignRepository $campaignRepo
      * @param SenderRepository $senderRepo
      * @param CampaignCrudService $campaignCrudService
+     * @param SendoutCrudService $sendoutCrudService
      * @param CampaignSenderService $campaignSenderService
      */
     public function __construct(
@@ -75,6 +84,7 @@ class DefaultController
         CampaignRepository $campaignRepo,
         SenderRepository $senderRepo,
         CampaignCrudService $campaignCrudService,
+        SendoutCrudService $sendoutCrudService,
         CampaignSenderService $campaignSenderService
     ) {
         $this->viewRenderer = $viewRenderer
@@ -86,14 +96,16 @@ class DefaultController
         $this->campaignRepo = $campaignRepo->withBrand($brandLocator->getBrand());
         $this->senderRepo = $senderRepo->withBrand($brandLocator->getBrand());
         $this->campaignCrudService = $campaignCrudService->withBrand($brandLocator->getBrand());
+        $this->sendoutCrudService = $sendoutCrudService;
         $this->campaignSenderService = $campaignSenderService;
     }
 
     /**
      * @param Request $request
+     * @param SendTestForm $testForm
      * @return Response
      */
-    public function view(Request $request): Response
+    public function view(Request $request, SendTestForm $testForm): Response
     {
         $campaignId = $request->getAttribute('id');
         if (empty($campaignId) || ($campaign = $this->campaignRepo->findByPK($campaignId)) === null) {
@@ -102,7 +114,7 @@ class DefaultController
 
         $sender = $this->senderRepo->findByPK($campaign->getSender()->getId());
 
-        return $this->viewRenderer->render('view', compact('campaign', 'sender'));
+        return $this->viewRenderer->render('view', compact('campaign', 'sender', 'testForm'));
     }
 
     /**
@@ -120,7 +132,7 @@ class DefaultController
             $campaign = $this->campaignCrudService->create($valueObject);
 
             return $this->responseFactory
-                    ->createResponse(302)
+                ->createResponse(302)
                 ->withHeader('Location', $this->urlGenerator->generate('/campaign/standard/view', ['id' => $campaign->getId()]));
         }
 
@@ -166,4 +178,39 @@ class DefaultController
         return $this->viewRenderer->render('edit', compact('form', 'campaign'));
     }
 
+    /**
+     * @param Request $request
+     * @param ValidatorInterface $validator
+     * @param SendTestForm $form
+     * @return Response
+     */
+    public function test(Request $request, ValidatorInterface $validator, SendTestForm $form): Response
+    {
+        $campaignId = $request->getAttribute('id');
+        if (empty($campaignId) || ($campaign = $this->campaignRepo->findByPK($campaignId)) === null) {
+            return $this->responseFactory->createResponse(404);
+        }
+
+        $body = $request->getParsedBody();
+
+        if (($request->getMethod() === Method::POST) && $form->load($body) && $validator->validate($form, $form->getRules())) {
+            $valueObject = SendoutValueObject::fromTestForm($form)
+                ->withCampaign($campaign);
+
+            $sendout = $this->sendoutCrudService->create($valueObject);
+
+            $mailer = (new MailerBuilder())
+                ->withSender($campaign->getSender())
+                ->withTemplate($campaign->getTemplate())
+                ->build();
+
+            foreach ($sendout->getRecipientsIterator() as $recipient) {
+                $mailer->send($recipient);
+            }
+        }
+
+        return $this->responseFactory
+            ->createResponse(302)
+            ->withHeader('Location', $this->urlGenerator->generate('/campaign/standard/view', ['id' => $campaign->getId()]));
+    }
 }
