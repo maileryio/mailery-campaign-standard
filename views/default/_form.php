@@ -14,12 +14,14 @@ use Yiisoft\Form\Widget\Form;
         <?= Form::widget()
             ->options(
                 [
-                    'id' => 'form-sender',
+                    'id' => 'form-campaign',
                     'csrf' => $csrf,
                     'enctype' => 'multipart/form-data',
                 ]
             )
             ->begin(); ?>
+
+        <?= $field->config($form, 'channel')->hiddenInput(); ?>
 
         <h3 class="h6">Subject and sender</h3>
         <div class="form-text text-muted">What is the subject line of the campaign?</div>
@@ -46,18 +48,9 @@ use Yiisoft\Form\Widget\Form;
             ->listBox($form->getGroupOptions(), ['name' => $form->formName() . '[groups][]']); ?>
 
         <?= Html::submitButton(
-            'Seve & next',
+            'Save',
             [
                 'class' => 'btn btn-primary float-right mt-2',
-                'name' => 'next',
-                'value' => '1',
-            ]
-        ); ?>
-
-        <?= Html::submitButton(
-            'Save as draft',
-            [
-                'class' => 'btn btn-link float-right mt-2',
             ]
         ); ?>
 

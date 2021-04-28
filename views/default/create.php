@@ -1,4 +1,7 @@
-<?php declare(strict_types=1);
+<?php
+
+use Yiisoft\Html\Html;
+use Yiisoft\Form\Widget\Form;
 
 /** @var Yiisoft\Form\Widget\Field $field */
 /** @var Yiisoft\Router\UrlGeneratorInterface $urlGenerator */
@@ -23,4 +26,38 @@ $this->setTitle('New standard campaign');
 </div>
 <div class="mb-2"></div>
 
-<?= $this->render('_form', compact('csrf', 'field', 'form')) ?>
+<?php if ($form->getChannel() === null) {
+    ?><div class="row">
+        <div class="col-12 col-xl-4">
+            <?= Form::widget()
+                ->options(
+                    [
+                        'id' => 'form-campaign-channel',
+                        'csrf' => $csrf,
+                        'enctype' => 'multipart/form-data',
+                    ]
+                )
+                ->begin(); ?>
+
+            <h3 class="h6">Select channel</h3>
+            <div class="form-text text-muted">What is the campaign channel?</div>
+            <div class="mb-4"></div>
+
+            <?= $field->config($form, 'channel')
+                ->dropDownList($form->getChannelOptions()); ?>
+
+            <?= Html::submitButton(
+                'Next',
+                [
+                    'class' => 'btn btn-primary float-right mt-2',
+                    'name' => 'creating-next-step',
+                    'value' => '1',
+                ]
+            ); ?>
+
+            <?= Form::end(); ?>
+        </div>
+    </div><?php
+} else {
+    ?><?= $this->render('_form', compact('csrf', 'field', 'form')) ?><?php
+} ?>

@@ -49,6 +49,7 @@ class CampaignCrudService
         $campaign = (new StandardCampaign())
             ->setBrand($this->brand)
             ->setName($valueObject->getName())
+            ->setChannel($valueObject->getChannel()->getName())
             ->setSender($valueObject->getSender())
             ->setTemplate($valueObject->getTemplate())
         ;
@@ -71,6 +72,7 @@ class CampaignCrudService
         $campaign = $campaign
             ->setBrand($this->brand)
             ->setName($valueObject->getName())
+            ->setChannel($valueObject->getChannel()->getName())
             ->setSender($valueObject->getSender())
             ->setTemplate($valueObject->getTemplate())
         ;

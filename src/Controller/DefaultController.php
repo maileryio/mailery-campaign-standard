@@ -22,6 +22,8 @@ use Mailery\Campaign\Standard\ValueObject\CampaignValueObject;
 use Yiisoft\Validator\ValidatorInterface;
 use Yiisoft\Session\Flash\FlashInterface;
 use Mailery\Sender\Repository\SenderRepository;
+use Mailery\Sender\Email\Model\SenderLabel;
+use Mailery\Channel\Model\ChannelList;
 
 class DefaultController
 {
@@ -127,13 +129,30 @@ class DefaultController
     {
         $body = $request->getParsedBody();
 
-        if (($request->getMethod() === Method::POST) && $form->load($body) && $validator->validate($form, $form->getRules())) {
-            $valueObject = CampaignValueObject::fromForm($form);
-            $campaign = $this->campaignCrudService->create($valueObject);
+        if (
+            $request->getMethod() === Method::POST
+            && $form->load($body)
+        ) {
+            if ($form->getChannel() === null) {
+                return $this->viewRenderer->render('create', compact('form'));
+            }
 
-            return $this->responseFactory
-                ->createResponse(302)
-                ->withHeader('Location', $this->urlGenerator->generate('/campaign/standard/view', ['id' => $campaign->getId()]));
+            if (empty($body['creating-next-step']) && $validator->validate($form)->isValid()) {
+                $valueObject = CampaignValueObject::fromForm($form);
+                $campaign = $this->campaignCrudService->create($valueObject);
+
+                $flash->add(
+                    'success',
+                    [
+                        'body' => 'Data have been saved!',
+                    ],
+                    true
+                );
+
+                return $this->responseFactory
+                    ->createResponse(302)
+                    ->withHeader('Location', $this->urlGenerator->generate('/campaign/standard/view', ['id' => $campaign->getId()]));
+            }
         }
 
         return $this->viewRenderer->render('create', compact('form'));
@@ -156,7 +175,7 @@ class DefaultController
 
         $form = $form->withCampaign($campaign);
 
-        if (($request->getMethod() === Method::POST) && $form->load($body) && $validator->validate($form, $form->getRules())) {
+        if ($request->getMethod() === Method::POST && $form->load($body) && $validator->validate($form)) {
             $valueObject = CampaignValueObject::fromForm($form);
             $this->campaignCrudService->update($campaign, $valueObject);
 
@@ -168,11 +187,9 @@ class DefaultController
                 true
             );
 
-            if (!empty($body['next'])) {
-                return $this->responseFactory
-                    ->createResponse(302)
-                    ->withHeader('Location', $this->urlGenerator->generate('/campaign/standard/sendout', ['id' => $campaign->getId()]));
-            }
+            return $this->responseFactory
+                ->createResponse(302)
+                ->withHeader('Location', $this->urlGenerator->generate('/campaign/standard/view', ['id' => $campaign->getId()]));
         }
 
         return $this->viewRenderer->render('edit', compact('form', 'campaign'));
@@ -182,9 +199,10 @@ class DefaultController
      * @param Request $request
      * @param ValidatorInterface $validator
      * @param SendTestForm $form
+     * @param ChannelList $channelList
      * @return Response
      */
-    public function test(Request $request, ValidatorInterface $validator, SendTestForm $form): Response
+    public function test(Request $request, ValidatorInterface $validator, SendTestForm $form, ChannelList $channelList): Response
     {
         $campaignId = $request->getAttribute('id');
         if (empty($campaignId) || ($campaign = $this->campaignRepo->findByPK($campaignId)) === null) {
@@ -193,20 +211,28 @@ class DefaultController
 
         $body = $request->getParsedBody();
 
-        if (($request->getMethod() === Method::POST) && $form->load($body) && $validator->validate($form, $form->getRules())) {
-            $valueObject = SendoutValueObject::fromTestForm($form)
-                ->withCampaign($campaign);
+        if (($request->getMethod() === Method::POST) && $form->load($body) && $validator->validate($form)) {
+//            $mailer = (new MailerBuilder())
+//                ->withSender($campaign->getSender())
+//                ->withTemplate($campaign->getTemplate())
+//                ->build();
 
-            $sendout = $this->sendoutCrudService->create($valueObject);
+            $channel = $channelList->filterByCampaign($campaign)->first();
+            $recipientFactory = $channel->getRecipientFactory();
+            $mailer = $channel->getMailer();
 
-            $mailer = (new MailerBuilder())
-                ->withSender($campaign->getSender())
-                ->withTemplate($campaign->getTemplate())
-                ->build();
+            $senderLabels = SenderLabel::fromString($form->getAttributeValue('recipients'));
+            foreach ($senderLabels as $senderLabel) {
+                /** @var SenderLabel $senderLabel */
+                $recipient = $recipientFactory->fromArray([
+                    'name' => $senderLabel->getName(),
+                    'email' => $senderLabel->getEmail(),
+                ]);
 
-            foreach ($sendout->getRecipientsIterator() as $recipient) {
                 $mailer->send($recipient);
             }
+
+            $sendout = $this->sendoutCrudService->create($valueObject);
         }
 
         return $this->responseFactory

@@ -4,6 +4,7 @@ use Mailery\Activity\Log\Widget\ActivityLogLink;
 use Mailery\Icon\Icon;
 use Mailery\Widget\Link\Link;
 use Mailery\Web\Widget\FlashMessage;
+use Mailery\Sender\Email\Model\SenderLabel;
 use Yiisoft\Html\Html;
 use Yiisoft\Form\Widget\Form;
 
@@ -79,7 +80,7 @@ $this->setTitle($campaign->getName());
             ->begin(); ?>
 
         <?= $field->config($testForm, 'recipients'); ?>
-        <div class="form-text text-muted">Enter unlimited number of addresses, separated by a semi-colon (;)</div>
+        <div class="form-text text-muted">Enter unlimited number of addresses, separated by a commas, ex. <?= Html::encode('"Bob Smith" <bob@company.com>, joe@company.com') ?></div>
 
         <?= Html::submitButton(
             'Test send this newsletter',
@@ -94,11 +95,11 @@ $this->setTitle($campaign->getName());
         <div class="callout callout-info">
             <p>
                 <strong class="h6">From</strong>
-                <span class="border border-light rounded bg-light text-dark p-1"><?= Html::encode(sprintf('%s <%s>', $sender->getName(), $sender->getEmail())) ?></span>
+                <span class="border border-light rounded bg-light text-dark p-1"><?= Html::encode((new SenderLabel($sender->getName(), $sender->getEmail()))->__toString()) ?></span>
             </p>
             <p>
                 <strong class="h6">Reply to</strong>
-                <span class="border border-light rounded bg-light text-dark p-1"><?= Html::encode(sprintf('%s <%s>', $sender->getReplyName(), $sender->getReplyEmail())) ?></span>
+                <span class="border border-light rounded bg-light text-dark p-1"><?= Html::encode((new SenderLabel($sender->getReplyName(), $sender->getReplyEmail()))->__toString()) ?></span>
             </p>
             <p>
                 <strong class="h6">Subject</strong>

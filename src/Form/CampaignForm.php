@@ -14,10 +14,13 @@ use Yiisoft\Form\HtmlOptions\RequiredHtmlOptions;
 use Yiisoft\Validator\Rule\Required;
 use Yiisoft\Form\HtmlOptions\HasLengthHtmlOptions;
 use Yiisoft\Validator\Rule\HasLength;
+use Yiisoft\Validator\Rule\InRange;
 use Mailery\Sender\Repository\SenderRepository;
 use Mailery\Sender\Model\Status;
 use Mailery\Template\Entity\Template;
 use Mailery\Sender\Entity\Sender;
+use Mailery\Channel\ChannelInterface as Channel;
+use Mailery\Channel\Model\ChannelList;
 
 class CampaignForm extends FormModel
 {
@@ -25,6 +28,11 @@ class CampaignForm extends FormModel
      * @var string|null
      */
     private ?string $name = null;
+
+    /**
+     * @var string|null
+     */
+    private ?string $channel = null;
 
     /**
      * @var int|null
@@ -40,6 +48,11 @@ class CampaignForm extends FormModel
      * @var array
      */
     private array $groups = [];
+
+    /**
+     * @var ChannelList
+     */
+    private ChannelList $channelList;
 
     /**
      * @var SenderRepository
@@ -58,6 +71,7 @@ class CampaignForm extends FormModel
 
     /**
      * @param BrandLocator $brandLocator
+     * @param ChannelList $channelList
      * @param SenderRepository $senderRepo
      * @param TemplateRepository $templateRepo
      * @param GroupRepository $groupRepo
@@ -65,11 +79,13 @@ class CampaignForm extends FormModel
      */
     public function __construct(
         BrandLocator $brandLocator,
+        ChannelList $channelList,
         SenderRepository $senderRepo,
         TemplateRepository $templateRepo,
         GroupRepository $groupRepo,
         SubscriberCounter $subscriberCounter
     ) {
+        $this->channelList = $channelList->filterByBrand($brandLocator->getBrand());
         $this->senderRepo = $senderRepo->withBrand($brandLocator->getBrand());
         $this->templateRepo = $templateRepo->withBrand($brandLocator->getBrand());
         $this->groupRepo = $groupRepo->withBrand($brandLocator->getBrand());
@@ -86,6 +102,7 @@ class CampaignForm extends FormModel
     {
         $new = clone $this;
         $new->name = $campaign->getName();
+        $new->channel = $campaign->getChannel();
         $new->sender = $campaign->getSender()->getId();
         $new->template = $campaign->getTemplate()->getId();
         $new->groups = $campaign->getGroups()->map(fn (Group $group) => $group->getId())->toArray();
@@ -100,6 +117,7 @@ class CampaignForm extends FormModel
     {
         return [
             'name' => 'Subject',
+            'channel' => 'Channel',
             'sender' => 'Sender',
             'template' => 'Template',
             'groups' => 'Groups',
@@ -124,6 +142,10 @@ class CampaignForm extends FormModel
                 new RequiredHtmlOptions(new Required()),
                 new HasLengthHtmlOptions((new HasLength())->max(255)),
             ],
+            'channel' => [
+                new RequiredHtmlOptions(new Required()),
+                new InRange(array_keys($this->getChannelOptions())),
+            ],
             'sender' => [
                 new RequiredHtmlOptions(new Required()),
             ],
@@ -132,6 +154,19 @@ class CampaignForm extends FormModel
             ],
             'groups' => [
                 new RequiredHtmlOptions(new Required()),
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getCreatingRules(): array
+    {
+        return [
+            'channel' => [
+                new RequiredHtmlOptions(new Required()),
+                new InRange(array_keys($this->getChannelOptions())),
             ],
         ];
     }
@@ -223,5 +258,35 @@ class CampaignForm extends FormModel
         }
 
         return $options;
+    }
+
+    /**
+     * @return Channel|null
+     */
+    public function getChannel(): ?Channel
+    {
+        if ($this->channel === null) {
+            return null;
+        }
+
+        return $this->channelList->filter(
+            function (Channel $channel) {
+                return $channel->getName() === $this->channel;
+            }
+        )->first();
+    }
+
+    /**
+     * @return array
+     */
+    public function getChannelOptions(): array
+    {
+        $listOptions = [];
+        foreach ($this->channelList as $channel) {
+            /** @var Channel $channel */
+            $listOptions[$channel->getName()] = $channel->getLabel();
+        }
+
+        return $listOptions;
     }
 }
