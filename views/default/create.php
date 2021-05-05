@@ -44,7 +44,7 @@ $this->setTitle('New standard campaign');
             <div class="mb-4"></div>
 
             <?= $field->config($form, 'channel')
-                ->dropDownList($form->getChannelOptions()); ?>
+                ->dropDownList($form->getChannelListOptions()); ?>
 
             <?= Html::submitButton(
                 'Next',

@@ -3,6 +3,7 @@
 namespace Mailery\Campaign\Standard\Model;
 
 use Mailery\Campaign\Model\CampaignTypeInterface;
+use Mailery\Campaign\Standard\Entity\StandardCampaign;
 
 class StandardCampaignType implements CampaignTypeInterface
 {
@@ -36,5 +37,14 @@ class StandardCampaignType implements CampaignTypeInterface
     public function getCreateRouteParams(): array
     {
         return [];
+    }
+
+    /**
+     * @param object $entity
+     * @return bool
+     */
+    public function isEntitySameType(object $entity): bool
+    {
+        return $entity instanceof StandardCampaign;
     }
 }

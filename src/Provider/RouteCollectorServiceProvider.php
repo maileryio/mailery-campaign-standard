@@ -35,6 +35,9 @@ final class RouteCollectorServiceProvider extends ServiceProvider
                     Route::methods(['POST'], '/campaign/standard/test/{id:\d+}')
                         ->name('/campaign/standard/test')
                         ->action([DefaultController::class, 'test']),
+                    Route::delete('/campaign/standard/delete/{id:\d+}')
+                        ->name('/campaign/standard/delete')
+                        ->action([DefaultController::class, 'delete'])
                 )
         );
     }

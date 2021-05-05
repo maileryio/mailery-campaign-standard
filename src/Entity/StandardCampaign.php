@@ -15,23 +15,23 @@ class StandardCampaign extends Campaign implements RoutableEntityInterface, Logg
     use LoggableEntityTrait;
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function getEditRouteName(): ?string
+    public function getIndexRouteName(): ?string
     {
-        return '/campaign/standard/edit';
+        return '/campaign/default/index';
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
-    public function getEditRouteParams(): array
+    public function getIndexRouteParams(): array
     {
-        return ['id' => $this->getId()];
+        return [];
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getViewRouteName(): ?string
     {
@@ -39,7 +39,7 @@ class StandardCampaign extends Campaign implements RoutableEntityInterface, Logg
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getViewRouteParams(): array
     {
@@ -47,7 +47,7 @@ class StandardCampaign extends Campaign implements RoutableEntityInterface, Logg
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getPreviewRouteName(): ?string
     {
@@ -55,9 +55,41 @@ class StandardCampaign extends Campaign implements RoutableEntityInterface, Logg
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getPreviewRouteParams(): array
+    {
+        return ['id' => $this->getId()];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getEditRouteName(): ?string
+    {
+        return '/campaign/standard/edit';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getEditRouteParams(): array
+    {
+        return ['id' => $this->getId()];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getDeleteRouteName(): ?string
+    {
+        return '/campaign/standard/delete';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getDeleteRouteParams(): array
     {
         return ['id' => $this->getId()];
     }

@@ -29,7 +29,7 @@ use Yiisoft\Form\Widget\Form;
 
         <?= $field->config($form, 'name'); ?>
         <?= $field->config($form, 'sender')
-            ->dropDownList($form->getSenderOptions()); ?>
+            ->dropDownList($form->getSenderListOptions()); ?>
 
         <div class="mt-5"></div>
         <h3 class="h6">Content</h3>
@@ -37,7 +37,7 @@ use Yiisoft\Form\Widget\Form;
         <div class="mb-4"></div>
 
         <?= $field->config($form, 'template')
-            ->dropDownList($form->getTemplateOptions()); ?>
+            ->dropDownList($form->getTemplateListOptions()); ?>
 
         <div class="mt-5"></div>
         <h3 class="h6">Select recipients</h3>
@@ -45,7 +45,7 @@ use Yiisoft\Form\Widget\Form;
         <div class="mb-4"></div>
 
         <?= $field->config($form, 'groups')
-            ->listBox($form->getGroupOptions(), ['name' => $form->formName() . '[groups][]']); ?>
+            ->listBox($form->getGroupListOptions(), ['name' => $form->getFormName() . '[groups][]']); ?>
 
         <?= Html::submitButton(
             'Save',

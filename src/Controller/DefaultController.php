@@ -23,7 +23,7 @@ use Yiisoft\Validator\ValidatorInterface;
 use Yiisoft\Session\Flash\FlashInterface;
 use Mailery\Sender\Repository\SenderRepository;
 use Mailery\Sender\Email\Model\SenderLabel;
-use Mailery\Channel\Model\ChannelList;
+use Mailery\Channel\Model\ChannelTypeList;
 
 class DefaultController
 {
@@ -173,7 +173,7 @@ class DefaultController
             return $this->responseFactory->createResponse(404);
         }
 
-        $form = $form->withCampaign($campaign);
+        $form = $form->withEntity($campaign);
 
         if ($request->getMethod() === Method::POST && $form->load($body) && $validator->validate($form)) {
             $valueObject = CampaignValueObject::fromForm($form);
@@ -197,12 +197,31 @@ class DefaultController
 
     /**
      * @param Request $request
-     * @param ValidatorInterface $validator
-     * @param SendTestForm $form
-     * @param ChannelList $channelList
+     * @param UrlGenerator $urlGenerator
      * @return Response
      */
-    public function test(Request $request, ValidatorInterface $validator, SendTestForm $form, ChannelList $channelList): Response
+    public function delete(Request $request): Response
+    {
+        $campaignId = $request->getAttribute('id');
+        if (empty($campaignId) || ($campaign = $this->campaignRepo->findByPK($campaignId)) === null) {
+            return $this->responseFactory->createResponse(404);
+        }
+
+        $this->campaignCrudService->delete($campaign);
+
+        return $this->responseFactory
+            ->createResponse(302)
+            ->withHeader('Location', $this->urlGenerator->generate('/campaign/default/index'));
+    }
+
+    /**
+     * @param Request $request
+     * @param ValidatorInterface $validator
+     * @param SendTestForm $form
+     * @param ChannelTypeList $channelTypeList
+     * @return Response
+     */
+    public function test(Request $request, ValidatorInterface $validator, SendTestForm $form, ChannelTypeList $channelTypeList): Response
     {
         $campaignId = $request->getAttribute('id');
         if (empty($campaignId) || ($campaign = $this->campaignRepo->findByPK($campaignId)) === null) {
@@ -211,15 +230,18 @@ class DefaultController
 
         $body = $request->getParsedBody();
 
-        if (($request->getMethod() === Method::POST) && $form->load($body) && $validator->validate($form)) {
-//            $mailer = (new MailerBuilder())
-//                ->withSender($campaign->getSender())
-//                ->withTemplate($campaign->getTemplate())
-//                ->build();
+        if ($request->getMethod() === Method::POST && $form->load($body) && $validator->validate($form)) {
+            $channelType = $channelTypeList
+                ->filterByType($campaign->getChannel()->getType())
+                ->first();
 
-            $channel = $channelList->filterByCampaign($campaign)->first();
-            $recipientFactory = $channel->getRecipientFactory();
-            $mailer = $channel->getMailer();
+            $recipientFactory = $channelType->getRecipientFactory();
+            $messageFactory = $channelType->getMessageFactory();
+
+            $sendout = $this->sendoutCrudService
+                ->create(SendoutValueObject::fromChannel($campaign->getChannel()));
+
+            $sendoutService = $this->sendoutService->withSendout($sendout);
 
             $senderLabels = SenderLabel::fromString($form->getAttributeValue('recipients'));
             foreach ($senderLabels as $senderLabel) {
@@ -229,10 +251,13 @@ class DefaultController
                     'email' => $senderLabel->getEmail(),
                 ]);
 
-                $mailer->send($recipient);
-            }
+                $message = $messageFactory
+                    ->withSender($campaign->getSender())
+                    ->withRecipient($recipient)
+                    ->fromTemplate($campaign->getTemplate());
 
-            $sendout = $this->sendoutCrudService->create($valueObject);
+                $sendoutService->send($message);
+            }
         }
 
         return $this->responseFactory

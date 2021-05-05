@@ -27,7 +27,7 @@ $this->setTitle($campaign->getName());
                 <?= Link::widget()
                     ->label(Icon::widget()->name('delete')->options(['class' => 'mr-1'])->render() . ' Delete')
                     ->method('delete')
-                    ->href($urlGenerator->generate('/campaign/default/delete', ['id' => $campaign->getId()]))
+                    ->href($urlGenerator->generate($campaign->getDeleteRouteName(), $campaign->getDeleteRouteParams()))
                     ->confirm('Are you sure?')
                     ->options([
                         'class' => 'btn btn-sm btn-danger mx-sm-1 mb-2',

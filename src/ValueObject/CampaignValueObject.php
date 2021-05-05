@@ -6,7 +6,7 @@ use Mailery\Campaign\Standard\Form\CampaignForm;
 use Mailery\Template\Entity\Template;
 use Mailery\Sender\Entity\Sender;
 use Mailery\Subscriber\Entity\Group;
-use Mailery\Channel\ChannelInterface as Channel;
+use Mailery\Channel\Entity\Channel;
 
 class CampaignValueObject
 {

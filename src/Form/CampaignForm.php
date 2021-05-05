@@ -19,8 +19,8 @@ use Mailery\Sender\Repository\SenderRepository;
 use Mailery\Sender\Model\Status;
 use Mailery\Template\Entity\Template;
 use Mailery\Sender\Entity\Sender;
-use Mailery\Channel\ChannelInterface as Channel;
-use Mailery\Channel\Model\ChannelList;
+use Mailery\Channel\Repository\ChannelRepository;
+use Mailery\Channel\Entity\Channel;
 
 class CampaignForm extends FormModel
 {
@@ -50,9 +50,9 @@ class CampaignForm extends FormModel
     private array $groups = [];
 
     /**
-     * @var ChannelList
+     * @var ChannelRepository
      */
-    private ChannelList $channelList;
+    private ChannelRepository $channelRepo;
 
     /**
      * @var SenderRepository
@@ -71,7 +71,7 @@ class CampaignForm extends FormModel
 
     /**
      * @param BrandLocator $brandLocator
-     * @param ChannelList $channelList
+     * @param ChannelRepository $channelRepo
      * @param SenderRepository $senderRepo
      * @param TemplateRepository $templateRepo
      * @param GroupRepository $groupRepo
@@ -79,13 +79,13 @@ class CampaignForm extends FormModel
      */
     public function __construct(
         BrandLocator $brandLocator,
-        ChannelList $channelList,
+        ChannelRepository $channelRepo,
         SenderRepository $senderRepo,
         TemplateRepository $templateRepo,
         GroupRepository $groupRepo,
         SubscriberCounter $subscriberCounter
     ) {
-        $this->channelList = $channelList->filterByBrand($brandLocator->getBrand());
+        $this->channelRepo = $channelRepo->withBrand($brandLocator->getBrand());
         $this->senderRepo = $senderRepo->withBrand($brandLocator->getBrand());
         $this->templateRepo = $templateRepo->withBrand($brandLocator->getBrand());
         $this->groupRepo = $groupRepo->withBrand($brandLocator->getBrand());
@@ -98,14 +98,16 @@ class CampaignForm extends FormModel
      * @param StandardCampaign $campaign
      * @return self
      */
-    public function withCampaign(StandardCampaign $campaign): self
+    public function withEntity(StandardCampaign $campaign): self
     {
         $new = clone $this;
         $new->name = $campaign->getName();
-        $new->channel = $campaign->getChannel();
+        $new->channel = $campaign->getChannel()->getId();
         $new->sender = $campaign->getSender()->getId();
         $new->template = $campaign->getTemplate()->getId();
-        $new->groups = $campaign->getGroups()->map(fn (Group $group) => $group->getId())->toArray();
+        $new->groups = $campaign->getGroups()->map(
+            fn (Group $group) => $group->getId()
+        )->toArray();
 
         return $new;
     }
@@ -125,14 +127,6 @@ class CampaignForm extends FormModel
     }
 
     /**
-     * @return string
-     */
-    public function formName(): string
-    {
-        return 'CampaignForm';
-    }
-
-    /**
      * @return array
      */
     public function getRules(): array
@@ -144,7 +138,7 @@ class CampaignForm extends FormModel
             ],
             'channel' => [
                 new RequiredHtmlOptions(new Required()),
-                new InRange(array_keys($this->getChannelOptions())),
+                new InRange(array_keys($this->getChannelListOptions())),
             ],
             'sender' => [
                 new RequiredHtmlOptions(new Required()),
@@ -154,19 +148,6 @@ class CampaignForm extends FormModel
             ],
             'groups' => [
                 new RequiredHtmlOptions(new Required()),
-            ],
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function getCreatingRules(): array
-    {
-        return [
-            'channel' => [
-                new RequiredHtmlOptions(new Required()),
-                new InRange(array_keys($this->getChannelOptions())),
             ],
         ];
     }
@@ -186,7 +167,7 @@ class CampaignForm extends FormModel
     /**
      * @return array
      */
-    public function getSenderOptions(): array
+    public function getSenderListOptions(): array
     {
         $options = [];
         $senders = $this->senderRepo
@@ -215,7 +196,7 @@ class CampaignForm extends FormModel
     /**
      * @return array
      */
-    public function getTemplateOptions(): array
+    public function getTemplateListOptions(): array
     {
         $options = [];
         $templates = $this->templateRepo->findAll();
@@ -244,7 +225,7 @@ class CampaignForm extends FormModel
     /**
      * @return array
      */
-    public function getGroupOptions(): array
+    public function getGroupListOptions(): array
     {
         $options = [];
         $groups = $this->groupRepo->findAll();
@@ -269,22 +250,18 @@ class CampaignForm extends FormModel
             return null;
         }
 
-        return $this->channelList->filter(
-            function (Channel $channel) {
-                return $channel->getName() === $this->channel;
-            }
-        )->first();
+        return $this->channelRepo->findByPK($this->channel);
     }
 
     /**
      * @return array
      */
-    public function getChannelOptions(): array
+    public function getChannelListOptions(): array
     {
         $listOptions = [];
-        foreach ($this->channelList as $channel) {
+        foreach ($this->channelRepo->findAll() as $channel) {
             /** @var Channel $channel */
-            $listOptions[$channel->getName()] = $channel->getLabel();
+            $listOptions[$channel->getId()] = $channel->getName();
         }
 
         return $listOptions;
