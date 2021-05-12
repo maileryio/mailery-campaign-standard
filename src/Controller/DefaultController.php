@@ -14,10 +14,10 @@ use Yiisoft\Yii\View\ViewRenderer;
 use Psr\Http\Message\ResponseFactoryInterface as ResponseFactory;
 use Mailery\Campaign\Repository\CampaignRepository;
 use Mailery\Brand\BrandLocatorInterface;
+use Mailery\Campaign\Service\SendoutService;
 use Mailery\Campaign\Service\SendoutCrudService;
 use Mailery\Campaign\ValueObject\SendoutValueObject;
 use Mailery\Campaign\Standard\Service\CampaignCrudService;
-use Mailery\Campaign\Standard\Service\CampaignSenderService;
 use Mailery\Campaign\Standard\ValueObject\CampaignValueObject;
 use Yiisoft\Validator\ValidatorInterface;
 use Yiisoft\Session\Flash\FlashInterface;
@@ -58,14 +58,14 @@ class DefaultController
     private CampaignCrudService $campaignCrudService;
 
     /**
+     * @var SendoutService
+     */
+    private SendoutService $sendoutService;
+
+    /**
      * @var SendoutCrudService
      */
     private SendoutCrudService $sendoutCrudService;
-
-    /**
-     * @var CampaignSenderService
-     */
-    private CampaignSenderService $campaignSenderService;
 
     /**
      * @param ViewRenderer $viewRenderer
@@ -75,8 +75,8 @@ class DefaultController
      * @param CampaignRepository $campaignRepo
      * @param SenderRepository $senderRepo
      * @param CampaignCrudService $campaignCrudService
+     * @param SendoutService $sendoutService
      * @param SendoutCrudService $sendoutCrudService
-     * @param CampaignSenderService $campaignSenderService
      */
     public function __construct(
         ViewRenderer $viewRenderer,
@@ -86,8 +86,8 @@ class DefaultController
         CampaignRepository $campaignRepo,
         SenderRepository $senderRepo,
         CampaignCrudService $campaignCrudService,
-        SendoutCrudService $sendoutCrudService,
-        CampaignSenderService $campaignSenderService
+        SendoutService $sendoutService,
+        SendoutCrudService $sendoutCrudService
     ) {
         $this->viewRenderer = $viewRenderer
             ->withController($this)
@@ -98,8 +98,8 @@ class DefaultController
         $this->campaignRepo = $campaignRepo->withBrand($brandLocator->getBrand());
         $this->senderRepo = $senderRepo->withBrand($brandLocator->getBrand());
         $this->campaignCrudService = $campaignCrudService->withBrand($brandLocator->getBrand());
+        $this->sendoutService = $sendoutService;
         $this->sendoutCrudService = $sendoutCrudService;
-        $this->campaignSenderService = $campaignSenderService;
     }
 
     /**
@@ -231,33 +231,17 @@ class DefaultController
         $body = $request->getParsedBody();
 
         if ($request->getMethod() === Method::POST && $form->load($body) && $validator->validate($form)) {
-            $channelType = $channelTypeList
-                ->filterByType($campaign->getChannel()->getType())
-                ->first();
+            $recipients = $channelTypeList->findByEntity($campaign->getChannel())
+                ->getRecipientIterator()
+                ->appendIdentificators($form->getAttributeValue('recipients'));
 
-            $recipientFactory = $channelType->getRecipientFactory();
-            $messageFactory = $channelType->getMessageFactory();
+            $sendout = $this->sendoutCrudService->create(
+                (new SendoutValueObject())
+                    ->withCampaign($campaign)
+                    ->withRecipients($recipients)
+            );
 
-            $sendout = $this->sendoutCrudService
-                ->create(SendoutValueObject::fromChannel($campaign->getChannel()));
-
-            $sendoutService = $this->sendoutService->withSendout($sendout);
-
-            $senderLabels = SenderLabel::fromString($form->getAttributeValue('recipients'));
-            foreach ($senderLabels as $senderLabel) {
-                /** @var SenderLabel $senderLabel */
-                $recipient = $recipientFactory->fromArray([
-                    'name' => $senderLabel->getName(),
-                    'email' => $senderLabel->getEmail(),
-                ]);
-
-                $message = $messageFactory
-                    ->withSender($campaign->getSender())
-                    ->withRecipient($recipient)
-                    ->fromTemplate($campaign->getTemplate());
-
-                $sendoutService->send($message);
-            }
+            $this->sendoutService->send($sendout);
         }
 
         return $this->responseFactory
