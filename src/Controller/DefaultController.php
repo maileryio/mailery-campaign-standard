@@ -239,6 +239,7 @@ class DefaultController
                 (new SendoutValueObject())
                     ->withCampaign($campaign)
                     ->withRecipients($recipients)
+                    ->withIsTest(true)
             );
 
             $this->sendoutService->send($sendout);
