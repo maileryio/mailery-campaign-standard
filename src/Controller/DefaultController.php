@@ -14,7 +14,6 @@ use Yiisoft\Yii\View\ViewRenderer;
 use Psr\Http\Message\ResponseFactoryInterface as ResponseFactory;
 use Mailery\Campaign\Repository\CampaignRepository;
 use Mailery\Brand\BrandLocatorInterface;
-use Mailery\Campaign\Service\SendoutService;
 use Mailery\Campaign\Service\SendoutCrudService;
 use Mailery\Campaign\ValueObject\SendoutValueObject;
 use Mailery\Campaign\Standard\Service\CampaignCrudService;
@@ -22,7 +21,6 @@ use Mailery\Campaign\Standard\ValueObject\CampaignValueObject;
 use Yiisoft\Validator\ValidatorInterface;
 use Yiisoft\Session\Flash\FlashInterface;
 use Mailery\Sender\Repository\SenderRepository;
-use Mailery\Sender\Email\Model\SenderLabel;
 use Mailery\Channel\Model\ChannelTypeList;
 
 class DefaultController
@@ -58,11 +56,6 @@ class DefaultController
     private CampaignCrudService $campaignCrudService;
 
     /**
-     * @var SendoutService
-     */
-    private SendoutService $sendoutService;
-
-    /**
      * @var SendoutCrudService
      */
     private SendoutCrudService $sendoutCrudService;
@@ -75,7 +68,6 @@ class DefaultController
      * @param CampaignRepository $campaignRepo
      * @param SenderRepository $senderRepo
      * @param CampaignCrudService $campaignCrudService
-     * @param SendoutService $sendoutService
      * @param SendoutCrudService $sendoutCrudService
      */
     public function __construct(
@@ -86,7 +78,6 @@ class DefaultController
         CampaignRepository $campaignRepo,
         SenderRepository $senderRepo,
         CampaignCrudService $campaignCrudService,
-        SendoutService $sendoutService,
         SendoutCrudService $sendoutCrudService
     ) {
         $this->viewRenderer = $viewRenderer
@@ -98,7 +89,6 @@ class DefaultController
         $this->campaignRepo = $campaignRepo->withBrand($brandLocator->getBrand());
         $this->senderRepo = $senderRepo->withBrand($brandLocator->getBrand());
         $this->campaignCrudService = $campaignCrudService->withBrand($brandLocator->getBrand());
-        $this->sendoutService = $sendoutService;
         $this->sendoutCrudService = $sendoutCrudService;
     }
 
@@ -231,18 +221,21 @@ class DefaultController
         $body = $request->getParsedBody();
 
         if ($request->getMethod() === Method::POST && $form->load($body) && $validator->validate($form)) {
-            $recipients = $channelTypeList->findByEntity($campaign->getChannel())
-                ->getRecipientIterator()
-                ->appendIdentificators($form->getAttributeValue('recipients'));
-
             $sendout = $this->sendoutCrudService->create(
                 (new SendoutValueObject())
                     ->withCampaign($campaign)
-                    ->withRecipients($recipients)
                     ->withIsTest(true)
             );
 
-            $this->sendoutService->send($sendout);
+            $channelType = $channelTypeList->findByEntity($campaign->getChannel());
+            $recipientIterator = $channelType
+                ->getRecipientIterator()
+                ->appendIdentificators($form->getAttributeValue('recipients'));
+
+            foreach ($recipientIterator as $recipient) {
+                $channelType->getHandler()
+                    ->handle($sendout, $recipient);
+            }
         }
 
         return $this->responseFactory
