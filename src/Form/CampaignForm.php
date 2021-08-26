@@ -133,21 +133,21 @@ class CampaignForm extends FormModel
     {
         return [
             'name' => [
-                new RequiredHtmlOptions(new Required()),
-                new HasLengthHtmlOptions((new HasLength())->max(255)),
+                new RequiredHtmlOptions(Required::rule()),
+                new HasLengthHtmlOptions(HasLength::rule()->max(255)),
             ],
             'channel' => [
-                new RequiredHtmlOptions(new Required()),
-                new InRange(array_keys($this->getChannelListOptions())),
+                new RequiredHtmlOptions(Required::rule()),
+                InRange::rule(array_keys($this->getChannelListOptions())),
             ],
             'sender' => [
-                new RequiredHtmlOptions(new Required()),
+                new RequiredHtmlOptions(Required::rule()),
             ],
             'template' => [
-                new RequiredHtmlOptions(new Required()),
+                new RequiredHtmlOptions(Required::rule()),
             ],
             'groups' => [
-                new RequiredHtmlOptions(new Required()),
+                new RequiredHtmlOptions(Required::rule()),
             ],
         ];
     }
