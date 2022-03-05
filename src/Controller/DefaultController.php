@@ -131,14 +131,6 @@ class DefaultController
                 $valueObject = CampaignValueObject::fromForm($form);
                 $campaign = $this->campaignCrudService->create($valueObject);
 
-                $flash->add(
-                    'success',
-                    [
-                        'body' => 'Data have been saved!',
-                    ],
-                    true
-                );
-
                 return $this->responseFactory
                     ->createResponse(302)
                     ->withHeader('Location', $this->urlGenerator->generate('/campaign/standard/view', ['id' => $campaign->getId()]));
@@ -165,7 +157,7 @@ class DefaultController
 
         $form = $form->withEntity($campaign);
 
-        if ($request->getMethod() === Method::POST && $form->load($body) && $validator->validate($form)) {
+        if ($request->getMethod() === Method::POST && $form->load($body) && $validator->validate($form)->isValid()) {
             $valueObject = CampaignValueObject::fromForm($form);
             $this->campaignCrudService->update($campaign, $valueObject);
 
@@ -220,7 +212,7 @@ class DefaultController
 
         $body = $request->getParsedBody();
 
-        if ($request->getMethod() === Method::POST && $form->load($body) && $validator->validate($form)) {
+        if ($request->getMethod() === Method::POST && $form->load($body) && $validator->validate($form)->isValid()) {
             $sendout = $this->sendoutCrudService->create(
                 (new SendoutValueObject())
                     ->withCampaign($campaign)

@@ -45,7 +45,14 @@ use Yiisoft\Form\Widget\Form;
         <div class="mb-4"></div>
 
         <?= $field->config($form, 'groups')
-            ->listBox($form->getGroupListOptions(), ['name' => $form->getFormName() . '[groups][]']); ?>
+            ->listBox(
+                $form->getGroupListOptions(),
+                [
+                    'name' => $form->getFormName() . '[groups][]',
+                    'class' => 'form-control',
+                ]
+            );
+        ?>
 
         <?= Html::submitButton(
             'Save',

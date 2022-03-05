@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 use Yiisoft\Html\Html;
 use Yiisoft\Form\Widget\Form;
