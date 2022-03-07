@@ -222,7 +222,7 @@ class DefaultController
             $channelType = $channelTypeList->findByEntity($campaign->getChannel());
             $recipientIterator = $channelType
                 ->getRecipientIterator()
-                ->appendIdentificators($form->getAttributeValue('recipients'));
+                ->appendIdentificators($form->getRecipients());
 
             foreach ($recipientIterator as $recipient) {
                 $channelType->getHandler()

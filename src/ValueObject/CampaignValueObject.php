@@ -42,8 +42,7 @@ class CampaignValueObject
     public static function fromForm(CampaignForm $form): self
     {
         $new = new self();
-
-        $new->name = $form->getAttributeValue('name');
+        $new->name = $form->getName();
         $new->sender = $form->getSender();
         $new->template = $form->getTemplate();
         $new->channel = $form->getChannel();

@@ -129,6 +129,64 @@ class CampaignForm extends FormModel
     }
 
     /**
+     * @return string|null
+     */
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return Channel|null
+     */
+    public function getChannel(): ?Channel
+    {
+        if ($this->channel === null) {
+            return null;
+        }
+
+        return $this->channelRepo->findByPK($this->channel);
+    }
+
+    /**
+     * @return Sender|null
+     */
+    public function getSender(): ?Sender
+    {
+        if ($this->sender === null) {
+            return null;
+        }
+
+        return $this->senderRepo->findByPK($this->sender);
+    }
+
+    /**
+     * @return Template|null
+     */
+    public function getTemplate(): ?Template
+    {
+        if ($this->template === null) {
+            return null;
+        }
+
+        return $this->templateRepo->findByPK($this->template);
+    }
+
+    /**
+     * @return array
+     */
+    public function getGroups(): array
+    {
+        if (empty($this->groups)) {
+            return [];
+        }
+
+        return $this->groupRepo->findAll([
+            'id' => ['in' => new Parameter($this->groups, \PDO::PARAM_INT)],
+        ]);
+    }
+
+    /**
      * @return array
      */
     public function getAttributeLabels(): array
@@ -150,7 +208,7 @@ class CampaignForm extends FormModel
         return [
             'name' => [
                 new RequiredHtmlOptions(Required::rule()),
-                new HasLengthHtmlOptions(HasLength::rule()->max(255)),
+                new HasLengthHtmlOptions(HasLength::rule()->min(3)->max(255)),
             ],
             'channel' => [
                 new RequiredHtmlOptions(Required::rule()),
@@ -166,21 +224,9 @@ class CampaignForm extends FormModel
                 new RequiredHtmlOptions(Required::rule()),
                 Each::rule(new Rules([
                     InRange::rule(array_keys($this->getGroupListOptions())),
-                ]))->message('{error}')
+                ]))->message('{error}'),
             ],
         ];
-    }
-
-    /**
-     * @return Sender|null
-     */
-    public function getSender(): ?Sender
-    {
-        if ($this->sender === null) {
-            return null;
-        }
-
-        return $this->senderRepo->findByPK($this->sender);
     }
 
     /**
@@ -201,18 +247,6 @@ class CampaignForm extends FormModel
     }
 
     /**
-     * @return Template|null
-     */
-    public function getTemplate(): ?Template
-    {
-        if ($this->template === null) {
-            return null;
-        }
-
-        return $this->templateRepo->findByPK($this->template);
-    }
-
-    /**
      * @return array
      */
     public function getTemplateListOptions(): array
@@ -225,20 +259,6 @@ class CampaignForm extends FormModel
         }
 
         return $options;
-    }
-
-    /**
-     * @return array
-     */
-    public function getGroups(): array
-    {
-        if (empty($this->groups)) {
-            return [];
-        }
-
-        return $this->groupRepo->findAll([
-            'id' => ['in' => new Parameter($this->groups, \PDO::PARAM_INT)],
-        ]);
     }
 
     /**
@@ -258,18 +278,6 @@ class CampaignForm extends FormModel
         }
 
         return $options;
-    }
-
-    /**
-     * @return Channel|null
-     */
-    public function getChannel(): ?Channel
-    {
-        if ($this->channel === null) {
-            return null;
-        }
-
-        return $this->channelRepo->findByPK($this->channel);
     }
 
     /**
