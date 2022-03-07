@@ -21,6 +21,8 @@ use Mailery\Template\Entity\Template;
 use Mailery\Sender\Entity\Sender;
 use Mailery\Channel\Repository\ChannelRepository;
 use Mailery\Channel\Entity\Channel;
+use Yiisoft\Validator\Rule\Each;
+use Yiisoft\Validator\Rules;
 
 class CampaignForm extends FormModel
 {
@@ -113,6 +115,20 @@ class CampaignForm extends FormModel
     }
 
     /**
+     * @inheritdoc
+     */
+    public function load(array $data, ?string $formName = null): bool
+    {
+        $scope = $formName ?? $this->getFormName();
+
+        if (isset($data[$scope]['groups'])) {
+            $data[$scope]['groups'] = array_filter((array) $data[$scope]['groups']);
+        }
+
+        return parent::load($data, $formName);
+    }
+
+    /**
      * @return array
      */
     public function getAttributeLabels(): array
@@ -148,6 +164,9 @@ class CampaignForm extends FormModel
             ],
             'groups' => [
                 new RequiredHtmlOptions(Required::rule()),
+                Each::rule(new Rules([
+                    InRange::rule(array_keys($this->getGroupListOptions())),
+                ]))->message('{error}')
             ],
         ];
     }

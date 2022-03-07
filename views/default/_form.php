@@ -48,8 +48,8 @@ use Yiisoft\Form\Widget\Form;
             ->listBox(
                 $form->getGroupListOptions(),
                 [
-                    'name' => $form->getFormName() . '[groups][]',
                     'class' => 'form-control',
+                    'multiple' => true,
                 ]
             );
         ?>
