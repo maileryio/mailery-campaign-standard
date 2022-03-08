@@ -7,6 +7,8 @@ namespace Mailery\Campaign\Standard\Controller;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Yiisoft\Http\Method;
+use Yiisoft\Http\Status;
+use Yiisoft\Http\Header;
 use Yiisoft\Router\UrlGeneratorInterface as UrlGenerator;
 use Mailery\Campaign\Form\SendTestForm;
 use Mailery\Campaign\Standard\Form\CampaignForm;
@@ -101,7 +103,7 @@ class DefaultController
     {
         $campaignId = $request->getAttribute('id');
         if (empty($campaignId) || ($campaign = $this->campaignRepo->findByPK($campaignId)) === null) {
-            return $this->responseFactory->createResponse(404);
+            return $this->responseFactory->createResponse(Status::NOT_FOUND);
         }
 
         $sender = $this->senderRepo->findByPK($campaign->getSender()->getId());
@@ -132,8 +134,8 @@ class DefaultController
                 $campaign = $this->campaignCrudService->create($valueObject);
 
                 return $this->responseFactory
-                    ->createResponse(302)
-                    ->withHeader('Location', $this->urlGenerator->generate('/campaign/standard/view', ['id' => $campaign->getId()]));
+                    ->createResponse(Status::FOUND)
+                    ->withHeader(Header::LOCATION, $this->urlGenerator->generate('/campaign/standard/view', ['id' => $campaign->getId()]));
             }
         }
 
@@ -152,7 +154,7 @@ class DefaultController
         $body = $request->getParsedBody();
         $campaignId = $request->getAttribute('id');
         if (empty($campaignId) || ($campaign = $this->campaignRepo->findByPK($campaignId)) === null) {
-            return $this->responseFactory->createResponse(404);
+            return $this->responseFactory->createResponse(Status::NOT_FOUND);
         }
 
         $form = $form->withEntity($campaign);
@@ -170,8 +172,8 @@ class DefaultController
             );
 
             return $this->responseFactory
-                ->createResponse(302)
-                ->withHeader('Location', $this->urlGenerator->generate('/campaign/standard/view', ['id' => $campaign->getId()]));
+                ->createResponse(Status::FOUND)
+                ->withHeader(Header::LOCATION, $this->urlGenerator->generate('/campaign/standard/view', ['id' => $campaign->getId()]));
         }
 
         return $this->viewRenderer->render('edit', compact('form', 'campaign'));
@@ -186,14 +188,14 @@ class DefaultController
     {
         $campaignId = $request->getAttribute('id');
         if (empty($campaignId) || ($campaign = $this->campaignRepo->findByPK($campaignId)) === null) {
-            return $this->responseFactory->createResponse(404);
+            return $this->responseFactory->createResponse(Status::NOT_FOUND);
         }
 
         $this->campaignCrudService->delete($campaign);
 
         return $this->responseFactory
-            ->createResponse(302)
-            ->withHeader('Location', $this->urlGenerator->generate('/campaign/default/index'));
+            ->createResponse(Status::SEE_OTHER)
+            ->withHeader(Header::LOCATION, $this->urlGenerator->generate('/campaign/default/index'));
     }
 
     /**
@@ -207,7 +209,7 @@ class DefaultController
     {
         $campaignId = $request->getAttribute('id');
         if (empty($campaignId) || ($campaign = $this->campaignRepo->findByPK($campaignId)) === null) {
-            return $this->responseFactory->createResponse(404);
+            return $this->responseFactory->createResponse(Status::NOT_FOUND);
         }
 
         $body = $request->getParsedBody();
@@ -231,7 +233,7 @@ class DefaultController
         }
 
         return $this->responseFactory
-            ->createResponse(302)
-            ->withHeader('Location', $this->urlGenerator->generate('/campaign/standard/view', ['id' => $campaign->getId()]));
+            ->createResponse(Status::FOUND)
+            ->withHeader(Header::LOCATION, $this->urlGenerator->generate('/campaign/standard/view', ['id' => $campaign->getId()]));
     }
 }
