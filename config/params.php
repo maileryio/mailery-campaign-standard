@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Yiisoft\Factory\Definition\Reference;
+use Yiisoft\Definitions\Reference;
 use Mailery\Campaign\Standard\Model\StandardCampaignType;
 
 return [
@@ -13,7 +13,7 @@ return [
     ],
 
     'yiisoft/yii-cycle' => [
-        'annotated-entity-paths' => [
+        'entity-paths' => [
             '@vendor/maileryio/mailery-campaign-standard/src/Entity',
         ],
     ],
