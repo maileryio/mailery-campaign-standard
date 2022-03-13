@@ -10,9 +10,7 @@ use Mailery\Subscriber\Counter\SubscriberCounter;
 use Mailery\Subscriber\Entity\Group;
 use Mailery\Subscriber\Repository\GroupRepository;
 use Spiral\Database\Injection\Parameter;
-use Yiisoft\Form\HtmlOptions\RequiredHtmlOptions;
 use Yiisoft\Validator\Rule\Required;
-use Yiisoft\Form\HtmlOptions\HasLengthHtmlOptions;
 use Yiisoft\Validator\Rule\HasLength;
 use Yiisoft\Validator\Rule\InRange;
 use Mailery\Sender\Repository\SenderRepository;
@@ -22,7 +20,7 @@ use Mailery\Sender\Entity\Sender;
 use Mailery\Channel\Repository\ChannelRepository;
 use Mailery\Channel\Entity\Channel;
 use Yiisoft\Validator\Rule\Each;
-use Yiisoft\Validator\Rules;
+use Yiisoft\Validator\RuleSet;
 
 class CampaignForm extends FormModel
 {
@@ -207,22 +205,22 @@ class CampaignForm extends FormModel
     {
         return [
             'name' => [
-                new RequiredHtmlOptions(Required::rule()),
-                new HasLengthHtmlOptions(HasLength::rule()->min(3)->max(255)),
+                Required::rule(),
+                HasLength::rule()->min(3)->max(255),
             ],
             'channel' => [
-                new RequiredHtmlOptions(Required::rule()),
+                Required::rule(),
                 InRange::rule(array_keys($this->getChannelListOptions())),
             ],
             'sender' => [
-                new RequiredHtmlOptions(Required::rule()),
+                Required::rule(),
             ],
             'template' => [
-                new RequiredHtmlOptions(Required::rule()),
+                Required::rule(),
             ],
             'groups' => [
-                new RequiredHtmlOptions(Required::rule()),
-                Each::rule(new Rules([
+                Required::rule(),
+                Each::rule(new RuleSet([
                     InRange::rule(array_keys($this->getGroupListOptions())),
                 ]))->message('{error}'),
             ],
