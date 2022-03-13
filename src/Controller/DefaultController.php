@@ -28,70 +28,32 @@ use Mailery\Channel\Model\ChannelTypeList;
 class DefaultController
 {
     /**
-     * @var ViewRenderer
-     */
-    private ViewRenderer $viewRenderer;
-
-    /**
-     * @var ResponseFactory
-     */
-    private ResponseFactory $responseFactory;
-
-    /**
-     * @var UrlGenerator
-     */
-    private UrlGenerator $urlGenerator;
-
-    /**
-     * @var CampaignRepository
-     */
-    private CampaignRepository $campaignRepo;
-
-    /**
-     * @var SenderRepository
-     */
-    private SenderRepository $senderRepo;
-
-    /**
-     * @var CampaignCrudService
-     */
-    private CampaignCrudService $campaignCrudService;
-
-    /**
-     * @var SendoutCrudService
-     */
-    private SendoutCrudService $sendoutCrudService;
-
-    /**
      * @param ViewRenderer $viewRenderer
      * @param ResponseFactory $responseFactory
-     * @param BrandLocatorInterface $brandLocator
      * @param UrlGenerator $urlGenerator
      * @param CampaignRepository $campaignRepo
      * @param SenderRepository $senderRepo
      * @param CampaignCrudService $campaignCrudService
      * @param SendoutCrudService $sendoutCrudService
+     * @param BrandLocatorInterface $brandLocator
      */
     public function __construct(
-        ViewRenderer $viewRenderer,
-        ResponseFactory $responseFactory,
-        BrandLocatorInterface $brandLocator,
-        UrlGenerator $urlGenerator,
-        CampaignRepository $campaignRepo,
-        SenderRepository $senderRepo,
-        CampaignCrudService $campaignCrudService,
-        SendoutCrudService $sendoutCrudService
+        private ViewRenderer $viewRenderer,
+        private ResponseFactory $responseFactory,
+        private UrlGenerator $urlGenerator,
+        private CampaignRepository $campaignRepo,
+        private SenderRepository $senderRepo,
+        private CampaignCrudService $campaignCrudService,
+        private SendoutCrudService $sendoutCrudService,
+        BrandLocatorInterface $brandLocator
     ) {
         $this->viewRenderer = $viewRenderer
             ->withController($this)
             ->withViewPath(dirname(dirname(__DIR__)) . '/views');
 
-        $this->responseFactory = $responseFactory;
-        $this->urlGenerator = $urlGenerator;
         $this->campaignRepo = $campaignRepo->withBrand($brandLocator->getBrand());
         $this->senderRepo = $senderRepo->withBrand($brandLocator->getBrand());
         $this->campaignCrudService = $campaignCrudService->withBrand($brandLocator->getBrand());
-        $this->sendoutCrudService = $sendoutCrudService;
     }
 
     /**

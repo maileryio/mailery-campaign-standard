@@ -7,7 +7,7 @@ use Mailery\Web\Widget\FlashMessage;
 /** @var Yiisoft\Router\UrlGeneratorInterface $urlGenerator */
 /** @var Yiisoft\Yii\WebView $this */
 /** @var Psr\Http\Message\ServerRequestInterface $request */
-/** @var Mailery\Campaign\Standard\Form\CampaignForm $form */
+/** @var Yiisoft\Form\FormModelInterface $form */
 /** @var string $csrf */
 
 $this->setTitle('Edit campaign #' . $campaign->getId());

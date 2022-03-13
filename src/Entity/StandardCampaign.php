@@ -3,16 +3,22 @@
 namespace Mailery\Campaign\Standard\Entity;
 
 use Mailery\Campaign\Entity\Campaign;
+use Cycle\Annotated\Annotation\Entity;
+use Cycle\Annotated\Annotation\Inheritance\SingleTable;
+use Mailery\Common\Entity\RoutableEntityInterface;
 use Mailery\Activity\Log\Entity\LoggableEntityInterface;
 use Mailery\Activity\Log\Entity\LoggableEntityTrait;
-use Mailery\Common\Entity\RoutableEntityInterface;
 
-/**
- * @Cycle\Annotated\Annotation\Entity
- */
+#[Entity(table: 'campaigns')]
+#[SingleTable(value: StandardCampaign::class)]
 class StandardCampaign extends Campaign implements RoutableEntityInterface, LoggableEntityInterface
 {
     use LoggableEntityTrait;
+
+    public function __construct()
+    {
+        $this->type = self::class;
+    }
 
     /**
      * @inheritdoc

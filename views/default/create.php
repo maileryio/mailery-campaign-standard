@@ -7,7 +7,7 @@ use Yiisoft\Form\Widget\Form;
 /** @var Yiisoft\Router\UrlGeneratorInterface $urlGenerator */
 /** @var Yiisoft\Yii\WebView $this */
 /** @var Psr\Http\Message\ServerRequestInterface $request */
-/** @var Mailery\Campaign\Standard\Form\CampaignForm $form */
+/** @var Yiisoft\Form\FormModelInterface $form */
 /** @var string $csrf */
 
 $this->setTitle('New standard campaign');
@@ -30,21 +30,15 @@ $this->setTitle('New standard campaign');
     ?><div class="row">
         <div class="col-12 col-xl-4">
             <?= Form::widget()
-                ->options(
-                    [
-                        'id' => 'form-campaign-channel',
-                        'csrf' => $csrf,
-                        'enctype' => 'multipart/form-data',
-                    ]
-                )
+                ->csrf($csrf)
+                ->id('channel-channel-form')
                 ->begin(); ?>
 
             <h3 class="h6">Select channel</h3>
             <div class="form-text text-muted">What is the campaign channel?</div>
             <div class="mb-4"></div>
 
-            <?= $field->config($form, 'channel')
-                ->dropDownList($form->getChannelListOptions()); ?>
+            <?= $field->select($form, 'channel', ['items()' => [$form->getChannelListOptions()]]); ?>
 
             <?= Html::submitButton(
                 'Next',

@@ -50,40 +50,20 @@ class CampaignForm extends FormModel
     private array $groups = [];
 
     /**
-     * @var ChannelRepository
-     */
-    private ChannelRepository $channelRepo;
-
-    /**
-     * @var SenderRepository
-     */
-    private SenderRepository $senderRepo;
-
-    /**
-     * @var TemplateRepository
-     */
-    private TemplateRepository $templateRepo;
-
-    /**
-     * @var GroupRepository
-     */
-    private GroupRepository $groupRepo;
-
-    /**
-     * @param BrandLocator $brandLocator
      * @param ChannelRepository $channelRepo
      * @param SenderRepository $senderRepo
      * @param TemplateRepository $templateRepo
      * @param GroupRepository $groupRepo
      * @param SubscriberCounter $subscriberCounter
+     * @param BrandLocator $brandLocator
      */
     public function __construct(
-        BrandLocator $brandLocator,
-        ChannelRepository $channelRepo,
-        SenderRepository $senderRepo,
-        TemplateRepository $templateRepo,
-        GroupRepository $groupRepo,
-        SubscriberCounter $subscriberCounter
+        private ChannelRepository $channelRepo,
+        private SenderRepository $senderRepo,
+        private TemplateRepository $templateRepo,
+        private GroupRepository $groupRepo,
+        private SubscriberCounter $subscriberCounter,
+        BrandLocator $brandLocator
     ) {
         $this->channelRepo = $channelRepo->withBrand($brandLocator->getBrand());
         $this->senderRepo = $senderRepo->withBrand($brandLocator->getBrand());
