@@ -14,7 +14,7 @@ use Yiisoft\Form\Widget\Form;
 /** @var Mailery\Campaign\Standard\Entity\StandardCampaign $campaign */
 /** @var Mailery\Sender\Email\Entity\EmailSender $sender */
 /** @var Mailery\Campaign\Standard\Form\SendTestForm $testForm */
-/** @var string $csrf */
+/** @var Yiisoft\Yii\View\Csrf $csrf */
 /** @var bool $submitted */
 
 $this->setTitle($campaign->getName());
