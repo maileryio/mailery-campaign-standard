@@ -21,8 +21,7 @@ use Yiisoft\Form\Widget\Form;
         <div class="form-text text-muted">What is the subject line of the campaign?</div>
         <div class="mb-4"></div>
 
-        <?= $field->text($form, 'name')
-                ->autofocus(); ?>
+        <?= $field->text($form, 'name')->autofocus(); ?>
 
         <?= $field->select($form, 'sender', ['items()' => [$form->getSenderListOptions()]]); ?>
 
