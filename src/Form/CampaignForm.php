@@ -14,7 +14,7 @@ use Yiisoft\Validator\Rule\Required;
 use Yiisoft\Validator\Rule\HasLength;
 use Yiisoft\Validator\Rule\InRange;
 use Mailery\Sender\Repository\SenderRepository;
-use Mailery\Sender\Model\Status;
+use Mailery\Sender\Field\SenderStatus;
 use Mailery\Template\Entity\Template;
 use Mailery\Sender\Entity\Sender;
 use Mailery\Channel\Repository\ChannelRepository;
@@ -213,9 +213,7 @@ class CampaignForm extends FormModel
     public function getSenderListOptions(): array
     {
         $options = [];
-        $senders = $this->senderRepo
-            ->withStatus(Status::asActive())
-            ->findAll();
+        $senders = $this->senderRepo->withActive()->findAll();
 
         foreach ($senders as $sender) {
             $options[$sender->getId()] = $sender->getName();
