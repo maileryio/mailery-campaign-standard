@@ -17,13 +17,12 @@ use Psr\Http\Message\ResponseFactoryInterface as ResponseFactory;
 use Mailery\Campaign\Repository\CampaignRepository;
 use Mailery\Brand\BrandLocatorInterface;
 use Mailery\Campaign\Service\SendoutCrudService;
-use Mailery\Campaign\ValueObject\SendoutValueObject;
 use Mailery\Campaign\Standard\Service\CampaignCrudService;
 use Mailery\Campaign\Standard\ValueObject\CampaignValueObject;
 use Yiisoft\Validator\ValidatorInterface;
 use Yiisoft\Session\Flash\FlashInterface;
 use Mailery\Sender\Repository\SenderRepository;
-use Mailery\Channel\Model\ChannelTypeList;
+use Yiisoft\Router\CurrentRoute;
 
 class DefaultController
 {
@@ -57,13 +56,13 @@ class DefaultController
     }
 
     /**
-     * @param Request $request
+     * @param CurrentRoute $currentRoute
      * @param SendTestForm $testForm
      * @return Response
      */
-    public function view(Request $request, SendTestForm $testForm): Response
+    public function view(CurrentRoute $currentRoute, SendTestForm $testForm): Response
     {
-        $campaignId = $request->getAttribute('id');
+        $campaignId = $currentRoute->getArgument('id');
         if (empty($campaignId) || ($campaign = $this->campaignRepo->findByPK($campaignId)) === null) {
             return $this->responseFactory->createResponse(Status::NOT_FOUND);
         }
@@ -106,15 +105,16 @@ class DefaultController
 
     /**
      * @param Request $request
+     * @param CurrentRoute $currentRoute
      * @param ValidatorInterface $validator
      * @param FlashInterface $flash
      * @param CampaignForm $form
      * @return Response
      */
-    public function edit(Request $request, ValidatorInterface $validator, FlashInterface $flash, CampaignForm $form): Response
+    public function edit(Request $request, CurrentRoute $currentRoute, ValidatorInterface $validator, FlashInterface $flash, CampaignForm $form): Response
     {
         $body = $request->getParsedBody();
-        $campaignId = $request->getAttribute('id');
+        $campaignId = $currentRoute->getArgument('id');
         if (empty($campaignId) || ($campaign = $this->campaignRepo->findByPK($campaignId)) === null) {
             return $this->responseFactory->createResponse(Status::NOT_FOUND);
         }
@@ -142,13 +142,13 @@ class DefaultController
     }
 
     /**
-     * @param Request $request
+     * @param CurrentRoute $currentRoute
      * @param UrlGenerator $urlGenerator
      * @return Response
      */
-    public function delete(Request $request): Response
+    public function delete(CurrentRoute $currentRoute): Response
     {
-        $campaignId = $request->getAttribute('id');
+        $campaignId = $currentRoute->getArgument('id');
         if (empty($campaignId) || ($campaign = $this->campaignRepo->findByPK($campaignId)) === null) {
             return $this->responseFactory->createResponse(Status::NOT_FOUND);
         }
@@ -158,44 +158,5 @@ class DefaultController
         return $this->responseFactory
             ->createResponse(Status::SEE_OTHER)
             ->withHeader(Header::LOCATION, $this->urlGenerator->generate('/campaign/default/index'));
-    }
-
-    /**
-     * @param Request $request
-     * @param ValidatorInterface $validator
-     * @param SendTestForm $form
-     * @param ChannelTypeList $channelTypeList
-     * @return Response
-     */
-    public function test(Request $request, ValidatorInterface $validator, SendTestForm $form, ChannelTypeList $channelTypeList): Response
-    {
-        $campaignId = $request->getAttribute('id');
-        if (empty($campaignId) || ($campaign = $this->campaignRepo->findByPK($campaignId)) === null) {
-            return $this->responseFactory->createResponse(Status::NOT_FOUND);
-        }
-
-        $body = $request->getParsedBody();
-
-        if ($request->getMethod() === Method::POST && $form->load($body) && $validator->validate($form)->isValid()) {
-            $sendout = $this->sendoutCrudService->create(
-                (new SendoutValueObject())
-                    ->withCampaign($campaign)
-                    ->withIsTest(true)
-            );
-
-            $channelType = $channelTypeList->findByEntity($campaign->getChannel());
-            $recipientIterator = $channelType
-                ->getRecipientIterator()
-                ->appendIdentificators($form->getRecipients());
-
-            foreach ($recipientIterator as $recipient) {
-                $channelType->getHandler()
-                    ->handle($sendout, $recipient);
-            }
-        }
-
-        return $this->responseFactory
-            ->createResponse(Status::FOUND)
-            ->withHeader(Header::LOCATION, $this->urlGenerator->generate('/campaign/standard/view', ['id' => $campaign->getId()]));
     }
 }

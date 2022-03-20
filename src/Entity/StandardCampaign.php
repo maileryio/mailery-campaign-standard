@@ -18,6 +18,7 @@ class StandardCampaign extends Campaign implements RoutableEntityInterface, Logg
     public function __construct()
     {
         $this->type = self::class;
+        parent::__construct();
     }
 
     /**

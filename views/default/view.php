@@ -13,7 +13,7 @@ use Yiisoft\Form\Widget\Form;
 /** @var Psr\Http\Message\ServerRequestInterface $request */
 /** @var Mailery\Campaign\Standard\Entity\StandardCampaign $campaign */
 /** @var Mailery\Sender\Email\Entity\EmailSender $sender */
-/** @var Mailery\Campaign\Standard\Form\SendTestForm $testForm */
+/** @var Mailery\Campaign\Form\SendTestForm $testForm */
 /** @var Yiisoft\Yii\View\Csrf $csrf */
 /** @var bool $submitted */
 
@@ -70,25 +70,17 @@ $this->setTitle($campaign->getName());
         <div class="mb-4"></div>
 
         <?= Form::widget()
-            ->options(
-                [
-                    'id' => 'form-sender',
-                    'csrf' => $csrf,
-                    'enctype' => 'multipart/form-data',
-                ]
-            )
-            ->action($urlGenerator->generate('/campaign/standard/test', ['id' => $campaign->getId()]))
-            ->begin(); ?>
+                ->action($urlGenerator->generate('/campaign/sendout/test', ['id' => $campaign->getId()]))
+                ->csrf($csrf)
+                ->id('campaign-test-form')
+                ->begin(); ?>
 
-        <?= $field->config($testForm, 'recipients'); ?>
+        <?= $field->text($testForm, 'recipients'); ?>
         <div class="form-text text-muted">Enter unlimited number of addresses, separated by a commas, ex. <?= Html::encode('"Bob Smith" <bob@company.com>, joe@company.com') ?></div>
 
-        <?= Html::submitButton(
-            'Test send this newsletter',
-            [
-                'class' => 'btn btn-outline-secondary float-right mt-2',
-            ]
-        ); ?>
+        <?= $field->submitButton()
+                ->class('btn btn-outline-secondary float-right mt-2')
+                ->value('Test send this newsletter'); ?>
 
         <?= Form::end(); ?>
     </div>
