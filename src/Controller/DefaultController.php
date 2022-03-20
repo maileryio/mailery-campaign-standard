@@ -16,12 +16,10 @@ use Yiisoft\Yii\View\ViewRenderer;
 use Psr\Http\Message\ResponseFactoryInterface as ResponseFactory;
 use Mailery\Campaign\Repository\CampaignRepository;
 use Mailery\Brand\BrandLocatorInterface;
-use Mailery\Campaign\Service\SendoutCrudService;
 use Mailery\Campaign\Standard\Service\CampaignCrudService;
 use Mailery\Campaign\Standard\ValueObject\CampaignValueObject;
 use Yiisoft\Validator\ValidatorInterface;
 use Yiisoft\Session\Flash\FlashInterface;
-use Mailery\Sender\Repository\SenderRepository;
 use Yiisoft\Router\CurrentRoute;
 
 class DefaultController
@@ -31,9 +29,7 @@ class DefaultController
      * @param ResponseFactory $responseFactory
      * @param UrlGenerator $urlGenerator
      * @param CampaignRepository $campaignRepo
-     * @param SenderRepository $senderRepo
      * @param CampaignCrudService $campaignCrudService
-     * @param SendoutCrudService $sendoutCrudService
      * @param BrandLocatorInterface $brandLocator
      */
     public function __construct(
@@ -41,9 +37,7 @@ class DefaultController
         private ResponseFactory $responseFactory,
         private UrlGenerator $urlGenerator,
         private CampaignRepository $campaignRepo,
-        private SenderRepository $senderRepo,
         private CampaignCrudService $campaignCrudService,
-        private SendoutCrudService $sendoutCrudService,
         BrandLocatorInterface $brandLocator
     ) {
         $this->viewRenderer = $viewRenderer
@@ -51,7 +45,6 @@ class DefaultController
             ->withViewPath(dirname(dirname(__DIR__)) . '/views');
 
         $this->campaignRepo = $campaignRepo->withBrand($brandLocator->getBrand());
-        $this->senderRepo = $senderRepo->withBrand($brandLocator->getBrand());
         $this->campaignCrudService = $campaignCrudService->withBrand($brandLocator->getBrand());
     }
 
@@ -67,9 +60,24 @@ class DefaultController
             return $this->responseFactory->createResponse(Status::NOT_FOUND);
         }
 
-        $sender = $this->senderRepo->findByPK($campaign->getSender()->getId());
+        return $this->viewRenderer->render('view', compact('campaign', 'testForm'));
+    }
 
-        return $this->viewRenderer->render('view', compact('campaign', 'sender', 'testForm'));
+    /**
+     * @param CurrentRoute $currentRoute
+     * @return Response
+     */
+    public function preview(CurrentRoute $currentRoute): Response
+    {
+        $campaignId = $currentRoute->getArgument('id');
+        if (empty($campaignId) || ($campaign = $this->campaignRepo->findByPK($campaignId)) === null) {
+            return $this->responseFactory->createResponse(Status::NOT_FOUND);
+        }
+
+        $response = $this->responseFactory->createResponse();
+        $response->getBody()->write($campaign->getTemplate()->getHtmlContent());
+
+        return $response;
     }
 
     /**

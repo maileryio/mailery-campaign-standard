@@ -12,7 +12,6 @@ use Yiisoft\Form\Widget\Form;
 /** @var Yiisoft\Yii\WebView $this */
 /** @var Psr\Http\Message\ServerRequestInterface $request */
 /** @var Mailery\Campaign\Standard\Entity\StandardCampaign $campaign */
-/** @var Mailery\Sender\Email\Entity\EmailSender $sender */
 /** @var Mailery\Campaign\Form\SendTestForm $testForm */
 /** @var Yiisoft\Yii\View\Csrf $csrf */
 /** @var bool $submitted */
@@ -88,16 +87,18 @@ $this->setTitle($campaign->getName());
         <div class="callout callout-info">
             <p>
                 <strong class="h6">From</strong>
-                <span class="border border-light rounded bg-light text-dark p-1"><?= Html::encode((new SenderLabel($sender->getName(), $sender->getEmail()))->__toString()) ?></span>
+                <span class="border border-light rounded bg-light text-dark p-1"><?= Html::encode(new SenderLabel($campaign->getSender()->getName(), $campaign->getSender()->getEmail())) ?></span>
             </p>
             <p>
                 <strong class="h6">Reply to</strong>
-                <span class="border border-light rounded bg-light text-dark p-1"><?= Html::encode((new SenderLabel($sender->getReplyName(), $sender->getReplyEmail()))->__toString()) ?></span>
+                <span class="border border-light rounded bg-light text-dark p-1"><?= Html::encode(new SenderLabel($campaign->getSender()->getReplyName(), $campaign->getSender()->getReplyEmail())) ?></span>
             </p>
             <p>
                 <strong class="h6">Subject</strong>
                 <span class="border border-light rounded bg-light text-dark p-1"><?= Html::encode($campaign->getName()) ?></span>
             </p>
         </div>
+
+        <iframe class="border-0 w-100 min-vh-100" src="<?= $urlGenerator->generate('/campaign/standard/preview', ['id' => $campaign->getId()]) ?>"></iframe>
     </div>
 </div>

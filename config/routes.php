@@ -12,6 +12,9 @@ return [
             Route::get('/campaign/standard/view/{id:\d+}')
                 ->name('/campaign/standard/view')
                 ->action([DefaultController::class, 'view']),
+            Route::get('/campaign/standard/preview/{id:\d+}')
+                ->name('/campaign/standard/preview')
+                ->action([DefaultController::class, 'preview']),
             Route::methods(['GET', 'POST'], '/campaign/standard/create')
                 ->name('/campaign/standard/create')
                 ->action([DefaultController::class, 'create']),
