@@ -32,7 +32,7 @@ class CampaignForm extends FormModel
     /**
      * @var string|null
      */
-    private ?string $channel = null;
+    private ?int $channel = null;
 
     /**
      * @var int|null
@@ -261,12 +261,13 @@ class CampaignForm extends FormModel
      */
     public function getChannelListOptions(): array
     {
-        $listOptions = [];
-        foreach ($this->channelRepo->findAll() as $channel) {
-            /** @var Channel $channel */
-            $listOptions[$channel->getId()] = $channel->getName();
+        $options = [];
+        $channels = $this->channelRepo->findAll();
+
+        foreach ($channels as $channel) {
+            $options[$channel->getId()] = $channel->getName();
         }
 
-        return $listOptions;
+        return $options;
     }
 }
