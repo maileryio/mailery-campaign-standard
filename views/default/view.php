@@ -27,14 +27,14 @@ $this->setTitle($campaign->getName());
                     ->csrf($csrf)
                     ->label(Icon::widget()->name('delete')->options(['class' => 'mr-1'])->render() . ' Delete')
                     ->method('delete')
-                    ->href($urlGenerator->generate($campaign->getDeleteRouteName(), $campaign->getDeleteRouteParams()))
+                    ->href($url->generate($campaign->getDeleteRouteName(), $campaign->getDeleteRouteParams()))
                     ->confirm('Are you sure?')
                     ->options([
                         'class' => 'btn btn-sm btn-danger mx-sm-1 mb-2',
                     ])
                     ->encode(false);
                 ?>
-                <a class="btn btn-sm btn-secondary mx-sm-1 mb-2" href="<?= $urlGenerator->generate($campaign->getEditRouteName(), $campaign->getEditRouteParams()); ?>">
+                <a class="btn btn-sm btn-secondary mx-sm-1 mb-2" href="<?= $url->generate($campaign->getEditRouteName(), $campaign->getEditRouteParams()); ?>">
                     <?= Icon::widget()->name('pencil')->options(['class' => 'mr-1']); ?>
                     Update
                 </a>
@@ -48,7 +48,7 @@ $this->setTitle($campaign->getName());
                         ->entity($campaign); ?>
                 </b-dropdown>
                 <div class="btn-toolbar float-right">
-                    <a class="btn btn-sm btn-outline-secondary mx-sm-1 mb-2" href="<?= $urlGenerator->generate('/campaign/default/index'); ?>">
+                    <a class="btn btn-sm btn-outline-secondary mx-sm-1 mb-2" href="<?= $url->generate('/campaign/default/index'); ?>">
                         Back
                     </a>
                 </div>
@@ -69,7 +69,7 @@ $this->setTitle($campaign->getName());
         <div class="mb-4"></div>
 
         <?= Form::widget()
-                ->action($urlGenerator->generate('/campaign/sendout/test', ['id' => $campaign->getId()]))
+                ->action($url->generate('/campaign/sendout/test', ['id' => $campaign->getId()]))
                 ->csrf($csrf)
                 ->id('campaign-test-form')
                 ->begin(); ?>
@@ -99,6 +99,6 @@ $this->setTitle($campaign->getName());
             </p>
         </div>
 
-        <iframe class="border-0 w-100 min-vh-100" src="<?= $urlGenerator->generate('/campaign/standard/preview', ['id' => $campaign->getId()]) ?>"></iframe>
+        <iframe class="border-0 w-100 min-vh-100" src="<?= $url->generate('/campaign/standard/preview', ['id' => $campaign->getId()]) ?>"></iframe>
     </div>
 </div>
