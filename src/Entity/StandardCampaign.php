@@ -9,7 +9,7 @@ use Mailery\Common\Entity\RoutableEntityInterface;
 use Mailery\Activity\Log\Entity\LoggableEntityInterface;
 use Mailery\Activity\Log\Entity\LoggableEntityTrait;
 
-#[Entity(table: 'campaigns')]
+#[Entity]
 #[SingleTable(value: StandardCampaign::class)]
 class StandardCampaign extends Campaign implements RoutableEntityInterface, LoggableEntityInterface
 {
@@ -17,7 +17,6 @@ class StandardCampaign extends Campaign implements RoutableEntityInterface, Logg
 
     public function __construct()
     {
-        $this->type = self::class;
         parent::__construct();
     }
 
