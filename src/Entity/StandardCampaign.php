@@ -9,7 +9,9 @@ use Mailery\Common\Entity\RoutableEntityInterface;
 use Mailery\Activity\Log\Entity\LoggableEntityInterface;
 use Mailery\Activity\Log\Entity\LoggableEntityTrait;
 
-#[Entity]
+#[Entity(
+    table: 'campaigns',
+)]
 #[SingleTable(value: StandardCampaign::class)]
 class StandardCampaign extends Campaign implements RoutableEntityInterface, LoggableEntityInterface
 {
