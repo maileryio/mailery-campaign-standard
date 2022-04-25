@@ -2,6 +2,7 @@
 
 use Yiisoft\Html\Html;
 use Yiisoft\Form\Widget\Form;
+use Mailery\Widget\Select\Select;
 
 /** @var Yiisoft\Form\Widget\Field $field */
 /** @var Yiisoft\Router\UrlGeneratorInterface $url */
@@ -38,7 +39,16 @@ $this->setTitle('New standard campaign');
             <div class="form-text text-muted">What is the campaign channel?</div>
             <div class="mb-4"></div>
 
-            <?= $field->select($form, 'channel', ['items()' => [$form->getChannelListOptions()]]); ?>
+            <?= $field->select(
+                    $form,
+                    'channel',
+                    [
+                        'class' => Select::class,
+                        'items()' => [$form->getChannelListOptions()],
+                        'searchable()' => [false],
+                        'clearable()' => [false],
+                    ]
+                ); ?>
 
             <?= Html::submitButton(
                 'Next',

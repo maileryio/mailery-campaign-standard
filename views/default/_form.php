@@ -1,6 +1,7 @@
 <?php
 
 use Yiisoft\Form\Widget\Form;
+use Mailery\Widget\Select\Select;
 
 /** @var Yiisoft\Form\Widget\Field $field */
 /** @var Yiisoft\View\WebView $this */
@@ -23,21 +24,50 @@ use Yiisoft\Form\Widget\Form;
 
         <?= $field->text($form, 'name')->autofocus(); ?>
 
-        <?= $field->select($form, 'sender', ['items()' => [$form->getSenderListOptions()]]); ?>
+        <?= $field->select(
+                $form,
+                'sender',
+                [
+                    'class' => Select::class,
+                    'items()' => [$form->getSenderListOptions()],
+                    'searchable()' => [false],
+                    'clearable()' => [false],
+                ]
+            ); ?>
 
         <div class="mt-5"></div>
         <h3 class="h6">Content</h3>
         <div class="form-text text-muted">What is the campaign content?</div>
         <div class="mb-4"></div>
 
-        <?= $field->select($form, 'template', ['items()' => [$form->getTemplateListOptions()]]); ?>
+        <?= $field->select(
+                $form,
+                'template',
+                [
+                    'class' => Select::class,
+                    'items()' => [$form->getTemplateListOptions()],
+                    'searchable()' => [false],
+                    'clearable()' => [false],
+                ]
+            ); ?>
 
         <div class="mt-5"></div>
         <h3 class="h6">Select recipients</h3>
         <div class="form-text text-muted">Who will this campaign be sent to?</div>
         <div class="mb-4"></div>
 
-        <?= $field->select($form, 'groups', ['items()' => [$form->getGroupListOptions()], 'multiple()' => [true]]); ?>
+        <?= $field->select(
+                $form,
+                'groups',
+                [
+                    'class' => Select::class,
+                    'items()' => [$form->getGroupListOptions()],
+                    'multiple()' => [true],
+                    'taggable()' => [true],
+                    'searchable()' => [false],
+                    'clearable()' => [false],
+                ]
+            ); ?>
 
         <?= $field->submitButton()
                 ->class('btn btn-primary float-right mt-2')
