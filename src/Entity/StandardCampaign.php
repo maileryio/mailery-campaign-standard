@@ -8,11 +8,12 @@ use Cycle\Annotated\Annotation\Inheritance\SingleTable;
 use Mailery\Common\Entity\RoutableEntityInterface;
 use Mailery\Activity\Log\Entity\LoggableEntityInterface;
 use Mailery\Activity\Log\Entity\LoggableEntityTrait;
+use Mailery\Campaign\Standard\Model\StandardCampaignType;
 
 #[Entity(
     table: 'campaigns',
 )]
-#[SingleTable(value: StandardCampaign::class)]
+#[SingleTable(value: StandardCampaignType::class)]
 class StandardCampaign extends Campaign implements RoutableEntityInterface, LoggableEntityInterface
 {
     use LoggableEntityTrait;

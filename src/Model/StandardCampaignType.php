@@ -2,11 +2,19 @@
 
 namespace Mailery\Campaign\Standard\Model;
 
+use Mailery\Campaign\Entity\Campaign;
 use Mailery\Campaign\Model\CampaignTypeInterface;
-use Mailery\Campaign\Standard\Entity\StandardCampaign;
 
 class StandardCampaignType implements CampaignTypeInterface
 {
+    /**
+     * @inheritdoc
+     */
+    public function getName(): string
+    {
+        return self::class;
+    }
+
     /**
      * @inheritdoc
      */
@@ -40,11 +48,11 @@ class StandardCampaignType implements CampaignTypeInterface
     }
 
     /**
-     * @param object $entity
+     * @param Campaign $entity
      * @return bool
      */
-    public function isEntitySameType(object $entity): bool
+    public function isEntitySameType(Campaign $entity): bool
     {
-        return $entity instanceof StandardCampaign;
+        return $entity->getType() === $this->getName();
     }
 }
