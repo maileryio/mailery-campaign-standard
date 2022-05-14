@@ -6,7 +6,6 @@ use Mailery\Campaign\Standard\Form\CampaignForm;
 use Mailery\Template\Entity\Template;
 use Mailery\Sender\Entity\Sender;
 use Mailery\Subscriber\Entity\Group;
-use Mailery\Channel\Entity\Channel;
 
 class CampaignValueObject
 {
@@ -26,11 +25,6 @@ class CampaignValueObject
     private ?Template $template;
 
     /**
-     * @var Channel
-     */
-    private Channel $channel;
-
-    /**
      * @var Group[]
      */
     private array $groups = [];
@@ -45,7 +39,6 @@ class CampaignValueObject
         $new->name = $form->getName();
         $new->sender = $form->getSender();
         $new->template = $form->getTemplate();
-        $new->channel = $form->getChannel();
         $new->groups = $form->getGroups();
 
         return $new;
@@ -73,14 +66,6 @@ class CampaignValueObject
     public function getTemplate(): ?Template
     {
         return $this->template;
-    }
-
-    /**
-     * @return Channel
-     */
-    public function getChannel(): Channel
-    {
-        return $this->channel;
     }
 
     /**

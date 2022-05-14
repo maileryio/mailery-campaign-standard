@@ -16,11 +16,9 @@ use Mailery\Widget\Select\Select;
                 ->id('campaign-form')
                 ->begin(); ?>
 
-        <?= $field->hidden($form, 'channel'); ?>
-
-        <h3 class="h6">Subject and sender</h3>
+        <h6 class="font-weight-bold">Subject and sender</h6>
         <div class="form-text text-muted">What is the subject line of the campaign?</div>
-        <div class="mb-4"></div>
+        <div class="mb-3"></div>
 
         <?= $field->text($form, 'name')->autofocus(); ?>
 
@@ -35,10 +33,10 @@ use Mailery\Widget\Select\Select;
                 ]
             ); ?>
 
-        <div class="mt-5"></div>
-        <h3 class="h6">Content</h3>
-        <div class="form-text text-muted">What is the campaign content?</div>
         <div class="mb-4"></div>
+        <h6 class="font-weight-bold">Content</h6>
+        <div class="form-text text-muted">What is the campaign content?</div>
+        <div class="mb-3"></div>
 
         <?= $field->select(
                 $form,
@@ -51,10 +49,10 @@ use Mailery\Widget\Select\Select;
                 ]
             ); ?>
 
-        <div class="mt-5"></div>
-        <h3 class="h6">Select recipients</h3>
-        <div class="form-text text-muted">Who will this campaign be sent to?</div>
         <div class="mb-4"></div>
+        <h6 class="font-weight-bold">Select recipients</h6>
+        <div class="form-text text-muted">Who will this campaign be sent to?</div>
+        <div class="mb-3"></div>
 
         <?= $field->select(
                 $form,
@@ -71,7 +69,7 @@ use Mailery\Widget\Select\Select;
 
         <?= $field->submitButton()
                 ->class('btn btn-primary float-right mt-2')
-                ->value('Save'); ?>
+                ->value($form->hasEntity() ? 'Save changes' : 'Add campaign'); ?>
 
         <?= Form::end(); ?>
     </div>

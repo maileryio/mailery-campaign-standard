@@ -94,7 +94,7 @@ class DefaultController
             $request->getMethod() === Method::POST
             && $form->load($body)
         ) {
-            if ($form->getChannel() === null) {
+            if ($form->getSender() === null) {
                 return $this->viewRenderer->render('create', compact('form'));
             }
 
