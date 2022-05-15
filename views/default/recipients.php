@@ -36,18 +36,18 @@ $this->setTitle('Edit campaign #' . $campaign->getId());
                 ->id('campaign-form')
                 ->begin(); ?>
 
-        <h6 class="font-weight-bold">Subject and sender</h6>
-        <div class="form-text text-muted">What is the subject line of the campaign?</div>
+        <h6 class="font-weight-bold">Define recipients</h6>
+        <div class="form-text text-muted">Who will this campaign be sent to?</div>
         <div class="mb-3"></div>
-
-        <?= $field->text($form, 'name')->autofocus(); ?>
 
         <?= $field->select(
                 $form,
-                'sender',
+                'groups',
                 [
                     'class' => Select::class,
-                    'items()' => [$form->getSenderListOptions()],
+                    'items()' => [$form->getGroupListOptions()],
+                    'multiple()' => [true],
+                    'taggable()' => [true],
                     'searchable()' => [false],
                     'clearable()' => [false],
                 ]

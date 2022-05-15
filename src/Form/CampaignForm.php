@@ -84,6 +84,9 @@ class CampaignForm extends FormModel
             fn (Group $group) => $group->getId()
         )->toArray();
 
+        $new->senderRepo = $new->senderRepo->withSameType($entity->getSender());
+        $new->templateRepo = $new->templateRepo->withSameType($entity->getTemplate());
+
         return $new;
     }
 

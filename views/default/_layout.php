@@ -37,10 +37,6 @@ $this->setTitle($campaign->getName());
                                 ])
                                 ->encode(false);
                             ?>
-                            <a class="btn btn-sm btn-secondary mx-sm-1 mb-2" href="<?= $url->generate($campaign->getEditRouteName(), $campaign->getEditRouteParams()); ?>">
-                                <?= Icon::widget()->name('pencil')->options(['class' => 'mr-1']); ?>
-                                Update
-                            </a>
                             <b-dropdown right size="sm" variant="secondary" class="mb-2">
                                 <template v-slot:button-content>
                                     <?= Icon::widget()->name('settings'); ?>
@@ -76,8 +72,24 @@ $this->setTitle($campaign->getName());
                             'url' => $url->generate($campaign->getViewRouteName(), $campaign->getViewRouteParams()),
                         ],
                         [
-                            'label' => 'Edit',
+                            'label' => 'Details',
                             'url' => $url->generate($campaign->getEditRouteName(), $campaign->getEditRouteParams()),
+                        ],
+                        [
+                            'label' => 'Content',
+                            'url' => $url->generate('/campaign/standard/content', ['id' => $campaign->getId()]),
+                        ],
+                        [
+                            'label' => 'Recipients',
+                            'url' => $url->generate('/campaign/standard/recipients', ['id' => $campaign->getId()]),
+                        ],
+                        [
+                            'label' => 'Tracking',
+                            'url' => $url->generate('/campaign/standard/tracking', ['id' => $campaign->getId()]),
+                        ],
+                        [
+                            'label' => 'Schedule',
+                            'url' => $url->generate('/campaign/standard/schedule', ['id' => $campaign->getId()]),
                         ],
                     ])
                     ->options([

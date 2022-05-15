@@ -5,6 +5,7 @@ use Mailery\Sender\Email\Model\SenderLabel;
 use Yiisoft\Html\Html;
 use Yiisoft\Form\Widget\Form;
 use Yiisoft\Yii\Widgets\ContentDecorator;
+use Yiisoft\Yii\DataView\DetailView;
 
 /** @var Yiisoft\Form\Widget\Field $field */
 /** @var Yiisoft\Yii\WebView $this */
@@ -24,48 +25,56 @@ $this->setTitle($campaign->getName());
 
 <div class="mb-2"></div>
 <div class="row">
-    <div class="col-12 col-xl-4">
-        <?= FlashMessage::widget(); ?>
+    <div class="col-12">
+        <h6 class="font-weight-bold">General details</h6>
     </div>
 </div>
+
 <div class="mb-2"></div>
 <div class="row">
-    <div class="col-md-4">
-        <h3 class="h6">Test send this campaign</h3>
-        <div class="mb-4"></div>
+    <div class="col-12">
+        <p>
+            <strong class="h6">Subject</strong>
+            <span class="border border-light rounded bg-light text-dark p-1"><?= Html::encode($campaign->getName()) ?></span>
+        </p>
+        <p>
+            <strong class="h6">From</strong>
+            <span class="border border-light rounded bg-light text-dark p-1"><?= Html::encode(new SenderLabel($campaign->getSender()->getName(), $campaign->getSender()->getEmail())) ?></span>
+        </p>
+        <p>
+            <strong class="h6">Reply to</strong>
+            <span class="border border-light rounded bg-light text-dark p-1"><?= Html::encode(new SenderLabel($campaign->getSender()->getReplyName(), $campaign->getSender()->getReplyEmail())) ?></span>
+        </p>
 
-        <?= Form::widget()
-                ->action($url->generate('/campaign/sendout/test', ['id' => $campaign->getId()]))
-                ->csrf($csrf)
-                ->id('campaign-test-form')
-                ->begin(); ?>
-
-        <?= $field->text($testForm, 'recipients'); ?>
-        <div class="form-text text-muted">Enter unlimited number of addresses, separated by a commas, ex. <?= Html::encode('"Bob Smith" <bob@company.com>, joe@company.com') ?></div>
-
-        <?= $field->submitButton()
-                ->class('btn btn-outline-secondary float-right mt-2')
-                ->value('Test send this newsletter'); ?>
-
-        <?= Form::end(); ?>
+        <a class="btn btn-outline-secondary float-right mt-2" href="<?= $url->generate($campaign->getEditRouteName(), $campaign->getEditRouteParams()); ?>">
+            Edit details
+        </a>
     </div>
-    <div class="col-md-8">
-        <div class="callout callout-info">
-            <p>
-                <strong class="h6">From</strong>
-                <span class="border border-light rounded bg-light text-dark p-1"><?= Html::encode(new SenderLabel($campaign->getSender()->getName(), $campaign->getSender()->getEmail())) ?></span>
-            </p>
-            <p>
-                <strong class="h6">Reply to</strong>
-                <span class="border border-light rounded bg-light text-dark p-1"><?= Html::encode(new SenderLabel($campaign->getSender()->getReplyName(), $campaign->getSender()->getReplyEmail())) ?></span>
-            </p>
-            <p>
-                <strong class="h6">Subject</strong>
-                <span class="border border-light rounded bg-light text-dark p-1"><?= Html::encode($campaign->getName()) ?></span>
-            </p>
+</div>
+
+<div class="mb-2"></div>
+<div class="row">
+    <div class="col-12">
+        <h6 class="font-weight-bold">Content</h6>
+    </div>
+</div>
+
+<div class="mb-2"></div>
+<div class="row">
+    <div class="col-12">
+        <div class="row no-gutters">
+            <div class="col-3">
+
+                <!--<iframe class="border-0 w-100 min-vh-100" src="<?= $url->generate('/campaign/standard/preview', ['id' => $campaign->getId()]) ?>"></iframe>-->
+            </div>
+            <div class="col-auto">
+                ...
+            </div>
         </div>
 
-        <iframe class="border-0 w-100 min-vh-100" src="<?= $url->generate('/campaign/standard/preview', ['id' => $campaign->getId()]) ?>"></iframe>
+        <a class="btn btn-outline-secondary float-right mt-2" href="<?= $url->generate('/campaign/standard/content', ['id' => $campaign->getId()]); ?>">
+            Edit content
+        </a>
     </div>
 </div>
 

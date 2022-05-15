@@ -104,7 +104,7 @@ class DefaultController
 
                 return $this->responseFactory
                     ->createResponse(Status::FOUND)
-                    ->withHeader(Header::LOCATION, $this->urlGenerator->generate('/campaign/standard/view', ['id' => $campaign->getId()]));
+                    ->withHeader(Header::LOCATION, $this->urlGenerator->generate($campaign->getViewRouteName(), $campaign->getViewRouteParams()));
             }
         }
 
@@ -143,10 +143,112 @@ class DefaultController
 
             return $this->responseFactory
                 ->createResponse(Status::FOUND)
-                ->withHeader(Header::LOCATION, $this->urlGenerator->generate('/campaign/standard/view', ['id' => $campaign->getId()]));
+                ->withHeader(Header::LOCATION, $this->urlGenerator->generate($campaign->getViewRouteName(), $campaign->getViewRouteParams()));
         }
 
         return $this->viewRenderer->render('edit', compact('form', 'campaign'));
+    }
+
+    /**
+     * @param Request $request
+     * @param CurrentRoute $currentRoute
+     * @param ValidatorInterface $validator
+     * @param FlashInterface $flash
+     * @param CampaignForm $form
+     * @return Response
+     */
+    public function content(Request $request, CurrentRoute $currentRoute, ValidatorInterface $validator, FlashInterface $flash, CampaignForm $form): Response
+    {
+        $body = $request->getParsedBody();
+        $campaignId = $currentRoute->getArgument('id');
+        if (empty($campaignId) || ($campaign = $this->campaignRepo->findByPK($campaignId)) === null) {
+            return $this->responseFactory->createResponse(Status::NOT_FOUND);
+        }
+
+        $form = $form->withEntity($campaign);
+
+        if ($request->getMethod() === Method::POST && $form->load($body) && $validator->validate($form)->isValid()) {
+            $valueObject = CampaignValueObject::fromForm($form);
+            $this->campaignCrudService->update($campaign, $valueObject);
+
+            $flash->add(
+                'success',
+                [
+                    'body' => 'Data have been saved!',
+                ],
+                true
+            );
+
+            return $this->responseFactory
+                ->createResponse(Status::FOUND)
+                ->withHeader(Header::LOCATION, $this->urlGenerator->generate($campaign->getViewRouteName(), $campaign->getViewRouteParams()));
+        }
+
+        return $this->viewRenderer->render('content', compact('form', 'campaign'));
+    }
+
+    /**
+     * @param Request $request
+     * @param CurrentRoute $currentRoute
+     * @param ValidatorInterface $validator
+     * @param FlashInterface $flash
+     * @param CampaignForm $form
+     * @return Response
+     */
+    public function recipients(Request $request, CurrentRoute $currentRoute, ValidatorInterface $validator, FlashInterface $flash, CampaignForm $form): Response
+    {
+        $body = $request->getParsedBody();
+        $campaignId = $currentRoute->getArgument('id');
+        if (empty($campaignId) || ($campaign = $this->campaignRepo->findByPK($campaignId)) === null) {
+            return $this->responseFactory->createResponse(Status::NOT_FOUND);
+        }
+
+        $form = $form->withEntity($campaign);
+
+        if ($request->getMethod() === Method::POST && $form->load($body) && $validator->validate($form)->isValid()) {
+            $valueObject = CampaignValueObject::fromForm($form);
+            $this->campaignCrudService->update($campaign, $valueObject);
+
+            $flash->add(
+                'success',
+                [
+                    'body' => 'Data have been saved!',
+                ],
+                true
+            );
+
+            return $this->responseFactory
+                ->createResponse(Status::FOUND)
+                ->withHeader(Header::LOCATION, $this->urlGenerator->generate($campaign->getViewRouteName(), $campaign->getViewRouteParams()));
+        }
+
+        return $this->viewRenderer->render('recipients', compact('form', 'campaign'));
+    }
+
+    /**
+     * @param Request $request
+     * @param CurrentRoute $currentRoute
+     * @param ValidatorInterface $validator
+     * @param FlashInterface $flash
+     * @param CampaignForm $form
+     * @return Response
+     */
+    public function tracking(Request $request, CurrentRoute $currentRoute, ValidatorInterface $validator, FlashInterface $flash, CampaignForm $form): Response
+    {
+        return $this->responseFactory->createResponse(Status::NOT_FOUND);
+    }
+
+    /**
+     * @param Request $request
+     * @param CurrentRoute $currentRoute
+     * @param ValidatorInterface $validator
+     * @param FlashInterface $flash
+     * @param CampaignForm $form
+     * @return Response
+     */
+    public function schedule(Request $request, CurrentRoute $currentRoute, ValidatorInterface $validator, FlashInterface $flash, CampaignForm $form): Response
+    {
+        return $this->responseFactory->createResponse(Status::NOT_FOUND);
     }
 
     /**

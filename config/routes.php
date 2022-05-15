@@ -21,6 +21,18 @@ return [
             Route::methods(['GET', 'POST'], '/campaign/standard/edit/{id:\d+}')
                 ->name('/campaign/standard/edit')
                 ->action([DefaultController::class, 'edit']),
+            Route::methods(['GET', 'POST'], '/campaign/standard/content/{id:\d+}')
+                ->name('/campaign/standard/content')
+                ->action([DefaultController::class, 'content']),
+            Route::methods(['GET', 'POST'], '/campaign/standard/recipients/{id:\d+}')
+                ->name('/campaign/standard/recipients')
+                ->action([DefaultController::class, 'recipients']),
+            Route::methods(['GET', 'POST'], '/campaign/standard/tracking/{id:\d+}')
+                ->name('/campaign/standard/tracking')
+                ->action([DefaultController::class, 'tracking']),
+            Route::methods(['GET', 'POST'], '/campaign/standard/schedule/{id:\d+}')
+                ->name('/campaign/standard/schedule')
+                ->action([DefaultController::class, 'schedule']),
             Route::delete('/campaign/standard/delete/{id:\d+}')
                 ->name('/campaign/standard/delete')
                 ->action([DefaultController::class, 'delete']),

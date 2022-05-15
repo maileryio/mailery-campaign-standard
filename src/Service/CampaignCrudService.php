@@ -65,8 +65,6 @@ class CampaignCrudService
         $campaign = $campaign
             ->setBrand($this->brand)
             ->setName($valueObject->getName())
-            ->setSender($valueObject->getSender())
-            ->setTemplate($valueObject->getTemplate())
         ;
 
         foreach ($campaign->getGroups() as $group) {
