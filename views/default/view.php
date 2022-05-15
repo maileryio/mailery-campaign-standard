@@ -7,6 +7,7 @@ use Yiisoft\Form\Widget\Form;
 use Yiisoft\Yii\Widgets\ContentDecorator;
 use Yiisoft\Yii\DataView\DetailView;
 
+/** @var Yiisoft\Assets\AssetManager $assetManager */
 /** @var Yiisoft\Form\Widget\Field $field */
 /** @var Yiisoft\Yii\WebView $this */
 /** @var Psr\Http\Message\ServerRequestInterface $request */
@@ -64,7 +65,7 @@ $this->setTitle($campaign->getName());
     <div class="col-12">
         <div class="row no-gutters">
             <div class="col-3">
-
+                <?= $assetManager->getAssetUrl(Mailery\Campaign\Assets\CampaignAssetBundle::class, 'images/empty-image-bg.svg') ?>
                 <!--<iframe class="border-0 w-100 min-vh-100" src="<?= $url->generate('/campaign/standard/preview', ['id' => $campaign->getId()]) ?>"></iframe>-->
             </div>
             <div class="col-auto">
