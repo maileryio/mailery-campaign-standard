@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 
+use Mailery\Icon\Icon;
 use Mailery\Web\Widget\FlashMessage;
 use Mailery\Sender\Email\Model\SenderLabel;
 use Yiisoft\Html\Html;
@@ -63,13 +64,24 @@ $this->setTitle($campaign->getName());
 <div class="mb-2"></div>
 <div class="row">
     <div class="col-12">
-        <div class="row no-gutters">
-            <div class="col-3">
-                <?= $assetManager->getAssetUrl(Mailery\Campaign\Assets\CampaignAssetBundle::class, 'images/empty-image-bg.svg') ?>
-                <!--<iframe class="border-0 w-100 min-vh-100" src="<?= $url->generate('/campaign/standard/preview', ['id' => $campaign->getId()]) ?>"></iframe>-->
+        <div class="camp-view-content d-flex">
+            <!--<?= $assetManager->getAssetUrl(Mailery\Campaign\Assets\CampaignAssetBundle::class, 'images/empty-image-bg.svg') ?>-->
+            <div class="camp-view-content__preview">
+                <iframe
+                    src="<?= $url->generate('/campaign/standard/preview', ['id' => $campaign->getId()]) ?>"
+                    scrolling="no">
+                </iframe>
+
+                <div class="camp-view-content__preview--overlay d-flex justify-content-center align-items-center" v-b-modal.modal-preview>
+                    <div class="flex-grow-1 text-center">
+                        <?= Icon::widget()->name('magnify'); ?>
+                        <p class="font-weight-bold">Preview</p>
+                    </div>
+                </div>
             </div>
-            <div class="col-auto">
-                ...
+
+            <div class="camp-view-content__details ml-4">
+                <h5>Card title</h5>
             </div>
         </div>
 
@@ -78,5 +90,12 @@ $this->setTitle($campaign->getName());
         </a>
     </div>
 </div>
+
+<b-modal id="modal-preview" centered hide-footer>
+    <iframe
+        src="<?= $url->generate('/campaign/standard/preview', ['id' => $campaign->getId()]) ?>"
+        scrolling="no">
+    </iframe>
+</b-modal>
 
 <?= ContentDecorator::end() ?>
