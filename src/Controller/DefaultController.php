@@ -18,6 +18,7 @@ use Mailery\Campaign\Repository\CampaignRepository;
 use Mailery\Brand\BrandLocatorInterface;
 use Mailery\Campaign\Standard\Service\CampaignCrudService;
 use Mailery\Campaign\Standard\ValueObject\CampaignValueObject;
+use Mailery\Subscriber\Counter\SubscriberCounter;
 use Yiisoft\Validator\ValidatorInterface;
 use Yiisoft\Session\Flash\FlashInterface;
 use Yiisoft\Router\CurrentRoute;
@@ -50,17 +51,18 @@ class DefaultController
 
     /**
      * @param CurrentRoute $currentRoute
+     * @param SubscriberCounter $subscriberCounter
      * @param SendTestForm $testForm
      * @return Response
      */
-    public function view(CurrentRoute $currentRoute, SendTestForm $testForm): Response
+    public function view(CurrentRoute $currentRoute, SubscriberCounter $subscriberCounter, SendTestForm $testForm): Response
     {
         $campaignId = $currentRoute->getArgument('id');
         if (empty($campaignId) || ($campaign = $this->campaignRepo->findByPK($campaignId)) === null) {
             return $this->responseFactory->createResponse(Status::NOT_FOUND);
         }
 
-        return $this->viewRenderer->render('view', compact('campaign', 'testForm'));
+        return $this->viewRenderer->render('view', compact('campaign', 'subscriberCounter', 'testForm'));
     }
 
     /**

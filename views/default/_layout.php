@@ -13,30 +13,49 @@ use Yiisoft\Yii\Bootstrap5\Nav;
 
 $this->setTitle($campaign->getName());
 
+$status = $campaign->getStatus();
+
 ?><div class="row">
     <div class="col-12">
         <div class="card mb-3">
             <div class="card-body">
                 <div class="row">
                     <div class="col-md">
-                        <h4 class="mb-0">Campaign #<?= $campaign->getId(); ?></h4>
+                        <h4 class="mb-0">Campaign #<?= $campaign->getId(); ?> <span class="badge <?= $status->getCssClass(); ?> align-top ml-2"><?= $status->getLabel(); ?></span></h4>
                         <p class="mt-1 mb-0 small">
                             Changed at <?= DateTimeFormat::widget()->dateTime($campaign->getUpdatedAt())->run() ?>
                         </p>
                     </div>
                     <div class="col-auto">
                         <div class="btn-toolbar float-right">
-                            <?= Link::widget()
-                                ->csrf($csrf)
-                                ->label(Icon::widget()->name('delete')->options(['class' => 'mr-1'])->render() . ' Delete')
-                                ->method('delete')
-                                ->href($url->generate($campaign->getDeleteRouteName(), $campaign->getDeleteRouteParams()))
-                                ->confirm('Are you sure?')
-                                ->options([
-                                    'class' => 'btn btn-sm btn-danger mx-sm-1 mb-2',
-                                ])
-                                ->encode(false);
-                            ?>
+                            <?php if ($status->isScheduled()) { ?>
+                                <?= Link::widget()
+                                    ->csrf($csrf)
+                                    ->label(Icon::widget()->name('cancel')->options(['class' => 'mr-1'])->render() . ' Cancel schedule')
+                                    ->method('post')
+                                    ->href($url->generate('/campaign/standard/schedule', ['id' => $campaign->getId()]))
+                                    ->confirm('Are you sure?')
+                                    ->options([
+                                        'class' => 'btn btn-sm btn-secondary mx-sm-1 mb-2',
+                                    ])
+                                    ->encode(false);
+                                ?>
+                            <?php } else { ?>
+                                <a class="btn btn-sm btn-outline-secondary mx-sm-1 mb-2" href="<?= $url->generate('/campaign/standard/schedule', ['id' => $campaign->getId()]); ?>">
+                                    Schedule
+                                </a>
+                                <?= Link::widget()
+                                    ->csrf($csrf)
+                                    ->label('Send immediately')
+                                    ->method('post')
+                                    ->href($url->generate('/campaign/standard/schedule', ['id' => $campaign->getId()]))
+                                    ->confirm('Are you sure?')
+                                    ->options([
+                                        'class' => 'btn btn-sm btn-primary mx-sm-1 mb-2',
+                                    ]);
+                                ?>
+                            <?php } ?>
+
                             <b-dropdown right size="sm" variant="secondary" class="mb-2">
                                 <template v-slot:button-content>
                                     <?= Icon::widget()->name('settings'); ?>
@@ -54,6 +73,17 @@ $this->setTitle($campaign->getName());
                         </div>
                     </div>
                 </div>
+
+                <?php if ($status->isScheduled()) { ?>
+                    <div class="mb-4"></div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="alert alert-warning" role="alert">
+                                Campaign will be sent on <?= DateTimeFormat::widget()->dateTime($campaign->getUpdatedAt())->run() ?>
+                            </div>
+                        </div>
+                    </div>
+                <?php } ?>
             </div>
         </div>
     </div>
