@@ -4,7 +4,6 @@ use Mailery\Icon\Icon;
 use Mailery\Web\Widget\SizeUnitsFormat;
 use Mailery\Campaign\Standard\Entity\StandardCampaign as Campaign;
 use Mailery\Sender\Email\Model\SenderLabel;
-use Mailery\Subscriber\Entity\Group;
 use Yiisoft\Html\Html;
 use Yiisoft\Form\Widget\Form;
 use Yiisoft\Yii\Widgets\ContentDecorator;
