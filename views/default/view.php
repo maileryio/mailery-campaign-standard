@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 use Mailery\Icon\Icon;
-use Mailery\Web\Widget\SizeUnitsFormat;
+use Mailery\Web\Widget\ByteUnitsFormat;
 use Mailery\Campaign\Standard\Entity\StandardCampaign as Campaign;
 use Mailery\Sender\Email\Model\SenderLabel;
 use Yiisoft\Html\Html;
@@ -126,7 +126,7 @@ $this->setTitle($campaign->getName());
                         <p class="d-flex align-items-center mb-0">
                             <?= Icon::widget()->name('check-circle-outline')->options(['class' => 'text-success h5']) ?>
                             <span class="mb-2 ml-2">
-                                Total size of one email: <?= SizeUnitsFormat::widget()->string($campaign->getTemplate()->getHtmlContent()) ?>
+                                Total size of one email: <?= ByteUnitsFormat::widget()->string($campaign->getTemplate()->getHtmlContent()) ?>
                                 <?= Icon::widget()
                                     ->name('help-circle-outline')
                                     ->options([
