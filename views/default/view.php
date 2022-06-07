@@ -190,7 +190,7 @@ $this->setTitle($campaign->getName());
     <div class="col-md">
         <h6>
             <span class="font-weight-bold">Recipients</span>
-            <span class="ml-2">5 <span class="text-muted">/ 10</span></span>
+            <span class="ml-2"><?= $subscriberCounter->getActiveCount() ?> <span class="text-muted">/ <?= $subscriberCounter->getTotalCount() ?></span></span>
             <?= Icon::widget()
                 ->name('help-circle-outline')
                 ->options([

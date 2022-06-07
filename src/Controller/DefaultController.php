@@ -62,6 +62,8 @@ class DefaultController
             return $this->responseFactory->createResponse(Status::NOT_FOUND);
         }
 
+        $subscriberCounter = $subscriberCounter->withGroups(...$campaign->getGroups()->toArray());
+
         return $this->viewRenderer->render('view', compact('campaign', 'subscriberCounter', 'testForm'));
     }
 
