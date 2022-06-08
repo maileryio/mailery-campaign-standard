@@ -12,7 +12,7 @@ use Yiisoft\Yii\Widgets\ContentDecorator;
 /** @var Yiisoft\Form\FormModelInterface $form */
 /** @var Yiisoft\Yii\View\Csrf $csrf */
 
-$this->setTitle('Edit campaign #' . $campaign->getId());
+$this->setTitle('Campaign tracking #' . $campaign->getId());
 
 ?>
 
@@ -33,25 +33,41 @@ $this->setTitle('Edit campaign #' . $campaign->getId());
     <div class="col-12">
         <?= Form::widget()
                 ->csrf($csrf)
-                ->id('campaign-form')
+                ->id('campaign-tracking-form')
                 ->begin(); ?>
 
-        <h6 class="font-weight-bold">Subject and sender</h6>
-        <div class="form-text text-muted">What is the subject line of the campaign?</div>
-        <div class="mb-3"></div>
+        <?= $field->select(
+            $form,
+            'trackClicks',
+            [
+                'class' => Select::class,
+                'items()' => [$form->getBooleanListOptions()],
+                'clearable()' => [false],
+                'searchable()' => [false],
+            ]
+        ); ?>
 
         <?= $field->select(
-                $form,
-                'sender',
-                [
-                    'class' => Select::class,
-                    'items()' => [$form->getSenderListOptions()],
-                    'searchable()' => [false],
-                    'clearable()' => [false],
-                ]
-            ); ?>
+            $form,
+            'trackOpens',
+            [
+                'class' => Select::class,
+                'items()' => [$form->getBooleanListOptions()],
+                'clearable()' => [false],
+                'searchable()' => [false],
+            ]
+        ); ?>
 
-        <?= $field->text($form, 'name')->autofocus(); ?>
+        <?= $field->select(
+            $form,
+            'enableUtmTags',
+            [
+                'class' => Select::class,
+                'items()' => [$form->getBooleanListOptions()],
+                'clearable()' => [false],
+                'searchable()' => [false],
+            ]
+        ); ?>
 
         <?= $field->submitButton()
                 ->class('btn btn-primary float-right mt-2')

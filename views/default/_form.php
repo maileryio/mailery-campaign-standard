@@ -18,8 +18,6 @@ use Mailery\Widget\Select\Select;
 <div class="form-text text-muted">What is the subject line of the campaign?</div>
 <div class="mb-3"></div>
 
-<?= $field->text($form, 'name')->autofocus(); ?>
-
 <?= $field->select(
         $form,
         'sender',
@@ -30,6 +28,8 @@ use Mailery\Widget\Select\Select;
             'clearable()' => [false],
         ]
     ); ?>
+
+<?= $field->text($form, 'name')->autofocus(); ?>
 
 <div class="mb-4"></div>
 <h6 class="font-weight-bold">Content</h6>

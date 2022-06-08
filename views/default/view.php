@@ -2,6 +2,7 @@
 
 use Mailery\Icon\Icon;
 use Mailery\Web\Widget\ByteUnitsFormat;
+use Mailery\Web\Widget\BooleanBadge;
 use Mailery\Campaign\Standard\Entity\StandardCampaign as Campaign;
 use Mailery\Sender\Email\Model\SenderLabel;
 use Yiisoft\Html\Html;
@@ -252,21 +253,21 @@ $this->setTitle($campaign->getName());
         <table class="table table-top-borderless">
             <tbody>
                 <tr>
-                    <td>Track opens</td>
+                    <td>Track clicks</td>
                     <td>
-                        <span class="badge badge-success">Enable</span>
+                        <?= BooleanBadge::widget()->value($campaign->getTrackClicks()) ?>
                     </td>
                 </tr>
                 <tr>
-                    <td>Track clicks</td>
+                    <td>Track opens</td>
                     <td>
-                        <span class="badge badge-success">Enable</span>
+                        <?= BooleanBadge::widget()->value($campaign->getTrackOpens()) ?>
                     </td>
                 </tr>
                 <tr>
                     <td>Enable UTM tags</td>
                     <td>
-                        <span class="badge badge-success">Enable</span>
+                        <?= BooleanBadge::widget()->value($campaign->getEnableUtmTags()) ?>
                     </td>
                 </tr>
             </tbody>

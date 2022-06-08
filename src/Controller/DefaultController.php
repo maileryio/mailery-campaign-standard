@@ -12,12 +12,15 @@ use Yiisoft\Http\Header;
 use Yiisoft\Router\UrlGeneratorInterface as UrlGenerator;
 use Mailery\Campaign\Form\SendTestForm;
 use Mailery\Campaign\Standard\Form\CampaignForm;
+use Mailery\Campaign\Standard\Form\CampaignTrackingForm;
 use Yiisoft\Yii\View\ViewRenderer;
 use Psr\Http\Message\ResponseFactoryInterface as ResponseFactory;
 use Mailery\Campaign\Repository\CampaignRepository;
 use Mailery\Brand\BrandLocatorInterface;
 use Mailery\Campaign\Standard\Service\CampaignCrudService;
+use Mailery\Campaign\Standard\Service\CampaignTrackingCrudService;
 use Mailery\Campaign\Standard\ValueObject\CampaignValueObject;
+use Mailery\Campaign\Standard\ValueObject\CampaignTrackingValueObject;
 use Mailery\Subscriber\Counter\SubscriberCounter;
 use Yiisoft\Validator\ValidatorInterface;
 use Yiisoft\Session\Flash\FlashInterface;
@@ -31,6 +34,7 @@ class DefaultController
      * @param UrlGenerator $urlGenerator
      * @param CampaignRepository $campaignRepo
      * @param CampaignCrudService $campaignCrudService
+     * @param CampaignTrackingCrudService $campaignTrackingCrudService
      * @param BrandLocatorInterface $brandLocator
      */
     public function __construct(
@@ -39,6 +43,7 @@ class DefaultController
         private UrlGenerator $urlGenerator,
         private CampaignRepository $campaignRepo,
         private CampaignCrudService $campaignCrudService,
+        private CampaignTrackingCrudService $campaignTrackingCrudService,
         BrandLocatorInterface $brandLocator
     ) {
         $this->viewRenderer = $viewRenderer
@@ -144,10 +149,6 @@ class DefaultController
                 ],
                 true
             );
-
-            return $this->responseFactory
-                ->createResponse(Status::FOUND)
-                ->withHeader(Header::LOCATION, $this->urlGenerator->generate($campaign->getViewRouteName(), $campaign->getViewRouteParams()));
         }
 
         return $this->viewRenderer->render('edit', compact('form', 'campaign'));
@@ -182,10 +183,6 @@ class DefaultController
                 ],
                 true
             );
-
-            return $this->responseFactory
-                ->createResponse(Status::FOUND)
-                ->withHeader(Header::LOCATION, $this->urlGenerator->generate($campaign->getViewRouteName(), $campaign->getViewRouteParams()));
         }
 
         return $this->viewRenderer->render('content', compact('form', 'campaign'));
@@ -220,10 +217,6 @@ class DefaultController
                 ],
                 true
             );
-
-            return $this->responseFactory
-                ->createResponse(Status::FOUND)
-                ->withHeader(Header::LOCATION, $this->urlGenerator->generate($campaign->getViewRouteName(), $campaign->getViewRouteParams()));
         }
 
         return $this->viewRenderer->render('recipients', compact('form', 'campaign'));
@@ -234,12 +227,33 @@ class DefaultController
      * @param CurrentRoute $currentRoute
      * @param ValidatorInterface $validator
      * @param FlashInterface $flash
-     * @param CampaignForm $form
+     * @param CampaignTrackingForm $form
      * @return Response
      */
-    public function tracking(Request $request, CurrentRoute $currentRoute, ValidatorInterface $validator, FlashInterface $flash, CampaignForm $form): Response
+    public function tracking(Request $request, CurrentRoute $currentRoute, ValidatorInterface $validator, FlashInterface $flash, CampaignTrackingForm $form): Response
     {
-        return $this->responseFactory->createResponse(Status::NOT_FOUND);
+        $body = $request->getParsedBody();
+        $campaignId = $currentRoute->getArgument('id');
+        if (empty($campaignId) || ($campaign = $this->campaignRepo->findByPK($campaignId)) === null) {
+            return $this->responseFactory->createResponse(Status::NOT_FOUND);
+        }
+
+        $form = $form->withEntity($campaign);
+
+        if ($request->getMethod() === Method::POST && $form->load($body) && $validator->validate($form)->isValid()) {
+            $valueObject = CampaignTrackingValueObject::fromForm($form);
+            $this->campaignTrackingCrudService->update($campaign, $valueObject);
+
+            $flash->add(
+                'success',
+                [
+                    'body' => 'Data have been saved!',
+                ],
+                true
+            );
+        }
+
+        return $this->viewRenderer->render('tracking', compact('form', 'campaign'));
     }
 
     /**

@@ -9,6 +9,7 @@ use Mailery\Subscriber\Entity\Group;
 
 class CampaignValueObject
 {
+
     /**
      * @var string|null
      */
@@ -27,7 +28,7 @@ class CampaignValueObject
     /**
      * @var Group[]
      */
-    private array $groups = [];
+    private array $groups;
 
     /**
      * @param CampaignForm $form
@@ -75,4 +76,5 @@ class CampaignValueObject
     {
         return $this->groups;
     }
+
 }
