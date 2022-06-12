@@ -28,6 +28,7 @@ class CampaignTrackingCrudService
             ->setTrackClicks($valueObject->getTrackClicks())
             ->setTrackOpens($valueObject->getTrackOpens())
             ->setEnableUtmTags($valueObject->getEnableUtmTags())
+            ->setUtmTags($valueObject->getUtmTags())
         ;
 
         (new EntityWriter($this->orm))->write([$campaign]);

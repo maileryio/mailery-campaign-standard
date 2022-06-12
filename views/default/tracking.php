@@ -36,6 +36,10 @@ $this->setTitle('Campaign tracking #' . $campaign->getId());
                 ->id('campaign-tracking-form')
                 ->begin(); ?>
 
+        <h6 class="font-weight-bold">Tracking configuration</h6>
+        <div class="form-text text-muted">Get your campaign statistics right after the start of sending.</div>
+        <div class="mb-3"></div>
+
         <?= $field->select(
             $form,
             'trackClicks',
@@ -66,8 +70,22 @@ $this->setTitle('Campaign tracking #' . $campaign->getId());
                 'items()' => [$form->getBooleanListOptions()],
                 'clearable()' => [false],
                 'searchable()' => [false],
+                'inputCallback()' => ['(val) => document.querySelector(".utm-tags").classList.toggle("d-none")'],
             ]
         ); ?>
+
+        <div class="utm-tags <?= !$form->getEnableUtmTags() ? 'd-none' : '' ?>">
+            <div class="mb-3"></div>
+            <?= $field->text($form, 'utmSource')->autofocus(); ?>
+
+            <?= $field->text($form, 'utmMedium')->autofocus(); ?>
+
+            <?= $field->text($form, 'utmCampaign')->autofocus(); ?>
+
+            <?= $field->text($form, 'utmContent')->autofocus(); ?>
+
+            <?= $field->text($form, 'utmTerm')->autofocus(); ?>
+        </div>
 
         <?= $field->submitButton()
                 ->class('btn btn-primary float-right mt-2')

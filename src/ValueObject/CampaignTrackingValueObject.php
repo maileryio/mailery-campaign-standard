@@ -2,6 +2,7 @@
 
 namespace Mailery\Campaign\Standard\ValueObject;
 
+use Mailery\Campaign\Field\UtmTags;
 use Mailery\Campaign\Standard\Form\CampaignTrackingForm;
 
 class CampaignTrackingValueObject
@@ -23,6 +24,11 @@ class CampaignTrackingValueObject
     private bool $enableUtmTags;
 
     /**
+     * @var UtmTags|null
+     */
+    private ?UtmTags $utmTags;
+
+    /**
      * @param CampaignTrackingForm $form
      * @return self
      */
@@ -32,6 +38,7 @@ class CampaignTrackingValueObject
         $new->trackClicks = $form->getTrackClicks();
         $new->trackOpens = $form->getTrackOpens();
         $new->enableUtmTags = $form->getEnableUtmTags();
+        $new->utmTags = $form->getUtmTags();
 
         return $new;
     }
@@ -58,6 +65,14 @@ class CampaignTrackingValueObject
     public function getEnableUtmTags(): bool
     {
         return $this->enableUtmTags;
+    }
+
+    /**
+     * @return UtmTags|null
+     */
+    public function getUtmTags(): ?UtmTags
+    {
+        return $this->utmTags;
     }
 
 }

@@ -2,8 +2,9 @@
 
 namespace Mailery\Campaign\Standard\Form;
 
-use Yiisoft\Form\FormModel;
+use Mailery\Campaign\Field\UtmTags;
 use Mailery\Campaign\Standard\Entity\StandardCampaign as Campaign;
+use Yiisoft\Form\FormModel;
 use Yiisoft\Validator\Rule\Required;
 
 class CampaignTrackingForm extends FormModel
@@ -25,6 +26,31 @@ class CampaignTrackingForm extends FormModel
     private bool $enableUtmTags = false;
 
     /**
+     * @var string|null
+     */
+    private ?string $utmSource = null;
+
+    /**
+     * @var string|null
+     */
+    private ?string $utmMedium = null;
+
+    /**
+     * @var string|null
+     */
+    private ?string $utmCampaign = null;
+
+    /**
+     * @var string|null
+     */
+    private ?string $utmContent = null;
+
+    /**
+     * @var string|null
+     */
+    private ?string $utmTerm = null;
+
+    /**
      * @var Campaign|null
      */
     private ?Campaign $entity = null;
@@ -40,6 +66,14 @@ class CampaignTrackingForm extends FormModel
         $new->trackClicks = $entity->getTrackClicks();
         $new->trackOpens = $entity->getTrackOpens();
         $new->enableUtmTags = $entity->getEnableUtmTags();
+
+        if (($utmTags = $entity->getUtmTags()) !== null) {
+            $new->utmSource = $entity->getUtmTags()->getSource();
+            $new->utmMedium = $entity->getUtmTags()->getMedium();
+            $new->utmCampaign = $entity->getUtmTags()->getCampaign();
+            $new->utmContent = $entity->getUtmTags()->getContent();
+            $new->utmTerm = $entity->getUtmTags()->getTerm();
+        }
 
         return $new;
     }
@@ -77,6 +111,23 @@ class CampaignTrackingForm extends FormModel
     }
 
     /**
+     * @return UtmTags|null
+     */
+    public function getUtmTags(): ?UtmTags
+    {
+        if ($this->enableUtmTags === false) {
+            return null;
+        }
+
+        return (new UtmTags())
+            ->setSource($this->utmSource)
+            ->setMedium($this->utmMedium)
+            ->setCampaign($this->utmCampaign)
+            ->setContent($this->utmContent)
+            ->setTerm($this->utmTerm);
+    }
+
+    /**
      * @return array
      */
     public function getAttributeLabels(): array
@@ -85,6 +136,11 @@ class CampaignTrackingForm extends FormModel
             'trackClicks' => 'Track clicks',
             'trackOpens' => 'Track opens',
             'enableUtmTags' => 'Enable UTM tags',
+            'utmSource' => 'UTM_Source',
+            'utmMedium' => 'UTM_Medium',
+            'utmCampaign' => 'UTM_Campaign',
+            'utmContent' => 'UTM_Content',
+            'utmTerm' => 'UTM_Term',
         ];
     }
 
