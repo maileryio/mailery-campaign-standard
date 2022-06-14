@@ -2,7 +2,7 @@
 
 namespace Mailery\Campaign\Standard\ValueObject;
 
-use Mailery\Campaign\Standard\Form\CampaignForm;
+use Mailery\Campaign\Form\CampaignForm;
 use Mailery\Template\Entity\Template;
 use Mailery\Sender\Entity\Sender;
 use Mailery\Subscriber\Entity\Group;

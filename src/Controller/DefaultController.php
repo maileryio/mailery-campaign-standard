@@ -10,17 +10,17 @@ use Yiisoft\Http\Method;
 use Yiisoft\Http\Status;
 use Yiisoft\Http\Header;
 use Yiisoft\Router\UrlGeneratorInterface as UrlGenerator;
+use Mailery\Campaign\Form\CampaignForm;
 use Mailery\Campaign\Form\SendTestForm;
-use Mailery\Campaign\Standard\Form\CampaignForm;
-use Mailery\Campaign\Standard\Form\CampaignTrackingForm;
+use Mailery\Campaign\Form\TrackingForm;
+use Mailery\Campaign\ValueObject\TrackingValueObject;
+use Mailery\Campaign\Service\TrackingCrudService;
 use Yiisoft\Yii\View\ViewRenderer;
 use Psr\Http\Message\ResponseFactoryInterface as ResponseFactory;
 use Mailery\Campaign\Repository\CampaignRepository;
 use Mailery\Brand\BrandLocatorInterface;
 use Mailery\Campaign\Standard\Service\CampaignCrudService;
-use Mailery\Campaign\Standard\Service\CampaignTrackingCrudService;
 use Mailery\Campaign\Standard\ValueObject\CampaignValueObject;
-use Mailery\Campaign\Standard\ValueObject\CampaignTrackingValueObject;
 use Mailery\Subscriber\Counter\SubscriberCounter;
 use Yiisoft\Validator\ValidatorInterface;
 use Yiisoft\Session\Flash\FlashInterface;
@@ -34,7 +34,7 @@ class DefaultController
      * @param UrlGenerator $urlGenerator
      * @param CampaignRepository $campaignRepo
      * @param CampaignCrudService $campaignCrudService
-     * @param CampaignTrackingCrudService $campaignTrackingCrudService
+     * @param TrackingCrudService $trackingCrudService
      * @param BrandLocatorInterface $brandLocator
      */
     public function __construct(
@@ -43,7 +43,7 @@ class DefaultController
         private UrlGenerator $urlGenerator,
         private CampaignRepository $campaignRepo,
         private CampaignCrudService $campaignCrudService,
-        private CampaignTrackingCrudService $campaignTrackingCrudService,
+        private TrackingCrudService $trackingCrudService,
         BrandLocatorInterface $brandLocator
     ) {
         $this->viewRenderer = $viewRenderer
@@ -104,6 +104,7 @@ class DefaultController
             && $form->load($body)
         ) {
             if ($form->getSender() === null) {
+                $validator->validate($form);
                 return $this->viewRenderer->render('create', compact('form'));
             }
 
@@ -227,10 +228,10 @@ class DefaultController
      * @param CurrentRoute $currentRoute
      * @param ValidatorInterface $validator
      * @param FlashInterface $flash
-     * @param CampaignTrackingForm $form
+     * @param TrackingForm $form
      * @return Response
      */
-    public function tracking(Request $request, CurrentRoute $currentRoute, ValidatorInterface $validator, FlashInterface $flash, CampaignTrackingForm $form): Response
+    public function tracking(Request $request, CurrentRoute $currentRoute, ValidatorInterface $validator, FlashInterface $flash, TrackingForm $form): Response
     {
         $body = $request->getParsedBody();
         $campaignId = $currentRoute->getArgument('id');
@@ -241,8 +242,8 @@ class DefaultController
         $form = $form->withEntity($campaign);
 
         if ($request->getMethod() === Method::POST && $form->load($body) && $validator->validate($form)->isValid()) {
-            $valueObject = CampaignTrackingValueObject::fromForm($form);
-            $this->campaignTrackingCrudService->update($campaign, $valueObject);
+            $valueObject = TrackingValueObject::fromForm($form);
+            $this->trackingCrudService->update($campaign, $valueObject);
 
             $flash->add(
                 'success',

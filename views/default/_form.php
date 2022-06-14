@@ -5,7 +5,7 @@ use Mailery\Widget\Select\Select;
 
 /** @var Yiisoft\Form\Widget\Field $field */
 /** @var Yiisoft\View\WebView $this */
-/** @var \Mailery\Campaign\Standard\Form\CampaignForm $form */
+/** @var Mailery\Campaign\Form\CampaignForm $form */
 /** @var Yiisoft\Yii\View\Csrf $csrf */
 
 ?>
