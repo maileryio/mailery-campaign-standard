@@ -12,7 +12,9 @@ use Yiisoft\Http\Header;
 use Yiisoft\Router\UrlGeneratorInterface as UrlGenerator;
 use Mailery\Campaign\Form\CampaignForm;
 use Mailery\Campaign\Form\SendTestForm;
+use Mailery\Campaign\Form\ScheduleForm;
 use Mailery\Campaign\Form\TrackingForm;
+use Mailery\Campaign\ValueObject\ScheduleValueObject;
 use Mailery\Campaign\ValueObject\TrackingValueObject;
 use Mailery\Campaign\Service\TrackingCrudService;
 use Yiisoft\Yii\View\ViewRenderer;
@@ -262,12 +264,35 @@ class DefaultController
      * @param CurrentRoute $currentRoute
      * @param ValidatorInterface $validator
      * @param FlashInterface $flash
-     * @param CampaignForm $form
+     * @param ScheduleForm $form
      * @return Response
      */
-    public function schedule(Request $request, CurrentRoute $currentRoute, ValidatorInterface $validator, FlashInterface $flash, CampaignForm $form): Response
+    public function schedule(Request $request, CurrentRoute $currentRoute, ValidatorInterface $validator, FlashInterface $flash, ScheduleForm $form): Response
     {
-        return $this->responseFactory->createResponse(Status::NOT_FOUND);
+        $body = $request->getParsedBody();
+        $campaignId = $currentRoute->getArgument('id');
+        if (empty($campaignId) || ($campaign = $this->campaignRepo->findByPK($campaignId)) === null) {
+            return $this->responseFactory->createResponse(Status::NOT_FOUND);
+        }
+
+        if (($schedule = $campaign->getSchedule()) !== null) {
+            $form = $form->withEntity($schedule);
+        }
+
+        if ($request->getMethod() === Method::POST && $form->load($body) && $validator->validate($form)->isValid()) {
+            $valueObject = ScheduleValueObject::fromForm($form);
+            $this->scheduleCrudService->update($campaign, $valueObject);
+
+            $flash->add(
+                'success',
+                [
+                    'body' => 'Data have been saved!',
+                ],
+                true
+            );
+        }
+
+        return $this->viewRenderer->render('schedule', compact('form', 'campaign'));
     }
 
     /**

@@ -12,7 +12,7 @@ use Yiisoft\Yii\Widgets\ContentDecorator;
 /** @var Yiisoft\Form\FormModelInterface $form */
 /** @var Yiisoft\Yii\View\Csrf $csrf */
 
-$this->setTitle('Edit campaign #' . $campaign->getId());
+$this->setTitle('Campaign content #' . $campaign->getId());
 
 ?>
 
@@ -33,7 +33,7 @@ $this->setTitle('Edit campaign #' . $campaign->getId());
     <div class="col-12">
         <?= Form::widget()
                 ->csrf($csrf)
-                ->id('campaign-form')
+                ->id('campaign-content-form')
                 ->begin(); ?>
 
         <h6 class="font-weight-bold">Content</h6>

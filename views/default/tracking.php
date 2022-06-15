@@ -70,11 +70,21 @@ $this->setTitle('Campaign tracking #' . $campaign->getId());
                 'items()' => [$form->getBooleanListOptions()],
                 'clearable()' => [false],
                 'searchable()' => [false],
-                'inputCallback()' => ['(val) => document.querySelector(".utm-tags").classList.toggle("d-none")'],
+                'inputCallback()' => [<<<JS
+                    (val) => {
+                        var classList = document.querySelector(".js-utm-tags-details").classList;
+                        if (val == 1) {
+                            classList.remove("d-none");
+                        } else {
+                            classList.add("d-none");
+                        }
+                    }
+                    JS
+                ],
             ]
         ); ?>
 
-        <div class="utm-tags <?= !$form->getEnableUtmTags() ? 'd-none' : '' ?>">
+        <div class="js-utm-tags-details <?= !$form->getEnableUtmTags() ? 'd-none' : '' ?>">
             <div class="mb-3"></div>
             <?= $field->text($form, 'utmSource')->autofocus(); ?>
 
