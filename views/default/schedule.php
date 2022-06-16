@@ -68,7 +68,18 @@ $scheduledSendingType = SendingType::asScheduled();
         ); ?>
 
         <div class="js-schedule-details <?= !$campaign->getSendingType()->isScheduled() ? 'd-none' : '' ?>">
-            <div class="mb-3">dddd</div>
+            <div class="mb-3"></div>
+
+            <?= $field->select(
+                $form,
+                'timezone',
+                [
+                    'class' => Select::class,
+                    'items()' => [$form->getTimezoneListOptions()],
+                    'clearable()' => [false],
+                    'searchable()' => [true],
+                ]
+            ); ?>
         </div>
 
         <?= $field->submitButton()
