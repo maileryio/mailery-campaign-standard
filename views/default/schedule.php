@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 use Mailery\Campaign\Field\SendingType;
+use Mailery\Widget\Datepicker\Datepicker;
 use Mailery\Widget\Select\Select;
 use Mailery\Web\Widget\FlashMessage;
 use Yiisoft\Form\Widget\Form;
@@ -31,17 +32,21 @@ $scheduledSendingType = SendingType::asScheduled();
 </div>
 <div class="mb-2"></div>
 
+<?= Form::widget()
+    ->csrf($csrf)
+    ->id('campaign-schedule-form')
+    ->begin(); ?>
+
 <div class="row">
     <div class="col-12">
-        <?= Form::widget()
-                ->csrf($csrf)
-                ->id('campaign-schedule-form')
-                ->begin(); ?>
-
         <h6 class="font-weight-bold">Schedule your campaign</h6>
         <div class="form-text text-muted">When would you like to send this campaign?</div>
-        <div class="mb-3"></div>
+    </div>
+</div>
 
+<div class="mb-3"></div>
+<div class="row">
+    <div class="col-12">
         <?= $field->select(
             $form,
             'sendingType',
@@ -66,10 +71,41 @@ $scheduledSendingType = SendingType::asScheduled();
                 ],
             ]
         ); ?>
+    </div>
+</div>
 
-        <div class="js-schedule-details <?= !$campaign->getSendingType()->isScheduled() ? 'd-none' : '' ?>">
-            <div class="mb-3"></div>
+<div class="js-schedule-details <?= !$form->getSendingType()->isScheduled() ? 'd-none' : '' ?>">
+    <div class="row">
+        <div class="col-4">
+            <?= $field->select(
+                $form,
+                'date',
+                [
+                    'class' => Datepicker::class,
+                    'type()' => ['date'],
+                    'format()' => ['YYYY-MM-DD'],
+                    'closeOnSelect()' => ['minute'],
+                ]
+            ); ?>
+        </div>
 
+        <div class="col-3">
+            <?= $field->select(
+                $form,
+                'time',
+                [
+                    'class' => Datepicker::class,
+                    'type()' => ['time'],
+                    'format()' => ['HH:mm'],
+                    'minuteOptions()' => [[5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]],
+                    'closeOnSelect()' => ['minute'],
+                ]
+            ); ?>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
             <?= $field->select(
                 $form,
                 'timezone',
@@ -79,15 +115,21 @@ $scheduledSendingType = SendingType::asScheduled();
                     'clearable()' => [false],
                     'searchable()' => [true],
                 ]
-            ); ?>
+            )->hintClass('form-text text-muted'); ?>
+
+            <!--{{moment().format('MMMM Do YYYY, h:mm:ss a');}}-->
         </div>
-
-        <?= $field->submitButton()
-                ->class('btn btn-primary float-right mt-2')
-                ->value('Save changes'); ?>
-
-        <?= Form::end(); ?>
     </div>
 </div>
+
+<div class="row">
+    <div class="col-12">
+        <?= $field->submitButton()
+            ->class('btn btn-primary float-right mt-2')
+            ->value('Save changes'); ?>
+    </div>
+</div>
+
+<?= Form::end(); ?>
 
 <?= ContentDecorator::end() ?>

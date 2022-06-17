@@ -16,6 +16,7 @@ use Mailery\Campaign\Form\ScheduleForm;
 use Mailery\Campaign\Form\TrackingForm;
 use Mailery\Campaign\ValueObject\ScheduleValueObject;
 use Mailery\Campaign\ValueObject\TrackingValueObject;
+use Mailery\Campaign\Service\ScheduleCrudService;
 use Mailery\Campaign\Service\TrackingCrudService;
 use Yiisoft\Yii\View\ViewRenderer;
 use Psr\Http\Message\ResponseFactoryInterface as ResponseFactory;
@@ -36,6 +37,7 @@ class DefaultController
      * @param UrlGenerator $urlGenerator
      * @param CampaignRepository $campaignRepo
      * @param CampaignCrudService $campaignCrudService
+     * @param ScheduleCrudService $scheduleCrudService
      * @param TrackingCrudService $trackingCrudService
      * @param BrandLocatorInterface $brandLocator
      */
@@ -45,6 +47,7 @@ class DefaultController
         private UrlGenerator $urlGenerator,
         private CampaignRepository $campaignRepo,
         private CampaignCrudService $campaignCrudService,
+        private ScheduleCrudService $scheduleCrudService,
         private TrackingCrudService $trackingCrudService,
         BrandLocatorInterface $brandLocator
     ) {
@@ -275,9 +278,7 @@ class DefaultController
             return $this->responseFactory->createResponse(Status::NOT_FOUND);
         }
 
-        if (($schedule = $campaign->getSchedule()) !== null) {
-            $form = $form->withEntity($schedule);
-        }
+        $form = $form->withEntity($campaign);
 
         if ($request->getMethod() === Method::POST && $form->load($body) && $validator->validate($form)->isValid()) {
             $valueObject = ScheduleValueObject::fromForm($form);

@@ -20,6 +20,7 @@
     "require": {
         "php": "^7.4",
         "foxy/foxy": "^1.0",
+        "maileryio/widget-datepicker": "dev-master",
         "maileryio/widget-select": "dev-master"
     },
     "require-dev": {
