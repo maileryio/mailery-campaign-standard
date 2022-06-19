@@ -301,6 +301,25 @@ class DefaultController
      * @param UrlGenerator $urlGenerator
      * @return Response
      */
+    public function scheduleCancel(CurrentRoute $currentRoute): Response
+    {
+        $campaignId = $currentRoute->getArgument('id');
+        if (empty($campaignId) || ($campaign = $this->campaignRepo->findByPK($campaignId)) === null) {
+            return $this->responseFactory->createResponse(Status::NOT_FOUND);
+        }
+
+        $this->scheduleCrudService->delete($campaign);
+
+        return $this->responseFactory
+            ->createResponse(Status::SEE_OTHER)
+            ->withHeader(Header::LOCATION, $_SERVER['HTTP_REFERER'] ?? $this->urlGenerator->generate($campaign->getViewRouteName(), $campaign->getViewRouteParams()));
+    }
+
+    /**
+     * @param CurrentRoute $currentRoute
+     * @param UrlGenerator $urlGenerator
+     * @return Response
+     */
     public function delete(CurrentRoute $currentRoute): Response
     {
         $campaignId = $currentRoute->getArgument('id');

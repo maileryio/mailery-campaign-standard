@@ -23,7 +23,7 @@ $status = $campaign->getStatus();
                     <div class="col-md">
                         <h4 class="mb-0">Campaign #<?= $campaign->getId(); ?> <span class="badge <?= $status->getCssClass(); ?> align-top ml-2"><?= $status->getLabel(); ?></span></h4>
                         <p class="mt-1 mb-0 small">
-                            Changed at <?= DateTimeFormat::widget()->dateTime($campaign->getUpdatedAt())->run() ?>
+                            Changed at <?= DateTimeFormat::widget()->dateTime($campaign->getUpdatedAt()) ?>
                         </p>
                     </div>
                     <div class="col-auto">
@@ -32,8 +32,8 @@ $status = $campaign->getStatus();
                                 <?= Link::widget()
                                     ->csrf($csrf)
                                     ->label(Icon::widget()->name('cancel')->options(['class' => 'mr-1'])->render() . ' Cancel schedule')
-                                    ->method('post')
-                                    ->href($url->generate('/campaign/standard/schedule', ['id' => $campaign->getId()]))
+                                    ->method('delete')
+                                    ->href($url->generate('/campaign/standard/schedule/cancel', ['id' => $campaign->getId()]))
                                     ->confirm('Are you sure?')
                                     ->options([
                                         'class' => 'btn btn-sm btn-secondary mx-sm-1 mb-2',
@@ -79,7 +79,9 @@ $status = $campaign->getStatus();
                     <div class="row">
                         <div class="col">
                             <div class="alert alert-warning" role="alert">
-                                Campaign will be sent on <?= DateTimeFormat::widget()->dateTime($campaign->getUpdatedAt())->run() ?>
+                                Campaign will be sent on
+                                <?= DateTimeFormat::widget()->dateTime($campaign->getSchedule()->getDatetime()) ?>
+                                <?= DateTimeFormat::widget()->format('(P)')->dateTime($campaign->getSchedule()->getDatetime()) ?>
                             </div>
                         </div>
                     </div>
