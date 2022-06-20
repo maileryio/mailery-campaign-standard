@@ -53,9 +53,7 @@ $this->setTitle('Campaign details #' . $campaign->getId());
 
         <?= $field->text($form, 'name')->autofocus(); ?>
 
-        <?= $field->submitButton()
-                ->class('btn btn-primary float-right mt-2')
-                ->value('Save changes'); ?>
+        <?= $this->render('_submit-button', compact('field', 'campaign')) ?>
 
         <?= Form::end(); ?>
     </div>

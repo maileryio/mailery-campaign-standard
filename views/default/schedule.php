@@ -134,9 +134,7 @@ $scheduledSendingType = SendingType::asScheduled();
 
 <div class="row">
     <div class="col-12">
-        <?= $field->submitButton()
-            ->class('btn btn-primary float-right mt-2')
-            ->value('Save changes'); ?>
+        <?= $this->render('_submit-button', compact('field', 'campaign')) ?>
     </div>
 </div>
 

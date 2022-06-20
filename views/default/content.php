@@ -51,9 +51,7 @@ $this->setTitle('Campaign content #' . $campaign->getId());
                 ]
             ); ?>
 
-        <?= $field->submitButton()
-                ->class('btn btn-primary float-right mt-2')
-                ->value('Save changes'); ?>
+        <?= $this->render('_submit-button', compact('field', 'campaign')) ?>
 
         <?= Form::end(); ?>
     </div>

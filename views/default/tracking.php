@@ -97,9 +97,7 @@ $this->setTitle('Campaign tracking #' . $campaign->getId());
             <?= $field->text($form, 'utmTerm')->autofocus(); ?>
         </div>
 
-        <?= $field->submitButton()
-                ->class('btn btn-primary float-right mt-2')
-                ->value('Save changes'); ?>
+        <?= $this->render('_submit-button', compact('field', 'campaign')) ?>
 
         <?= Form::end(); ?>
     </div>
