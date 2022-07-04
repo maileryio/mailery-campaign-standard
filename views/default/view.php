@@ -4,7 +4,8 @@ use Mailery\Icon\Icon;
 use Mailery\Web\Widget\ByteUnitsFormat;
 use Mailery\Web\Widget\BooleanBadge;
 use Mailery\Campaign\Standard\Entity\StandardCampaign as Campaign;
-use Mailery\Sender\Email\Model\SenderLabel;
+use Mailery\Channel\Smtp\Model\EmailIdentificator;
+use Mailery\Widget\Link\Link;
 use Yiisoft\Html\Html;
 use Yiisoft\Form\Widget\Form;
 use Yiisoft\Yii\Widgets\ContentDecorator;
@@ -64,14 +65,14 @@ $this->setTitle($campaign->getName());
                 [
                     'label' => 'From',
                     'value' => function (Campaign $data) {
-                        return new SenderLabel($data->getSender()->getName(), $data->getSender()->getEmail());
+                        return new EmailIdentificator($data->getSender()->getEmail(), $data->getSender()->getName());
                     },
                     'encode' => true,
                 ],
                 [
                     'label' => 'Reply to',
                     'value' => function (Campaign $data) {
-                        return new SenderLabel($data->getSender()->getReplyName(), $data->getSender()->getReplyEmail());
+                        return new EmailIdentificator($data->getSender()->getReplyEmail(), $data->getSender()->getReplyName());
                     },
                     'encode' => true,
                 ],
@@ -166,23 +167,80 @@ $this->setTitle($campaign->getName());
             <?= nl2br(Html::encode($campaign->getTemplate()->getTextContent())); ?>
         </b-modal>
 
-        <b-modal id="modal-send-test" title="Test send this campaign">
-            <template #modal-footer="{ cancel, ok }">
-                <b-button variant="outline-secondary" @click="cancel()">Cancel</b-button>
-                <b-button variant="primary" @click="ok()">Send email</b-button>
-            </template>
+        <ui-listener event="campaign.send-test" v-slot="{ data }">
+            <b-modal id="modal-send-test" title="Test send this campaign" @hidden="() => { mailery.app.$emit('campaign.send-test', {}) }">
+                <template #modal-footer="{ ok }">
+                    <?= Link::widget()
+                        ->csrf($csrf)
+                        ->label(<<<TEXT
+                            <b-spinner v-if="data.loading" small></b-spinner>
+                            <span v-if="data.loading">Sending...</span>
+                            <span v-else>Send email</span>
+                            TEXT
+                        )
+                        ->disabled('data.loading')
+                        ->options([
+                            'class' => 'btn btn-primary',
+                        ])
+                        ->createRequest(<<<JS
+                            () => {
+                                const form = document.getElementById('campaign-test-form');
 
-            <?= Form::widget()
-                ->action($url->generate('/campaign/sendout/test', ['id' => $campaign->getId()]))
-                ->csrf($csrf)
-                ->id('campaign-test-form')
-                ->begin(); ?>
+                                return new Request(
+                                    '{$url->generate('/campaign/sendout/test', ['id' => $campaign->getId()])}',
+                                    {
+                                        method: 'POST',
+                                        body: new URLSearchParams(new FormData(form))
+                                    }
+                                );
+                            }
+                            JS
+                        )
+                        ->beforeRequest(<<<JS
+                            (req) => {
+                                const form = document.getElementById('campaign-test-form');
+                                const isValid = form.reportValidity();
 
-            <?= $field->text($testForm, 'recipients'); ?>
-            <div class="form-text text-muted">Enter addresses, separated by a commas, ex. <?= Html::encode('"Bob Smith" <bob@company.com>, joe@company.com') ?></div>
+                                if (isValid) {
+                                    mailery.app.\$emit('campaign.send-test', { loading: true });
+                                }
+                                return isValid;
+                            }
+                            JS
+                        )
+                        ->afterRequest(<<<JS
+                            (res) => {
+                                if (res.redirected && res.url) {
+                                    window.location.href = res.url;
+                                    return;
+                                } else {
+                                    res.json().then((data) => {
+                                        mailery.app.\$emit('campaign.send-test', { loading: false, success: data.success, message: data.message });
+                                    });
+                                }
+                            }
+                            JS
+                        )
+                        ->encode(false);
+                    ?>
+                </template>
 
-            <?= Form::end(); ?>
-        </b-modal>
+                <b-alert :show="'success' in data" :variant="data.success ? 'success' : 'danger'">
+                    {{ data.message }}
+                </b-alert>
+
+                <?= Form::widget()
+                    ->action($url->generate('/campaign/sendout/test', ['id' => $campaign->getId()]))
+                    ->csrf($csrf)
+                    ->id('campaign-test-form')
+                    ->begin(); ?>
+
+                <?= $field->text($testForm, 'recipients'); ?>
+                <div class="form-text text-muted">Enter addresses, separated by a commas, ex. <?= Html::encode('"Bob Smith" <bob@company.com>, joe@company.com') ?></div>
+
+                <?= Form::end(); ?>
+            </b-modal>
+        </ui-listener>
     </div>
 </div>
 

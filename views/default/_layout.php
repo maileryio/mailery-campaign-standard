@@ -35,6 +35,12 @@ $status = $campaign->getStatus();
                                     ->method('delete')
                                     ->href($url->generate('/campaign/standard/schedule/cancel', ['id' => $campaign->getId()]))
                                     ->confirm('Are you sure?')
+                                    ->afterRequest(<<<JS
+                                        (res) => {
+                                            res.redirected && res.url && (window.location.href = res.url);
+                                        }
+                                        JS
+                                    )
                                     ->options([
                                         'class' => 'btn btn-sm btn-secondary mx-sm-1 mb-2',
                                     ])
@@ -50,6 +56,12 @@ $status = $campaign->getStatus();
                                     ->method('post')
                                     ->href($url->generate('/campaign/standard/schedule', ['id' => $campaign->getId()]))
                                     ->confirm('Are you sure?')
+                                    ->afterRequest(<<<JS
+                                        (res) => {
+                                            res.redirected && res.url && (window.location.href = res.url);
+                                        }
+                                        JS
+                                    )
                                     ->options([
                                         'class' => 'btn btn-sm btn-primary mx-sm-1 mb-2',
                                     ]);

@@ -58,7 +58,7 @@ $scheduledSendingType = SendingType::asScheduled();
                 'searchable()' => [false],
                 'inputCallback()' => [<<<JS
                     (val) => {
-                        mailery.app.events.\$emit('campaign-sending-type-changed', { val });
+                        mailery.app.\$emit('campaign.sending-type.changed', { val });
                     }
                     JS
                 ],
@@ -67,7 +67,7 @@ $scheduledSendingType = SendingType::asScheduled();
     </div>
 </div>
 
-<ui-listener event="campaign-sending-type-changed" v-slot="{ data }">
+<ui-listener event="campaign.sending-type.changed" v-slot="{ data }">
     <div v-if="!!data.val ? data.val === '<?= $scheduledSendingType->getValue() ?>' : <?= json_encode($form->getSendingType()->isScheduled()) ?>">
         <div class="row">
             <div class="col-4">
@@ -110,7 +110,7 @@ $scheduledSendingType = SendingType::asScheduled();
                             'searchable()' => [true],
                             'inputCallback()' => [<<<JS
                                 (val) => {
-                                    mailery.app.events.\$emit('campaign-timezone-changed', { val });
+                                    mailery.app.\$emit('campaign.timezone.changed', { val });
                                 }
                                 JS
                             ],
@@ -118,11 +118,10 @@ $scheduledSendingType = SendingType::asScheduled();
                     )
                     ->encode(false)
                     ->hint(<<<TEXT
-                            Current time in time zone:
-                            <ui-listener event="campaign-timezone-changed" v-slot="{ data }">
-                                <ui-clock format="MMMM Do YYYY, HH:mm:ss" :timezone="data.val ?? '{$form->getTimezone()}'"></ui-clock>
-                            </ui-listener>
-                            • Change this option if your targeted contacts are in a timezone different from yours. This is useful if you have country-specific contact lists.
+                        Current time in time zone:
+                        <ui-listener event="campaign.timezone.changed" v-slot="{ data }">
+                            <ui-clock format="MMMM Do YYYY, HH:mm:ss" :timezone="data.val ?? '{$form->getTimezone()}'"></ui-clock>
+                        </ui-listener> • Change this option if your targeted contacts are in a timezone different from yours. This is useful if you have country-specific contact lists.
                         TEXT
                     )
                     ->hintClass('form-text text-muted')
