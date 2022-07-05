@@ -54,7 +54,7 @@ $status = $campaign->getStatus();
                                     ->csrf($csrf)
                                     ->label('Send immediately')
                                     ->method('post')
-                                    ->href($url->generate('/campaign/standard/schedule', ['id' => $campaign->getId()]))
+                                    ->href($url->generate('/campaign/sendout/create', ['id' => $campaign->getId()]))
                                     ->confirm('Are you sure?')
                                     ->afterRequest(<<<JS
                                         (res) => {

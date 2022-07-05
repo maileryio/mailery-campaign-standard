@@ -14,6 +14,7 @@ use Mailery\Campaign\Form\CampaignForm;
 use Mailery\Campaign\Form\SendTestForm;
 use Mailery\Campaign\Form\ScheduleForm;
 use Mailery\Campaign\Form\TrackingForm;
+use Mailery\Campaign\Field\CampaignStatus;
 use Mailery\Campaign\ValueObject\ScheduleValueObject;
 use Mailery\Campaign\ValueObject\TrackingValueObject;
 use Mailery\Campaign\Service\ScheduleCrudService;
@@ -23,7 +24,7 @@ use Psr\Http\Message\ResponseFactoryInterface as ResponseFactory;
 use Mailery\Campaign\Repository\CampaignRepository;
 use Mailery\Brand\BrandLocatorInterface;
 use Mailery\Campaign\Standard\Service\CampaignCrudService;
-use Mailery\Campaign\Standard\ValueObject\CampaignValueObject;
+use Mailery\Campaign\ValueObject\CampaignValueObject;
 use Mailery\Subscriber\Counter\SubscriberCounter;
 use Yiisoft\Validator\ValidatorInterface;
 use Yiisoft\Session\Flash\FlashInterface;
@@ -114,7 +115,9 @@ class DefaultController
             }
 
             if (empty($body['creating-next-step']) && $validator->validate($form)->isValid()) {
-                $valueObject = CampaignValueObject::fromForm($form);
+                $valueObject = CampaignValueObject::fromForm($form)
+                    ->withStatus(CampaignStatus::asDraft());
+
                 $campaign = $this->campaignCrudService->create($valueObject);
 
                 return $this->responseFactory
@@ -145,7 +148,9 @@ class DefaultController
         $form = $form->withEntity($campaign);
 
         if ($request->getMethod() === Method::POST && $form->load($body) && $validator->validate($form)->isValid()) {
-            $valueObject = CampaignValueObject::fromForm($form);
+            $valueObject = CampaignValueObject::fromForm($form)
+                ->withStatus($campaign->getStatus());
+
             $this->campaignCrudService->update($campaign, $valueObject);
 
             $flash->add(
@@ -179,7 +184,9 @@ class DefaultController
         $form = $form->withEntity($campaign);
 
         if ($request->getMethod() === Method::POST && $form->load($body) && $validator->validate($form)->isValid()) {
-            $valueObject = CampaignValueObject::fromForm($form);
+            $valueObject = CampaignValueObject::fromForm($form)
+                ->withStatus($campaign->getStatus());
+
             $this->campaignCrudService->update($campaign, $valueObject);
 
             $flash->add(
@@ -213,7 +220,9 @@ class DefaultController
         $form = $form->withEntity($campaign);
 
         if ($request->getMethod() === Method::POST && $form->load($body) && $validator->validate($form)->isValid()) {
-            $valueObject = CampaignValueObject::fromForm($form);
+            $valueObject = CampaignValueObject::fromForm($form)
+                ->withStatus($campaign->getStatus());
+
             $this->campaignCrudService->update($campaign, $valueObject);
 
             $flash->add(
@@ -298,7 +307,6 @@ class DefaultController
 
     /**
      * @param CurrentRoute $currentRoute
-     * @param UrlGenerator $urlGenerator
      * @return Response
      */
     public function scheduleCancel(CurrentRoute $currentRoute): Response
@@ -317,7 +325,6 @@ class DefaultController
 
     /**
      * @param CurrentRoute $currentRoute
-     * @param UrlGenerator $urlGenerator
      * @return Response
      */
     public function delete(CurrentRoute $currentRoute): Response

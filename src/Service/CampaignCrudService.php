@@ -3,12 +3,13 @@
 namespace Mailery\Campaign\Standard\Service;
 
 use Cycle\ORM\ORMInterface;
+use Mailery\Campaign\Service\CampaignCrudService as BaseCrudService;
 use Mailery\Campaign\Standard\Entity\StandardCampaign;
-use Mailery\Campaign\Standard\ValueObject\CampaignValueObject;
+use Mailery\Campaign\ValueObject\CampaignValueObject;
 use Mailery\Brand\Entity\Brand;
 use Yiisoft\Yii\Cycle\Data\Writer\EntityWriter;
 
-class CampaignCrudService
+class CampaignCrudService extends BaseCrudService
 {
     /**
      * @var Brand
@@ -20,7 +21,9 @@ class CampaignCrudService
      */
     public function __construct(
         private ORMInterface $orm
-    ) {}
+    ) {
+        parent::__construct($orm);
+    }
 
     /**
      * @param Brand $brand
@@ -45,6 +48,7 @@ class CampaignCrudService
             ->setName($valueObject->getName())
             ->setSender($valueObject->getSender())
             ->setTemplate($valueObject->getTemplate())
+            ->setStatus($valueObject->getStatus())
         ;
         foreach ($valueObject->getGroups() as $group) {
             $campaign->getGroups()->add($group);
@@ -53,45 +57,5 @@ class CampaignCrudService
         (new EntityWriter($this->orm))->write([$campaign]);
 
         return $campaign;
-    }
-
-    /**
-     * @param StandardCampaign $campaign
-     * @param CampaignValueObject $valueObject
-     * @return Campaign
-     */
-    public function update(StandardCampaign $campaign, CampaignValueObject $valueObject): StandardCampaign
-    {
-        $campaign = $campaign
-            ->setBrand($this->brand)
-            ->setName($valueObject->getName())
-        ;
-
-        foreach ($campaign->getGroups() as $group) {
-            $campaign->getGroups()->removeElement($group);
-        }
-
-        foreach ($valueObject->getGroups() as $group) {
-            $campaign->getGroups()->add($group);
-        }
-
-        (new EntityWriter($this->orm))->write([$campaign]);
-
-        return $campaign;
-    }
-
-    /**
-     * @param StandardCampaign $campaign
-     * @return bool
-     */
-    public function delete(StandardCampaign $campaign): bool
-    {
-        foreach ($campaign->getGroups() as $groupPivot) {
-             $campaign->getGroups()->removeElement($groupPivot);
-        }
-
-        (new EntityWriter($this->orm))->delete([$campaign]);
-
-        return true;
     }
 }
