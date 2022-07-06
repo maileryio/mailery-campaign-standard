@@ -324,6 +324,21 @@ class DefaultController
     }
 
     /**
+     * @param Request $request
+     * @param CurrentRoute $currentRoute
+     * @return Response
+     */
+    public function report(CurrentRoute $currentRoute): Response
+    {
+        $campaignId = $currentRoute->getArgument('id');
+        if (empty($campaignId) || ($campaign = $this->campaignRepo->findByPK($campaignId)) === null) {
+            return $this->responseFactory->createResponse(Status::NOT_FOUND);
+        }
+
+        return $this->viewRenderer->render('report', compact('campaign'));
+    }
+
+    /**
      * @param CurrentRoute $currentRoute
      * @return Response
      */

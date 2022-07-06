@@ -5,11 +5,15 @@ use Mailery\Web\Widget\ByteUnitsFormat;
 use Mailery\Web\Widget\BooleanBadge;
 use Mailery\Campaign\Standard\Entity\StandardCampaign as Campaign;
 use Mailery\Channel\Smtp\Model\EmailIdentificator;
+use Mailery\Subscriber\Entity\Group;
 use Mailery\Widget\Link\Link;
 use Yiisoft\Html\Html;
 use Yiisoft\Form\Widget\Form;
 use Yiisoft\Yii\Widgets\ContentDecorator;
 use Yiisoft\Yii\DataView\DetailView;
+use Yiisoft\Data\Paginator\OffsetPaginator;
+use Yiisoft\Data\Reader\Iterable\IterableDataReader;
+use Yiisoft\Yii\DataView\GridView;
 
 /** @var Yiisoft\Assets\AssetManager $assetManager */
 /** @var Yiisoft\Form\Widget\Field $field */
@@ -277,15 +281,51 @@ $this->setTitle($campaign->getName());
 <div class="mb-2"></div>
 <div class="row">
     <div class="col-12">
-        <table class="table table-top-borderless">
-            <tbody>
-                <?php foreach ($campaign->getGroups() as $group) {
-                    ?><tr>
-                        <td><?= $group->getName() ?></td>
-                    </tr><?php
-                } ?>
-            </tbody>
-        </table>
+        <?= GridView::widget()
+            ->layout("{items}\n<div class=\"mb-4\"></div>\n<div class=\"float-right\">{pager}</div>")
+            ->options([
+                'class' => 'table-responsive',
+            ])
+            ->tableOptions([
+                'class' => 'table table-hover',
+            ])
+            ->emptyText('No data')
+            ->emptyTextOptions([
+                'class' => 'text-center text-muted mt-4 mb-4',
+            ])
+            ->paginator(new OffsetPaginator(new IterableDataReader($campaign->getGroups())))
+            ->columns([
+                [
+                    'label()' => ['Name'],
+                    'value()' => [fn (Group $model) => Html::a($model->getName(), $url->generate($model->getViewRouteName(), $model->getViewRouteParams()))],
+                ],
+                [
+                    'label()' => ['Active'],
+                    'value()' => [fn (Group $model) => $subscriberCounter->withGroup($model)->getActiveCount()],
+                    'emptyValue()' => ['0'],
+                ],
+                [
+                    'label()' => ['Unconfirmed'],
+                    'value()' => [fn (Group $model) => $subscriberCounter->withGroup($model)->getUnconfirmedCount()],
+                    'emptyValue()' => ['0'],
+                ],
+                [
+                    'label()' => ['Unsubscribed'],
+                    'value()' => [fn (Group $model) => $subscriberCounter->withGroup($model)->getUnsubscribedCount()],
+                    'emptyValue()' => ['0'],
+                ],
+                [
+                    'label()' => ['Bounced'],
+                    'value()' => [fn (Group $model) => $subscriberCounter->withGroup($model)->getBouncedCount()],
+                    'emptyValue()' => ['0'],
+                ],
+                [
+                    'label()' => ['Marked as spam'],
+                    'value()' => [fn (Group $model) => $subscriberCounter->withGroup($model)->getComplaintCount()],
+                    'emptyValue()' => ['0'],
+                ],
+            ]);
+        ?>
     </div>
 </div>
 

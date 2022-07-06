@@ -46,7 +46,11 @@ $status = $campaign->getStatus();
                                     ])
                                     ->encode(false);
                                 ?>
-                            <?php } else { ?>
+                            <?php } else if($status->isSent()) { ?>
+                                <a class="btn btn-sm btn-primary mx-sm-1 mb-2" href="<?= $url->generate('/campaign/standard/report', ['id' => $campaign->getId()]); ?>">
+                                    See report
+                                </a>
+                            <?php } else if($status->isDraft()) { ?>
                                 <a class="btn btn-sm btn-outline-secondary mx-sm-1 mb-2" href="<?= $url->generate('/campaign/standard/schedule', ['id' => $campaign->getId()]); ?>">
                                     Schedule
                                 </a>
@@ -97,6 +101,13 @@ $status = $campaign->getStatus();
                             </div>
                         </div>
                     </div>
+                <?php } else if($status->isSent()) { ?>
+                    <div class="mb-4"></div>
+                    <div class="row">
+                        <div class="col">
+                            Campaign succesfullly sent
+                        </div>
+                    </div>
                 <?php } ?>
             </div>
         </div>
@@ -110,7 +121,7 @@ $status = $campaign->getStatus();
             <div class="card-body">
                 <?= Nav::widget()
                     ->currentPath($currentRoute->getUri()->getPath())
-                    ->items([
+                    ->items(array_filter([
                         [
                             'label' => 'Overview',
                             'url' => $url->generate($campaign->getViewRouteName(), $campaign->getViewRouteParams()),
@@ -135,7 +146,13 @@ $status = $campaign->getStatus();
                             'label' => 'Schedule',
                             'url' => $url->generate('/campaign/standard/schedule', ['id' => $campaign->getId()]),
                         ],
-                    ])
+                        $status->isSent()
+                            ? [
+                                'label' => 'Report',
+                                'url' => $url->generate('/campaign/standard/report', ['id' => $campaign->getId()]),
+                            ]
+                            : null,
+                    ]))
                     ->options([
                         'class' => 'nav nav-tabs nav-tabs-bordered font-weight-bold',
                     ])

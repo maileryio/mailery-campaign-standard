@@ -37,6 +37,9 @@ return [
                     Route::methods(['GET', 'POST'], '/schedule/{id:\d+}')
                         ->name('/campaign/standard/schedule')
                         ->action([DefaultController::class, 'schedule']),
+                    Route::methods(['GET', 'POST'], '/report/{id:\d+}')
+                        ->name('/campaign/standard/report')
+                        ->action([DefaultController::class, 'report']),
                     Route::delete('/schedule/{id:\d+}/cancel')
                         ->name('/campaign/standard/schedule/cancel')
                         ->action([DefaultController::class, 'scheduleCancel']),
