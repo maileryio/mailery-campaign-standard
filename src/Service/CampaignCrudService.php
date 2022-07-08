@@ -2,7 +2,7 @@
 
 namespace Mailery\Campaign\Standard\Service;
 
-use Cycle\ORM\ORMInterface;
+use Cycle\ORM\EntityManagerInterface;
 use Mailery\Campaign\Service\CampaignCrudService as BaseCrudService;
 use Mailery\Campaign\Standard\Entity\StandardCampaign;
 use Mailery\Campaign\ValueObject\CampaignValueObject;
@@ -17,12 +17,12 @@ class CampaignCrudService extends BaseCrudService
     private Brand $brand;
 
     /**
-     * @param ORMInterface $orm
+     * @param EntityManagerInterface $entityManager
      */
     public function __construct(
-        private ORMInterface $orm
+        private EntityManagerInterface $entityManager
     ) {
-        parent::__construct($orm);
+        parent::__construct($entityManager);
     }
 
     /**
@@ -54,7 +54,7 @@ class CampaignCrudService extends BaseCrudService
             $campaign->getGroups()->add($group);
         }
 
-        (new EntityWriter($this->orm))->write([$campaign]);
+        (new EntityWriter($this->entityManager))->write([$campaign]);
 
         return $campaign;
     }

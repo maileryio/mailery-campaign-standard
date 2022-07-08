@@ -1,47 +1,48 @@
 <?php
 
-use Yiisoft\Form\Widget\Form;
+use Yiisoft\Html\Tag\Form;
 use Mailery\Widget\Select\Select;
+use Yiisoft\Form\Field;
 
-/** @var Yiisoft\Form\Widget\Field $field */
 /** @var Yiisoft\View\WebView $this */
 /** @var Mailery\Campaign\Form\CampaignForm $form */
 /** @var Yiisoft\Yii\View\Csrf $csrf */
 
 ?>
-<?= Form::widget()
+<?= Form::tag()
         ->csrf($csrf)
         ->id('campaign-form')
-        ->begin(); ?>
+        ->post()
+        ->open(); ?>
 
 <h6 class="font-weight-bold">Subject and sender</h6>
 <div class="form-text text-muted">What is the subject line of the campaign?</div>
 <div class="mb-3"></div>
 
-<?= $field->select(
+<?= Field::input(
+        Select::class,
         $form,
         'sender',
         [
-            'class' => Select::class,
-            'items()' => [$form->getSenderListOptions()],
+            'optionsData()' => [$form->getSenderListOptions()],
             'searchable()' => [false],
             'clearable()' => [false],
         ]
     ); ?>
 
-<?= $field->text($form, 'name')->autofocus(); ?>
+<?= Field::text($form, 'name')->autofocus(); ?>
 
 <div class="mb-4"></div>
 <h6 class="font-weight-bold">Content</h6>
 <div class="form-text text-muted">What is the campaign content?</div>
 <div class="mb-3"></div>
 
-<?= $field->select(
+<?= Field::input(
+        Select::class,
         $form,
         'template',
         [
-            'class' => Select::class,
-            'items()' => [$form->getTemplateListOptions()],
+            'optionsData()' => [$form->getTemplateListOptions()],
             'searchable()' => [false],
             'clearable()' => [false],
         ]
@@ -52,12 +53,12 @@ use Mailery\Widget\Select\Select;
 <div class="form-text text-muted">Who will this campaign be sent to?</div>
 <div class="mb-3"></div>
 
-<?= $field->select(
+<?= Field::input(
+        Select::class,
         $form,
         'groups',
         [
-            'class' => Select::class,
-            'items()' => [$form->getGroupListOptions()],
+            'optionsData()' => [$form->getGroupListOptions()],
             'multiple()' => [true],
             'taggable()' => [true],
             'searchable()' => [false],
@@ -65,8 +66,7 @@ use Mailery\Widget\Select\Select;
         ]
     ); ?>
 
-<?= $field->submitButton()
-        ->class('btn btn-primary float-right mt-2')
-        ->value($form->hasEntity() ? 'Save changes' : 'Add campaign'); ?>
+<?= Field::submitButton()
+        ->content($form->hasEntity() ? 'Save changes' : 'Add campaign'); ?>
 
-<?= Form::end(); ?>
+<?= Form::tag()->close(); ?>

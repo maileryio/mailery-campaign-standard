@@ -3,7 +3,6 @@
 use Yiisoft\Yii\Widgets\ContentDecorator;
 
 /** @var Yiisoft\Assets\AssetManager $assetManager */
-/** @var Yiisoft\Form\Widget\Field $field */
 /** @var Yiisoft\Yii\WebView $this */
 /** @var Psr\Http\Message\ServerRequestInterface $request */
 /** @var Mailery\Campaign\Standard\Entity\StandardCampaign $campaign */

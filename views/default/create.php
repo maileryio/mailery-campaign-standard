@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
 use Yiisoft\Html\Html;
-use Yiisoft\Form\Widget\Form;
+use Yiisoft\Html\Tag\Form;
 use Mailery\Widget\Select\Select;
+use Yiisoft\Form\Field;
 
-/** @var Yiisoft\Form\Widget\Field $field */
 /** @var Yiisoft\Router\UrlGeneratorInterface $url */
 /** @var Yiisoft\Yii\WebView $this */
 /** @var Psr\Http\Message\ServerRequestInterface $request */
@@ -39,39 +39,38 @@ $this->setTitle('New standard campaign');
     <div class="col-12">
         <div class="card mb-3">
             <div class="card-body">
-                <?php if ($form->getSender() === null) {
-                    ?><?= Form::widget()
-                        ->csrf($csrf)
-                        ->id('campaign-form')
-                        ->begin(); ?>
+                <?php if ($form->getSender() === null) { ?>
+                    <?= Form::tag()
+                            ->csrf($csrf)
+                            ->id('campaign-form')
+                            ->post()
+                            ->open(); ?>
 
                     <h3 class="h6">Select sender</h3>
                     <div class="form-text text-muted">What is the campaign sender?</div>
                     <div class="mb-4"></div>
 
-                    <?= $field->select(
+                    <?= Field::input(
+                            Select::class,
                             $form,
                             'sender',
                             [
-                                'class' => Select::class,
-                                'items()' => [$form->getSenderListOptions()],
+                                'optionsData()' => [$form->getSenderListOptions()],
                                 'searchable()' => [false],
                                 'clearable()' => [false],
                             ]
                         ); ?>
 
-                    <?= Html::submitButton(
-                        'Next',
-                        [
-                            'class' => 'btn btn-primary float-right mt-2',
-                            'name' => 'creating-next-step',
-                            'value' => '1',
-                        ]
-                    ); ?>
+                    <?= Field::submitButton()
+                            ->content('Next')
+                            ->name('creating-next-step')
+                            ->addButtonAttributes([
+                                'value' => '1',
+                            ]); ?>
 
-                    <?= Form::end(); ?><?php
+                    <?= Form::tag()->close(); ?><?php
                 } else {
-                    ?><?= $this->render('_form', compact('csrf', 'field', 'form')) ?><?php
+                    ?><?= $this->render('_form', compact('csrf', 'form')) ?><?php
                 } ?>
 
             </div>

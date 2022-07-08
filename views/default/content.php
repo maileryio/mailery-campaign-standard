@@ -2,10 +2,10 @@
 
 use Mailery\Widget\Select\Select;
 use Mailery\Web\Widget\FlashMessage;
-use Yiisoft\Form\Widget\Form;
+use Yiisoft\Html\Tag\Form;
 use Yiisoft\Yii\Widgets\ContentDecorator;
+use Yiisoft\Form\Field;
 
-/** @var Yiisoft\Form\Widget\Field $field */
 /** @var Yiisoft\Router\UrlGeneratorInterface $url */
 /** @var Yiisoft\Yii\WebView $this */
 /** @var Psr\Http\Message\ServerRequestInterface $request */
@@ -31,29 +31,30 @@ $this->setTitle('Campaign content #' . $campaign->getId());
 
 <div class="row">
     <div class="col-12">
-        <?= Form::widget()
+        <?= Form::tag()
                 ->csrf($csrf)
                 ->id('campaign-content-form')
-                ->begin(); ?>
+                ->post()
+                ->open(); ?>
 
         <h6 class="font-weight-bold">Content</h6>
         <div class="form-text text-muted">What is the campaign content?</div>
         <div class="mb-3"></div>
 
-        <?= $field->select(
+        <?= Field::input(
+                Select::class,
                 $form,
                 'template',
                 [
-                    'class' => Select::class,
-                    'items()' => [$form->getTemplateListOptions()],
+                    'optionsData()' => [$form->getTemplateListOptions()],
                     'searchable()' => [false],
                     'clearable()' => [false],
                 ]
             ); ?>
 
-        <?= $this->render('_submit-button', compact('field', 'campaign')) ?>
+        <?= $this->render('_submit-button', compact('campaign')) ?>
 
-        <?= Form::end(); ?>
+        <?= Form::tag()->close(); ?>
     </div>
 </div>
 

@@ -8,15 +8,15 @@ use Mailery\Channel\Smtp\Model\EmailIdentificator;
 use Mailery\Subscriber\Entity\Group;
 use Mailery\Widget\Link\Link;
 use Yiisoft\Html\Html;
-use Yiisoft\Form\Widget\Form;
+use Yiisoft\Html\Tag\Form;
 use Yiisoft\Yii\Widgets\ContentDecorator;
 use Yiisoft\Yii\DataView\DetailView;
 use Yiisoft\Data\Paginator\OffsetPaginator;
 use Yiisoft\Data\Reader\Iterable\IterableDataReader;
 use Yiisoft\Yii\DataView\GridView;
+use Yiisoft\Form\Field;
 
 /** @var Yiisoft\Assets\AssetManager $assetManager */
-/** @var Yiisoft\Form\Widget\Field $field */
 /** @var Yiisoft\Yii\WebView $this */
 /** @var Psr\Http\Message\ServerRequestInterface $request */
 /** @var Mailery\Campaign\Standard\Entity\StandardCampaign $campaign */
@@ -233,16 +233,16 @@ $this->setTitle($campaign->getName());
                     {{ data.message }}
                 </b-alert>
 
-                <?= Form::widget()
-                    ->action($url->generate('/campaign/sendout/test', ['id' => $campaign->getId()]))
-                    ->csrf($csrf)
-                    ->id('campaign-test-form')
-                    ->begin(); ?>
+                <?= Form::tag()
+                            ->csrf($csrf)
+                            ->id('campaign-test-form')
+                            ->post($url->generate('/campaign/sendout/test', ['id' => $campaign->getId()]))
+                            ->open(); ?>
 
-                <?= $field->text($testForm, 'recipients'); ?>
+                <?= Field::text($testForm, 'recipients'); ?>
                 <div class="form-text text-muted">Enter addresses, separated by a commas, ex. <?= Html::encode('"Bob Smith" <bob@company.com>, joe@company.com') ?></div>
 
-                <?= Form::end(); ?>
+                <?= Form::tag()->close(); ?>
             </b-modal>
         </ui-listener>
     </div>

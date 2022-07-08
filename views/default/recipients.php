@@ -2,10 +2,10 @@
 
 use Mailery\Widget\Select\Select;
 use Mailery\Web\Widget\FlashMessage;
-use Yiisoft\Form\Widget\Form;
+use Yiisoft\Html\Tag\Form;
 use Yiisoft\Yii\Widgets\ContentDecorator;
+use Yiisoft\Form\Field;
 
-/** @var Yiisoft\Form\Widget\Field $field */
 /** @var Yiisoft\Router\UrlGeneratorInterface $url */
 /** @var Yiisoft\Yii\WebView $this */
 /** @var Psr\Http\Message\ServerRequestInterface $request */
@@ -31,21 +31,22 @@ $this->setTitle('Campaign recipients #' . $campaign->getId());
 
 <div class="row">
     <div class="col-12">
-        <?= Form::widget()
+        <?= Form::tag()
                 ->csrf($csrf)
                 ->id('campaign-recipients-form')
-                ->begin(); ?>
+                ->post()
+                ->open(); ?>
 
         <h6 class="font-weight-bold">Define recipients</h6>
         <div class="form-text text-muted">Who will this campaign be sent to?</div>
         <div class="mb-3"></div>
 
-        <?= $field->select(
+        <?= Field::input(
+                Select::class,
                 $form,
                 'groups',
                 [
-                    'class' => Select::class,
-                    'items()' => [$form->getGroupListOptions()],
+                    'optionsData()' => [$form->getGroupListOptions()],
                     'multiple()' => [true],
                     'taggable()' => [true],
                     'searchable()' => [false],
@@ -53,9 +54,9 @@ $this->setTitle('Campaign recipients #' . $campaign->getId());
                 ]
             ); ?>
 
-        <?= $this->render('_submit-button', compact('field', 'campaign')) ?>
+        <?= $this->render('_submit-button', compact('campaign')) ?>
 
-        <?= Form::end(); ?>
+        <?= Form::tag()->close(); ?>
     </div>
 </div>
 
