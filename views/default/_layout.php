@@ -101,13 +101,17 @@ $status = $campaign->getStatus();
                             </div>
                         </div>
                     </div>
-                <?php } else if($status->isSent()) { ?>
+                <?php } else if(($sendout = $campaign->getLastSendout()) !== null) { ?>
+                    <?php if ($sendout->getStatus()->isErrored()) { ?>
                     <div class="mb-4"></div>
                     <div class="row">
                         <div class="col">
-                            Campaign succesfullly sent
+                                <div class="alert alert-danger" role="alert">
+                                    <?= $sendout->getError(); ?>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    <?php } ?>
                 <?php } ?>
             </div>
         </div>
