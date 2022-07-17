@@ -8,12 +8,14 @@ use Yiisoft\Yii\Bootstrap5\Nav;
 
 /** @var Yiisoft\Yii\WebView $this */
 /** @var Psr\Http\Message\ServerRequestInterface $request */
+/** @var Mailery\Campaign\Counter\RecipientCounter $recipientCounter */
 /** @var Mailery\Campaign\Standard\Entity\StandardCampaign $campaign */
 /** @var Yiisoft\Yii\View\Csrf $csrf */
 
 $this->setTitle($campaign->getName());
 
 $status = $campaign->getStatus();
+$sendout = $campaign->getLastDefaultSendout();
 
 ?><div class="row">
     <div class="col-12">
@@ -25,6 +27,22 @@ $status = $campaign->getStatus();
                         <p class="mt-1 mb-0 small">
                             Changed at <?= DateTimeFormat::widget()->dateTime($campaign->getUpdatedAt()) ?>
                         </p>
+                        <?php if ($sendout !== null) { ?>
+                            <?php $recipientCounter = $recipientCounter->withSendout($sendout); ?>
+
+                            <p class="mt-1 mb-0 small">
+                                Sent on <?= DateTimeFormat::widget()->dateTime($sendout->getCreatedAt()) ?> to <b><?= $recipientCounter->getSentCount() ?></b> <span class="text-muted">/ <?= $recipientCounter->getTotalCount() ?></span> subscribers
+                                <?= Icon::widget()
+                                    ->name('help-circle-outline')
+                                    ->options([
+                                        'id' => $tooltipTarget = 'tooltip-' . uniqid(),
+                                    ]); ?>
+
+                                <b-tooltip target="<?= $tooltipTarget ?>">
+                                    Active contacts to whom the campaign was sent / all active contacts.
+                                </b-tooltip>
+                            </p>
+                        <?php } ?>
                     </div>
                     <div class="col-auto">
                         <div class="btn-toolbar float-right">
@@ -101,16 +119,16 @@ $status = $campaign->getStatus();
                             </div>
                         </div>
                     </div>
-                <?php } else if(($sendout = $campaign->getLastSendout()) !== null) { ?>
+                <?php } else if($sendout !== null) { ?>
                     <?php if ($sendout->getStatus()->isErrored()) { ?>
                     <div class="mb-4"></div>
                     <div class="row">
                         <div class="col">
-                                <div class="alert alert-danger" role="alert">
-                                    <?= $sendout->getError(); ?>
-                                </div>
+                            <div class="alert alert-danger" role="alert">
+                                <?= $sendout->getError(); ?>
                             </div>
                         </div>
+                    </div>
                     <?php } ?>
                 <?php } ?>
             </div>
@@ -150,7 +168,7 @@ $status = $campaign->getStatus();
                             'label' => 'Schedule',
                             'url' => $url->generate('/campaign/standard/schedule', ['id' => $campaign->getId()]),
                         ],
-                        $status->isSent()
+                        $sendout !== null
                             ? [
                                 'label' => 'Report',
                                 'url' => $url->generate('/campaign/standard/report', ['id' => $campaign->getId()]),

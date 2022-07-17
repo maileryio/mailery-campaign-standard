@@ -11,6 +11,8 @@ use Yiisoft\Form\Field;
 /** @var Yiisoft\Router\UrlGeneratorInterface $url */
 /** @var Yiisoft\Yii\WebView $this */
 /** @var Psr\Http\Message\ServerRequestInterface $request */
+/** @var Mailery\Campaign\Counter\RecipientCounter $recipientCounter */
+/** @var Mailery\Campaign\Standard\Entity\StandardCampaign $campaign */
 /** @var Mailery\Campaign\Form\ScheduleForm $form */
 /** @var Yiisoft\Yii\View\Csrf $csrf */
 
@@ -21,7 +23,7 @@ $scheduledSendingType = SendingType::asScheduled();
 
 <?= ContentDecorator::widget()
     ->viewFile('@vendor/maileryio/mailery-campaign-standard/views/default/_layout.php')
-    ->parameters(compact('campaign', 'csrf'))
+    ->parameters(compact('campaign', 'csrf', 'recipientCounter'))
     ->begin(); ?>
 
 <div class="mb-2"></div>

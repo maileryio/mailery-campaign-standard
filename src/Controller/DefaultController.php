@@ -25,6 +25,7 @@ use Mailery\Campaign\Repository\CampaignRepository;
 use Mailery\Brand\BrandLocatorInterface;
 use Mailery\Campaign\Standard\Service\CampaignCrudService;
 use Mailery\Campaign\ValueObject\CampaignValueObject;
+use Mailery\Campaign\ViewInjection\RecipientCounterViewInjection;
 use Mailery\Subscriber\Counter\SubscriberCounter;
 use Yiisoft\Validator\ValidatorInterface;
 use Yiisoft\Session\Flash\FlashInterface;
@@ -40,6 +41,7 @@ class DefaultController
      * @param CampaignCrudService $campaignCrudService
      * @param ScheduleCrudService $scheduleCrudService
      * @param TrackingCrudService $trackingCrudService
+     * @param RecipientCounterViewInjection $recipientCounterViewInjection
      * @param BrandLocatorInterface $brandLocator
      */
     public function __construct(
@@ -50,11 +52,14 @@ class DefaultController
         private CampaignCrudService $campaignCrudService,
         private ScheduleCrudService $scheduleCrudService,
         private TrackingCrudService $trackingCrudService,
+        RecipientCounterViewInjection $recipientCounterViewInjection,
         BrandLocatorInterface $brandLocator
     ) {
         $this->viewRenderer = $viewRenderer
             ->withController($this)
-            ->withViewPath(dirname(dirname(__DIR__)) . '/views');
+            ->withViewPath(dirname(dirname(__DIR__)) . '/views')
+            ->withAddedInjections($recipientCounterViewInjection)
+        ;
 
         $this->campaignRepo = $campaignRepo->withBrand($brandLocator->getBrand());
         $this->campaignCrudService = $campaignCrudService->withBrand($brandLocator->getBrand());

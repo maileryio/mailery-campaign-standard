@@ -5,6 +5,7 @@ use Yiisoft\Yii\Widgets\ContentDecorator;
 /** @var Yiisoft\Assets\AssetManager $assetManager */
 /** @var Yiisoft\Yii\WebView $this */
 /** @var Psr\Http\Message\ServerRequestInterface $request */
+/** @var Mailery\Campaign\Counter\RecipientCounter $recipientCounter */
 /** @var Mailery\Campaign\Standard\Entity\StandardCampaign $campaign */
 /** @var Mailery\Campaign\Form\SendTestForm $testForm */
 /** @var Mailery\Subscriber\Counter\SubscriberCounter $subscriberCounter */
@@ -17,7 +18,7 @@ $this->setTitle($campaign->getName());
 
 <?= ContentDecorator::widget()
     ->viewFile('@vendor/maileryio/mailery-campaign-standard/views/default/_layout.php')
-    ->parameters(compact('campaign', 'csrf'))
+    ->parameters(compact('campaign', 'csrf', 'recipientCounter'))
     ->begin(); ?>
 
 <div class="mb-2"></div>

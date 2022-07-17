@@ -9,6 +9,8 @@ use Yiisoft\Form\Field;
 /** @var Yiisoft\Router\UrlGeneratorInterface $url */
 /** @var Yiisoft\Yii\WebView $this */
 /** @var Psr\Http\Message\ServerRequestInterface $request */
+/** @var Mailery\Campaign\Counter\RecipientCounter $recipientCounter */
+/** @var Mailery\Campaign\Standard\Entity\StandardCampaign $campaign */
 /** @var Yiisoft\Form\FormModelInterface $form */
 /** @var Yiisoft\Yii\View\Csrf $csrf */
 
@@ -18,7 +20,7 @@ $this->setTitle('Campaign recipients #' . $campaign->getId());
 
 <?= ContentDecorator::widget()
     ->viewFile('@vendor/maileryio/mailery-campaign-standard/views/default/_layout.php')
-    ->parameters(compact('campaign', 'csrf'))
+    ->parameters(compact('campaign', 'csrf', 'recipientCounter'))
     ->begin(); ?>
 
 <div class="mb-2"></div>

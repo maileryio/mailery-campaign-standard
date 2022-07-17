@@ -19,6 +19,7 @@ use Yiisoft\Form\Field;
 /** @var Yiisoft\Assets\AssetManager $assetManager */
 /** @var Yiisoft\Yii\WebView $this */
 /** @var Psr\Http\Message\ServerRequestInterface $request */
+/** @var Mailery\Campaign\Counter\RecipientCounter $recipientCounter */
 /** @var Mailery\Campaign\Standard\Entity\StandardCampaign $campaign */
 /** @var Mailery\Campaign\Form\SendTestForm $testForm */
 /** @var Mailery\Subscriber\Counter\SubscriberCounter $subscriberCounter */
@@ -31,7 +32,7 @@ $this->setTitle($campaign->getName());
 
 <?= ContentDecorator::widget()
     ->viewFile('@vendor/maileryio/mailery-campaign-standard/views/default/_layout.php')
-    ->parameters(compact('campaign', 'csrf'))
+    ->parameters(compact('campaign', 'csrf', 'recipientCounter'))
     ->begin(); ?>
 
 <div class="mb-2"></div>
@@ -149,9 +150,88 @@ $this->setTitle($campaign->getName());
             </div>
         </div>
 
-        <div class="camp-view-content__send-test mt-3">
-            <a class="font-weight-bold" href="javascript:void(0);" v-b-modal.modal-send-test>Send test email</a>
-        </div>
+        <div class="mb-2"></div>
+
+        <?php if ($campaign->canBeEdited()) { ?>
+            <div class="camp-view-content__send-test mt-3">
+                <a class="font-weight-bold" href="javascript:void(0);" v-b-modal.modal-send-test>Send test email</a>
+            </div>
+
+            <ui-listener event="campaign.send-test" v-slot="{ data }">
+                <b-modal id="modal-send-test" title="Test send this campaign" @hidden="() => { mailery.app.$emit('campaign.send-test', {}) }">
+                    <template #modal-footer="{ ok }">
+                        <?= Link::widget()
+                            ->csrf($csrf)
+                            ->label(<<<TEXT
+                                <b-spinner v-if="data.loading" small></b-spinner>
+                                <span v-if="data.loading">Sending...</span>
+                                <span v-else>Send email</span>
+                                TEXT
+                            )
+                            ->disabled('data.loading')
+                            ->options([
+                                'class' => 'btn btn-primary',
+                            ])
+                            ->createRequest(<<<JS
+                                () => {
+                                    const form = document.getElementById('campaign-test-form');
+
+                                    return new Request(
+                                        '{$url->generate('/campaign/sendout/test', ['id' => $campaign->getId()])}',
+                                        {
+                                            method: 'POST',
+                                            body: new URLSearchParams(new FormData(form))
+                                        }
+                                    );
+                                }
+                                JS
+                            )
+                            ->beforeRequest(<<<JS
+                                (req) => {
+                                    const form = document.getElementById('campaign-test-form');
+                                    const isValid = form.reportValidity();
+
+                                    if (isValid) {
+                                        mailery.app.\$emit('campaign.send-test', { loading: true });
+                                    }
+                                    return isValid;
+                                }
+                                JS
+                            )
+                            ->afterRequest(<<<JS
+                                (res) => {
+                                    if (res.redirected && res.url) {
+                                        window.location.href = res.url;
+                                        return;
+                                    } else {
+                                        res.json().then((data) => {
+                                            mailery.app.\$emit('campaign.send-test', { loading: false, success: data.success, message: data.message });
+                                        });
+                                    }
+                                }
+                                JS
+                            )
+                            ->encode(false);
+                        ?>
+                    </template>
+
+                    <b-alert :show="'success' in data" :variant="data.success ? 'success' : 'danger'">
+                        {{ data.message }}
+                    </b-alert>
+
+                    <?= Form::tag()
+                                ->csrf($csrf)
+                                ->id('campaign-test-form')
+                                ->post($url->generate('/campaign/sendout/test', ['id' => $campaign->getId()]))
+                                ->open(); ?>
+
+                    <?= Field::text($testForm, 'recipients'); ?>
+                    <div class="form-text text-muted">Enter addresses, separated by a commas, ex. <?= Html::encode('"Bob Smith" <bob@company.com>, joe@company.com') ?></div>
+
+                    <?= Form::tag()->close(); ?>
+                </b-modal>
+            </ui-listener>
+        <?php } ?>
 
         <b-modal id="modal-preview-html" title="Design preview">
             <template #modal-footer="{ cancel }">
@@ -170,81 +250,6 @@ $this->setTitle($campaign->getName());
 
             <?= nl2br(Html::encode($campaign->getTemplate()->getTextContent())); ?>
         </b-modal>
-
-        <ui-listener event="campaign.send-test" v-slot="{ data }">
-            <b-modal id="modal-send-test" title="Test send this campaign" @hidden="() => { mailery.app.$emit('campaign.send-test', {}) }">
-                <template #modal-footer="{ ok }">
-                    <?= Link::widget()
-                        ->csrf($csrf)
-                        ->label(<<<TEXT
-                            <b-spinner v-if="data.loading" small></b-spinner>
-                            <span v-if="data.loading">Sending...</span>
-                            <span v-else>Send email</span>
-                            TEXT
-                        )
-                        ->disabled('data.loading')
-                        ->options([
-                            'class' => 'btn btn-primary',
-                        ])
-                        ->createRequest(<<<JS
-                            () => {
-                                const form = document.getElementById('campaign-test-form');
-
-                                return new Request(
-                                    '{$url->generate('/campaign/sendout/test', ['id' => $campaign->getId()])}',
-                                    {
-                                        method: 'POST',
-                                        body: new URLSearchParams(new FormData(form))
-                                    }
-                                );
-                            }
-                            JS
-                        )
-                        ->beforeRequest(<<<JS
-                            (req) => {
-                                const form = document.getElementById('campaign-test-form');
-                                const isValid = form.reportValidity();
-
-                                if (isValid) {
-                                    mailery.app.\$emit('campaign.send-test', { loading: true });
-                                }
-                                return isValid;
-                            }
-                            JS
-                        )
-                        ->afterRequest(<<<JS
-                            (res) => {
-                                if (res.redirected && res.url) {
-                                    window.location.href = res.url;
-                                    return;
-                                } else {
-                                    res.json().then((data) => {
-                                        mailery.app.\$emit('campaign.send-test', { loading: false, success: data.success, message: data.message });
-                                    });
-                                }
-                            }
-                            JS
-                        )
-                        ->encode(false);
-                    ?>
-                </template>
-
-                <b-alert :show="'success' in data" :variant="data.success ? 'success' : 'danger'">
-                    {{ data.message }}
-                </b-alert>
-
-                <?= Form::tag()
-                            ->csrf($csrf)
-                            ->id('campaign-test-form')
-                            ->post($url->generate('/campaign/sendout/test', ['id' => $campaign->getId()]))
-                            ->open(); ?>
-
-                <?= Field::text($testForm, 'recipients'); ?>
-                <div class="form-text text-muted">Enter addresses, separated by a commas, ex. <?= Html::encode('"Bob Smith" <bob@company.com>, joe@company.com') ?></div>
-
-                <?= Form::tag()->close(); ?>
-            </b-modal>
-        </ui-listener>
     </div>
 </div>
 
