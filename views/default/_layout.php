@@ -35,7 +35,7 @@ if ($sendout !== null) {
                         </p>
                         <?php if ($sendout !== null) { ?>
                             <p class="mt-3 mb-0">
-                                Sent on <?= DateTimeFormat::widget()->dateTime($sendout->getCreatedAt()) ?> to <b><?= $recipientCounter->getSentCount() ?></b> / <?= $recipientCounter->getTotalCount() ?> subscribers
+                                Sent on <?= DateTimeFormat::widget()->dateTime($sendout->getCreatedAt()) ?> to <b><?= $recipientCounter->getSentCount() ?></b> / <?= $recipientCounter->getTotalCount() ?> recipients
                                 <?= Icon::widget()
                                     ->name('help-circle-outline')
                                     ->options([

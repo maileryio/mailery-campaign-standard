@@ -43,6 +43,7 @@ return [
                             '/campaign/standard/tracking',
                             '/campaign/standard/schedule',
                             '/campaign/standard/sendout',
+                            '/campaign/standard/report',
                         ],
                     ],
                 ],
