@@ -34,58 +34,58 @@ $this->setTitle('Campaign tracking #' . $campaign->getId());
 <div class="row">
     <div class="col-12">
         <?= Form::tag()
-                ->csrf($csrf)
-                ->id('campaign-tracking-form')
-                ->post()
-                ->open(); ?>
+            ->csrf($csrf)
+            ->id('campaign-tracking-form')
+            ->post()
+            ->open(); ?>
 
         <h6 class="font-weight-bold">Tracking configuration</h6>
         <div class="form-text text-muted">Get your campaign statistics right after the start of sending.</div>
         <div class="mb-3"></div>
 
         <?= Field::input(
-                Select::class,
-                $form,
-                'trackClicks',
-                [
-                    'optionsData()' => [$form->getBooleanListOptions()],
-                    'clearable()' => [false],
-                    'searchable()' => [false],
-                ]
-            ); ?>
+            Select::class,
+            $form,
+            'trackClicks',
+            [
+                'optionsData()' => [$form->getBooleanListOptions()],
+                'clearable()' => [false],
+                'searchable()' => [false],
+            ]
+        ); ?>
 
         <?= Field::input(
-                Select::class,
-                $form,
-                'trackOpens',
-                [
-                    'optionsData()' => [$form->getBooleanListOptions()],
-                    'clearable()' => [false],
-                    'searchable()' => [false],
-                ]
-            ); ?>
+            Select::class,
+            $form,
+            'trackOpens',
+            [
+                'optionsData()' => [$form->getBooleanListOptions()],
+                'clearable()' => [false],
+                'searchable()' => [false],
+            ]
+        ); ?>
 
         <?= Field::input(
-                Select::class,
-                $form,
-                'enableUtmTags',
-                [
-                    'optionsData()' => [$form->getBooleanListOptions()],
-                    'clearable()' => [false],
-                    'searchable()' => [false],
-                    'inputCallback()' => [<<<JS
-                        (val) => {
-                            var classList = document.querySelector(".js-utm-tags-details").classList;
-                            if (val == 1) {
-                                classList.remove("d-none");
-                            } else {
-                                classList.add("d-none");
-                            }
+            Select::class,
+            $form,
+            'enableUtmTags',
+            [
+                'optionsData()' => [$form->getBooleanListOptions()],
+                'clearable()' => [false],
+                'searchable()' => [false],
+                'inputCallback()' => [<<<JS
+                    (val) => {
+                        var classList = document.querySelector(".js-utm-tags-details").classList;
+                        if (val == 1) {
+                            classList.remove("d-none");
+                        } else {
+                            classList.add("d-none");
                         }
-                        JS
-                    ],
-                ]
-            ); ?>
+                    }
+                    JS
+                ],
+            ]
+        ); ?>
 
         <div class="js-utm-tags-details <?= !$form->getEnableUtmTags() ? 'd-none' : '' ?>">
             <div class="mb-3"></div>

@@ -20,15 +20,15 @@ use Yiisoft\Form\Field;
 <div class="mb-3"></div>
 
 <?= Field::input(
-        Select::class,
-        $form,
-        'sender',
-        [
-            'optionsData()' => [$form->getSenderListOptions()],
-            'searchable()' => [false],
-            'clearable()' => [false],
-        ]
-    ); ?>
+    Select::class,
+    $form,
+    'sender',
+    [
+        'optionsData()' => [$form->getSenderListOptions()],
+        'searchable()' => [false],
+        'clearable()' => [false],
+    ]
+); ?>
 
 <?= Field::text($form, 'name')->autofocus(); ?>
 
@@ -38,15 +38,15 @@ use Yiisoft\Form\Field;
 <div class="mb-3"></div>
 
 <?= Field::input(
-        Select::class,
-        $form,
-        'template',
-        [
-            'optionsData()' => [$form->getTemplateListOptions()],
-            'searchable()' => [false],
-            'clearable()' => [false],
-        ]
-    ); ?>
+    Select::class,
+    $form,
+    'template',
+    [
+        'optionsData()' => [$form->getTemplateListOptions()],
+        'searchable()' => [false],
+        'clearable()' => [false],
+    ]
+); ?>
 
 <div class="mb-4"></div>
 <h6 class="font-weight-bold">Define recipients</h6>
@@ -54,17 +54,17 @@ use Yiisoft\Form\Field;
 <div class="mb-3"></div>
 
 <?= Field::input(
-        Select::class,
-        $form,
-        'groups',
-        [
-            'optionsData()' => [$form->getGroupListOptions()],
-            'multiple()' => [true],
-            'taggable()' => [true],
-            'searchable()' => [false],
-            'clearable()' => [false],
-        ]
-    ); ?>
+    Select::class,
+    $form,
+    'groups',
+    [
+        'optionsData()' => [$form->getGroupListOptions()],
+        'multiple()' => [true],
+        'taggable()' => [true],
+        'searchable()' => [false],
+        'clearable()' => [false],
+    ]
+); ?>
 
 <?= Field::submitButton()
         ->content($form->hasEntity() ? 'Save changes' : 'Add campaign'); ?>

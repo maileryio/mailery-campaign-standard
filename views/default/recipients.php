@@ -34,27 +34,27 @@ $this->setTitle('Campaign recipients #' . $campaign->getId());
 <div class="row">
     <div class="col-12">
         <?= Form::tag()
-                ->csrf($csrf)
-                ->id('campaign-recipients-form')
-                ->post()
-                ->open(); ?>
+            ->csrf($csrf)
+            ->id('campaign-recipients-form')
+            ->post()
+            ->open(); ?>
 
         <h6 class="font-weight-bold">Define recipients</h6>
         <div class="form-text text-muted">Who will this campaign be sent to?</div>
         <div class="mb-3"></div>
 
         <?= Field::input(
-                Select::class,
-                $form,
-                'groups',
-                [
-                    'optionsData()' => [$form->getGroupListOptions()],
-                    'multiple()' => [true],
-                    'taggable()' => [true],
-                    'searchable()' => [false],
-                    'clearable()' => [false],
-                ]
-            ); ?>
+            Select::class,
+            $form,
+            'groups',
+            [
+                'optionsData()' => [$form->getGroupListOptions()],
+                'multiple()' => [true],
+                'taggable()' => [true],
+                'searchable()' => [false],
+                'clearable()' => [false],
+            ]
+        ); ?>
 
         <?= $this->render('_submit-button', compact('campaign')) ?>
 

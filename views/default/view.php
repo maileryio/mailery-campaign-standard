@@ -4,9 +4,9 @@ use Mailery\Icon\Icon;
 use Mailery\Web\Widget\ByteUnitsFormat;
 use Mailery\Web\Widget\BooleanBadge;
 use Mailery\Campaign\Standard\Entity\StandardCampaign as Campaign;
-use Mailery\Channel\Smtp\Model\EmailIdentificator;
 use Mailery\Subscriber\Entity\Group;
 use Mailery\Widget\Link\Link;
+use Symfony\Component\Mime\Address;
 use Yiisoft\Html\Html;
 use Yiisoft\Html\Tag\Form;
 use Yiisoft\Yii\Widgets\ContentDecorator;
@@ -15,6 +15,7 @@ use Yiisoft\Data\Paginator\OffsetPaginator;
 use Yiisoft\Data\Reader\Iterable\IterableDataReader;
 use Yiisoft\Yii\DataView\GridView;
 use Yiisoft\Form\Field;
+use Mailery\Web\Vue\Directive;
 
 /** @var Yiisoft\Assets\AssetManager $assetManager */
 /** @var Yiisoft\Yii\WebView $this */
@@ -64,22 +65,20 @@ $this->setTitle($campaign->getName());
                 [
                     'label' => 'Subject',
                     'value' => function (Campaign $data) {
-                        return $data->getName();
+                        return Directive::pre($data->getName());
                     },
                 ],
                 [
                     'label' => 'From',
                     'value' => function (Campaign $data) {
-                        return new EmailIdentificator($data->getSender()->getEmail(), $data->getSender()->getName());
+                        return Directive::pre((new Address($data->getSender()->getEmail(), $data->getSender()->getName()))->toString());
                     },
-                    'encode' => true,
                 ],
                 [
                     'label' => 'Reply to',
                     'value' => function (Campaign $data) {
-                        return new EmailIdentificator($data->getSender()->getReplyEmail(), $data->getSender()->getReplyName());
+                        return Directive::pre((new Address($data->getSender()->getReplyEmail(), $data->getSender()->getReplyName()))->toString());
                     },
-                    'encode' => true,
                 ],
             ]);
         ?>
@@ -220,10 +219,10 @@ $this->setTitle($campaign->getName());
                     </b-alert>
 
                     <?= Form::tag()
-                                ->csrf($csrf)
-                                ->id('campaign-test-form')
-                                ->post($url->generate('/campaign/sendout/test', ['id' => $campaign->getId()]))
-                                ->open(); ?>
+                        ->csrf($csrf)
+                        ->id('campaign-test-form')
+                        ->post($url->generate('/campaign/sendout/test', ['id' => $campaign->getId()]))
+                        ->open(); ?>
 
                     <?= Field::text($testForm, 'recipients'); ?>
                     <div class="form-text text-muted">Enter addresses, separated by a commas, ex. <?= Html::encode('"Bob Smith" <bob@company.com>, joe@company.com') ?></div>
@@ -248,7 +247,7 @@ $this->setTitle($campaign->getName());
                 <a class="btn btn-primary" href="<?= $url->generate('/campaign/standard/content', ['id' => $campaign->getId()]) ?>">Edit content</a>
             </template>
 
-            <?= nl2br(Html::encode($campaign->getTemplate()->getTextContent())); ?>
+            <?= nl2br((string) Directive::pre($campaign->getTemplate()->getTextContent())); ?>
         </b-modal>
     </div>
 </div>
@@ -302,7 +301,7 @@ $this->setTitle($campaign->getName());
             ->columns([
                 [
                     'label()' => ['Name'],
-                    'value()' => [fn (Group $model) => Html::a($model->getName(), $url->generate($model->getViewRouteName(), $model->getViewRouteParams()))],
+                    'value()' => [fn (Group $model) => Html::a(Directive::pre($model->getName()), $url->generate($model->getViewRouteName(), $model->getViewRouteParams()))],
                 ],
                 [
                     'label()' => ['Active'],

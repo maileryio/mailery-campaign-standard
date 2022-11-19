@@ -6,6 +6,7 @@ use Mailery\Widget\Link\Link;
 use Mailery\Web\Widget\DateTimeFormat;
 use Mailery\Widget\Highcharts\Highcharts;
 use Yiisoft\Yii\Bootstrap5\Nav;
+use Mailery\Web\Vue\Directive;
 
 /** @var Yiisoft\Yii\WebView $this */
 /** @var Psr\Http\Message\ServerRequestInterface $request */
@@ -29,7 +30,7 @@ if ($sendout !== null) {
             <div class="card-body">
                 <div class="row">
                     <div class="col-md">
-                        <h4 class="mb-0">Campaign #<?= $campaign->getId(); ?> <span class="badge <?= $status->getCssClass(); ?> align-top ml-2"><?= $status->getLabel(); ?></span></h4>
+                        <h4 class="mb-0">Campaign #<?= $campaign->getId(); ?> <span class="badge <?= $status->getCssClass(); ?> align-top ml-2"><?= Directive::pre($status->getLabel()); ?></span></h4>
                         <p class="mt-1 mb-0 small">
                             Changed at <?= DateTimeFormat::widget()->dateTime($campaign->getUpdatedAt()) ?>
                         </p>

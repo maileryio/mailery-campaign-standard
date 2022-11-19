@@ -34,25 +34,25 @@ $this->setTitle('Campaign content #' . $campaign->getId());
 <div class="row">
     <div class="col-12">
         <?= Form::tag()
-                ->csrf($csrf)
-                ->id('campaign-content-form')
-                ->post()
-                ->open(); ?>
+            ->csrf($csrf)
+            ->id('campaign-content-form')
+            ->post()
+            ->open(); ?>
 
         <h6 class="font-weight-bold">Content</h6>
         <div class="form-text text-muted">What is the campaign content?</div>
         <div class="mb-3"></div>
 
         <?= Field::input(
-                Select::class,
-                $form,
-                'template',
-                [
-                    'optionsData()' => [$form->getTemplateListOptions()],
-                    'searchable()' => [false],
-                    'clearable()' => [false],
-                ]
-            ); ?>
+            Select::class,
+            $form,
+            'template',
+            [
+                'optionsData()' => [$form->getTemplateListOptions()],
+                'searchable()' => [false],
+                'clearable()' => [false],
+            ]
+        ); ?>
 
         <?= $this->render('_submit-button', compact('campaign')) ?>
 

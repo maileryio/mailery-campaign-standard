@@ -35,10 +35,10 @@ $scheduledSendingType = SendingType::asScheduled();
 <div class="mb-2"></div>
 
 <?= Form::tag()
-        ->csrf($csrf)
-        ->id('campaign-schedule-form')
-        ->post()
-        ->open(); ?>
+    ->csrf($csrf)
+    ->id('campaign-schedule-form')
+    ->post()
+    ->open(); ?>
 
 <div class="row">
     <div class="col-12">
@@ -51,21 +51,21 @@ $scheduledSendingType = SendingType::asScheduled();
 <div class="row">
     <div class="col-12">
         <?= Field::input(
-                Select::class,
-                $form,
-                'sendingType',
-                [
-                    'optionsData()' => [$form->getSendingTypeListOptions()],
-                    'clearable()' => [false],
-                    'searchable()' => [false],
-                    'inputCallback()' => [<<<JS
-                        (val) => {
-                            mailery.app.\$emit('campaign.sending-type.changed', { val });
-                        }
-                        JS
-                    ],
-                ]
-            ); ?>
+            Select::class,
+            $form,
+            'sendingType',
+            [
+                'optionsData()' => [$form->getSendingTypeListOptions()],
+                'clearable()' => [false],
+                'searchable()' => [false],
+                'inputCallback()' => [<<<JS
+                    (val) => {
+                        mailery.app.\$emit('campaign.sending-type.changed', { val });
+                    }
+                    JS
+                ],
+            ]
+        ); ?>
     </div>
 </div>
 
@@ -103,33 +103,32 @@ $scheduledSendingType = SendingType::asScheduled();
         <div class="row">
             <div class="col-12">
                 <?= Field::input(
-                        Select::class,
-                        $form,
-                        'timezone',
-                        [
-                            'optionsData()' => [$form->getTimezoneListOptions()],
-                            'clearable()' => [false],
-                            'searchable()' => [true],
-                            'inputCallback()' => [<<<JS
-                                (val) => {
-                                    mailery.app.\$emit('campaign.timezone.changed', { val });
-                                }
-                                JS
-                            ],
-                        ]
-                    )
-                    ->hintConfig([
-                        'content()' => [<<<TEXT
-                            Current time in time zone:
-                            <ui-listener event="campaign.timezone.changed" v-slot="{ data }">
-                                <ui-clock format="MMMM Do YYYY, HH:mm:ss" :timezone="data.val ?? '{$form->getTimezone()}'"></ui-clock>
-                            </ui-listener> • Change this option if your targeted contacts are in a timezone different from yours. This is useful if you have country-specific contact lists.
-                            TEXT
+                    Select::class,
+                    $form,
+                    'timezone',
+                    [
+                        'optionsData()' => [$form->getTimezoneListOptions()],
+                        'clearable()' => [false],
+                        'searchable()' => [true],
+                        'inputCallback()' => [<<<JS
+                            (val) => {
+                                mailery.app.\$emit('campaign.timezone.changed', { val });
+                            }
+                            JS
                         ],
-                        'encode()' => [false],
-                        'class()' => ['form-text text-muted'],
-                    ])
-                ; ?>
+                    ]
+                )
+                ->hintConfig([
+                    'content()' => [<<<TEXT
+                        Current time in time zone:
+                        <ui-listener event="campaign.timezone.changed" v-slot="{ data }">
+                            <ui-clock format="MMMM Do YYYY, HH:mm:ss" :timezone="data.val ?? '{$form->getTimezone()}'"></ui-clock>
+                        </ui-listener> • Change this option if your targeted contacts are in a timezone different from yours. This is useful if you have country-specific contact lists.
+                        TEXT
+                    ],
+                    'encode()' => [false],
+                    'class()' => ['form-text text-muted'],
+                ]); ?>
             </div>
         </div>
     </div>

@@ -34,25 +34,25 @@ $this->setTitle('Campaign details #' . $campaign->getId());
 <div class="row">
     <div class="col-12">
         <?= Form::tag()
-                ->csrf($csrf)
-                ->id('campaign-details-form')
-                ->post()
-                ->open(); ?>
+            ->csrf($csrf)
+            ->id('campaign-details-form')
+            ->post()
+            ->open(); ?>
 
         <h6 class="font-weight-bold">Subject and sender</h6>
         <div class="form-text text-muted">What is the subject line of the campaign?</div>
         <div class="mb-3"></div>
 
         <?= Field::input(
-                Select::class,
-                $form,
-                'sender',
-                [
-                    'optionsData()' => [$form->getSenderListOptions()],
-                    'searchable()' => [false],
-                    'clearable()' => [false],
-                ]
-            ); ?>
+            Select::class,
+            $form,
+            'sender',
+            [
+                'optionsData()' => [$form->getSenderListOptions()],
+                'searchable()' => [false],
+                'clearable()' => [false],
+            ]
+        ); ?>
 
         <?= Field::text($form, 'name')->autofocus(); ?>
 

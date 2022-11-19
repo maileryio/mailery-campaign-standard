@@ -1,6 +1,5 @@
 <?php declare(strict_types=1);
 
-use Yiisoft\Html\Html;
 use Yiisoft\Html\Tag\Form;
 use Mailery\Widget\Select\Select;
 use Yiisoft\Form\Field;
@@ -41,32 +40,32 @@ $this->setTitle('New standard campaign');
             <div class="card-body">
                 <?php if ($form->getSender() === null) { ?>
                     <?= Form::tag()
-                            ->csrf($csrf)
-                            ->id('campaign-form')
-                            ->post()
-                            ->open(); ?>
+                        ->csrf($csrf)
+                        ->id('campaign-form')
+                        ->post()
+                        ->open(); ?>
 
                     <h3 class="h6">Select sender</h3>
                     <div class="form-text text-muted">What is the campaign sender?</div>
                     <div class="mb-4"></div>
 
                     <?= Field::input(
-                            Select::class,
-                            $form,
-                            'sender',
-                            [
-                                'optionsData()' => [$form->getSenderListOptions()],
-                                'searchable()' => [false],
-                                'clearable()' => [false],
-                            ]
-                        ); ?>
+                        Select::class,
+                        $form,
+                        'sender',
+                        [
+                            'optionsData()' => [$form->getSenderListOptions()],
+                            'searchable()' => [false],
+                            'clearable()' => [false],
+                        ]
+                    ); ?>
 
                     <?= Field::submitButton()
-                            ->content('Next')
-                            ->name('creating-next-step')
-                            ->addButtonAttributes([
-                                'value' => '1',
-                            ]); ?>
+                        ->content('Next')
+                        ->name('creating-next-step')
+                        ->addButtonAttributes([
+                            'value' => '1',
+                        ]); ?>
 
                     <?= Form::tag()->close(); ?><?php
                 } else {
