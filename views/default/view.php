@@ -108,7 +108,7 @@ $this->setTitle($campaign->getName());
             <!--<?= $assetManager->getAssetUrl(Mailery\Campaign\Assets\CampaignAssetBundle::class, 'images/empty-image-bg.svg') ?>-->
             <div class="camp-view-content__thumbnail-preview">
                 <iframe
-                    src="<?= $url->generate('/campaign/standard/preview', ['id' => $campaign->getId()]) ?>"
+                    src="<?= $url->generate($campaign->getPreviewRouteName(), $campaign->getPreviewRouteParams()) ?>"
                     scrolling="no">
                 </iframe>
 

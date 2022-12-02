@@ -86,4 +86,21 @@ class StandardCampaign extends Campaign implements RoutableEntityInterface, Logg
     {
         return ['id' => $this->getId()];
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function getPreviewRouteName(): string
+    {
+        return '/campaign/standard/preview';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getPreviewRouteParams(): array
+    {
+        return ['id' => $this->getId()];
+    }
+
 }
