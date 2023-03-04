@@ -12,6 +12,6 @@ if ($campaign->canBeEdited()) {
             ->disabled(!$campaign->canBeEdited()); ?>
     </span>
     <b-tooltip target="disabled-wrapper">
-        Campaign cannot be modified in read only status
+        Campaign cannot be edited because it has already been submitted
     </b-tooltip>
 <?php } ?>
